@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "author": "Seno",
+  "license": "MIT",
+  "main": "src/index.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon",
+    "start": "ts-node --esm src/index.ts",
+    "prettier-check": "prettier --check src",
+    "prettier-fix": "prettier --write src"
+  },
+  "dependencies": {
+    "fastify": "^4.9.2",
+    "mongoose": "^6.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
