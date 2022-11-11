@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -11,12 +17,22 @@ import { ConfigModule } from '@nestjs/config';
       envFilePath: '.env.dev',
       isGlobal: true,
     }),
-    MongooseModule.forRoot(
-      `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@cluster0.phxi29l.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
-    ),
+    MongooseModule.forRoot(process.env.DB_URI),
     UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): any {
+    /*
+     * Common middleware:
+     * - Helmet: Security http headers
+     * - Compression: Gzip, deflate
+     * - Rate limiting
+     */
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
