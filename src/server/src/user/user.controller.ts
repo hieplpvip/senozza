@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { User } from 'src/schemas/user.schema';
-import { UserCreateDto } from './dto/user-create.dto';
+
 import { UserSerivce } from './user.service';
 
 @Controller('user')
@@ -9,20 +11,11 @@ import { UserSerivce } from './user.service';
 export class UserController {
   constructor(private readonly userSerivce: UserSerivce) {}
 
-  @Post('create')
-  @ApiBody({ type: UserCreateDto })
+  @UseGuards(JwtAuthGuard)
+  @Get('info')
   @ApiOkResponse({ type: User })
-  async create(@Body() userCreateDto: UserCreateDto): Promise<User> {
-    const user = this.userSerivce.create(userCreateDto);
+  async info(@ExtractedUser() user: User): Promise<User> {
+    console.log(user);
     return user;
-  }
-
-  @Get('list')
-  @ApiOkResponse({
-    isArray: true,
-    type: User,
-  })
-  async list(): Promise<User[]> {
-    return this.userSerivce.findAll();
   }
 }
