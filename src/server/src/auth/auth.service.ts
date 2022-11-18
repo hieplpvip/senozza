@@ -20,10 +20,10 @@ export class AuthService {
   //   }
   // }
 
-  async generateAccessToken(userId: string) {
+  async generateAccessToken(email: string) {
     return {
       accessToken: this.jwtService.sign({
-        sub: userId,
+        sub: email,
       }),
     };
   }

@@ -1,4 +1,4 @@
-import { Body, Controller, NotFoundException, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { UserLoginDto } from '../user/dto/user-login.dto';
@@ -22,8 +22,6 @@ export class AuthController {
       properties: {
         accessToken: {
           type: 'string',
-          example:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MzgxYzk1ZjM0MTE2ODJkZGEwZGRkYmYiLCJpYXQiOjE2Njk0NTI4NTYsImV4cCI6MTY2OTQ1MjkxNn0.-6Wkt0E2PZPCZA1yyHAoJpuvtZYZ42uKa8BYdQ4srvQ',
         },
       },
     },
@@ -41,7 +39,7 @@ export class AuthController {
     //   httpOnly: true,
     //   maxAge: parseInt(process.env.cookie_max_age),
     // });
-    const accessToken = await this.authService.generateAccessToken(user._id);
+    const accessToken = await this.authService.generateAccessToken(user.email);
 
     return res.send(accessToken);
   }
@@ -54,8 +52,6 @@ export class AuthController {
       properties: {
         accessToken: {
           type: 'string',
-          example:
-            'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MzgxYzk1ZjM0MTE2ODJkZGEwZGRkYmYiLCJpYXQiOjE2Njk0NTI4NTYsImV4cCI6MTY2OTQ1MjkxNn0.-6Wkt0E2PZPCZA1yyHAoJpuvtZYZ42uKa8BYdQ4srvQ',
         },
       },
     },
@@ -71,7 +67,7 @@ export class AuthController {
     //   httpOnly: true,
     //   maxAge: parseInt(process.env.cookie_max_age),
     // });
-    const accessToken = await this.authService.generateAccessToken(user._id);
+    const accessToken = await this.authService.generateAccessToken(user.email);
 
     return res.send(accessToken);
   }

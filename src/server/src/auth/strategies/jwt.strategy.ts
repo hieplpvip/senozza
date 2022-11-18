@@ -25,7 +25,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any): Promise<UserDto> {
-    const user = await this.userService.find(payload.sub);
+    const user = await this.userService.findByEmail(payload.sub);
     if (!user) throw new UnauthorizedException();
 
     const mapper = buildMapper(UserDto);
