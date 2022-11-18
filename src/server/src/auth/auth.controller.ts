@@ -33,8 +33,8 @@ export class AuthController {
     @Res() res: Response,
   ): Promise<unknown> {
     const user = await this.userService.validateUser(userLoginDto);
-    if (!user) throw new NotFoundException('Invalid email or password');
 
+    // TODO: refresh token
     // const { refreshToken } = await this.authService.generateRefreshToken(user._id);
     // console.log(refreshToken);
     // res.cookie('refreshToken', refreshToken, {
@@ -65,7 +65,6 @@ export class AuthController {
     @Res() res: Response,
   ): Promise<unknown> {
     const user = await this.userService.registerUser(userRegisterDto);
-    if (!user) throw new NotFoundException('Invalid email or password');
 
     // const { refreshToken } = await this.authService.generateRefreshToken(user._id);
     // res.cookie('refreshToken', refreshToken, {

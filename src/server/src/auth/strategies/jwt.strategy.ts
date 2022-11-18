@@ -5,8 +5,9 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
+import { buildMapper } from 'dto-mapper';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { User } from 'src/schemas/user.schema';
+import { UserDto } from 'src/user/dto/user.dto';
 import { UserSerivce } from 'src/user/user.service';
 import { jwtConstants } from '../constants';
 
@@ -23,9 +24,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: any): Promise<User> {
+  async validate(payload: any): Promise<UserDto> {
     const user = await this.userService.find(payload.sub);
     if (!user) throw new UnauthorizedException();
-    return user;
+
+    const mapper = buildMapper(UserDto);
+    return mapper.serialize(user);
   }
 }

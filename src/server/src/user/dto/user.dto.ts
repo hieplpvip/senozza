@@ -1,13 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsUUID } from 'class-validator';
+import { dto, include } from 'dto-mapper';
 
-// TODO: transform user to userDto before sendind (filtering fields)
-// TODO: add validator
+@dto()
 export class UserDto {
-  constructor(partial: Partial<UserDto>) {
-    Object.assign(this, partial);
-  }
+  @include()
+  @ApiProperty({
+    type: String,
+    example: '6381c95f3411682dda0dddbf',
+  })
+  @IsUUID()
+  _id: string;
 
+  @include()
   @ApiProperty({
     type: String,
     example: 'user@gmail.com',
