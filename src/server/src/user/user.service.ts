@@ -4,11 +4,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId, Types } from 'mongoose';
 import { User, UserDocument } from 'src/schemas/user.schema';
 import * as bcrypt from 'bcrypt';
 import { UserRegisterDto } from './dto/user-register.dto';
 import { UserLoginDto } from './dto/user-login.dto';
+import { UserUpdateDto } from './dto/user-update.dto';
 
 // TODO: add tests
 @Injectable()
@@ -40,6 +41,7 @@ export class UserSerivce {
     return this.create(
       new UserRegisterDto({
         ...userRegisterDto,
+        _id: new Types.ObjectId(),
         password: hash,
       }),
     );
@@ -64,5 +66,20 @@ export class UserSerivce {
     return this.userModel.find().exec();
   }
 
+  async findWithClass(email: string): Promise<User> {
+    return this.userModel.findOne({ email }).populate('classes').exec();
+  }
+
   // Update
+  async update(email: string, userUpdateDto: UserUpdateDto): Promise<User> {
+    return this.userModel.findOneAndUpdate({ email }, userUpdateDto, {
+      new: true,
+    });
+  }
+
+  async joinClass(email: string, classId: ObjectId) {
+    const user = await this.userModel.findOne({ email });
+    user.classes.push(classId);
+    user.save();
+  }
 }
