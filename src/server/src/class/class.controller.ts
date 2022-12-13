@@ -1,14 +1,14 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { ApiBody, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { buildMapper } from 'dto-mapper';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
-import { UserDto } from 'src/user/dto/user.dto';
+import { UserDto } from 'src/user/dto';
 import { UserSerivce } from 'src/user/user.service';
 import { ClassService } from './class.service';
 import { ClassCreateDto, ClassDto } from './dto';
 
-@ApiTags('Class')
+@ApiTags('class')
 @Controller('class')
 export class ClassController {
   constructor(
@@ -16,6 +16,7 @@ export class ClassController {
     private readonly userService: UserSerivce,
   ) {}
 
+  /** CREATE */
   @UseGuards(JwtAuthGuard)
   @Post('create')
   @ApiBody({ type: ClassCreateDto })
@@ -30,4 +31,31 @@ export class ClassController {
     const mapper = buildMapper(ClassDto);
     return mapper.serialize(createdClass);
   }
+
+  /** READ */
+  @UseGuards(JwtAuthGuard)
+  @Get('find')
+  @ApiParam({ name: 'code', example: 'CS300' })
+  @ApiParam({ name: 'year', example: 2022 })
+  @ApiParam({ name: 'semester', example: 2 })
+  @ApiOkResponse({ type: ClassDto })
+  async find(
+    @ExtractedUser() userDto: UserDto,
+    @Query('code') courseCode: string,
+    @Query('year') year: number,
+    @Query('semester') semester: number,
+  ): Promise<ClassDto> {
+    const foundClass = await this.classService.findByCourse(
+      courseCode,
+      year,
+      semester,
+    );
+
+    const mapper = buildMapper(ClassDto);
+    return mapper.serialize(foundClass);
+  }
+
+  /** UPDATE */
+
+  /** DELETE */
 }

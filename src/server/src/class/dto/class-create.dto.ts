@@ -19,15 +19,17 @@ export class ClassCreateDto {
   courseName: string;
 
   @include()
-  @ApiProperty({ type: Number, example: 2022 })
+  @ApiProperty({ example: 2022 })
   @IsInt()
   year: number;
 
   @include()
-  @ApiProperty({ type: Number, example: 2 })
+  @ApiProperty({ example: 2 })
   @IsInt()
   semester: number;
 
+  @include()
+  @ApiProperty()
   @IsBoolean()
   archived: boolean;
 }
