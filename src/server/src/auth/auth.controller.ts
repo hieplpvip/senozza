@@ -30,7 +30,7 @@ export class AuthController {
     @Body() userLoginDto: UserLoginDto,
     @Res() res: Response,
   ): Promise<unknown> {
-    const user = await this.userService.validateUser(userLoginDto);
+    const user = await this.authService.validateUser(userLoginDto);
 
     // TODO: refresh token
     // const { refreshToken } = await this.authService.generateRefreshToken(user._id);
@@ -60,7 +60,7 @@ export class AuthController {
     @Body() userRegisterDto: UserRegisterDto,
     @Res() res: Response,
   ): Promise<unknown> {
-    const user = await this.userService.registerUser(userRegisterDto);
+    const user = await this.authService.registerUser(userRegisterDto);
 
     // const { refreshToken } = await this.authService.generateRefreshToken(user._id);
     // res.cookie('refreshToken', refreshToken, {
