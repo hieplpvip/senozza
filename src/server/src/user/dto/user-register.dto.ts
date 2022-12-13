@@ -1,23 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsDate,
-  IsEmail,
-  IsEnum,
-  IsString,
-  IsUUID,
-  MinLength,
-} from 'class-validator';
+import { IsDate, IsEmail, IsEnum, IsString, MinLength } from 'class-validator';
 import { dto, include } from 'dto-mapper';
 import { Types } from 'mongoose';
 import { UserRole } from 'src/common/enum';
 
 @dto()
 export class UserRegisterDto {
-  constructor(partial: Partial<UserRegisterDto>) {
-    Object.assign(this, partial);
-  }
-
-  @IsUUID()
   _id: Types.ObjectId;
 
   @include()

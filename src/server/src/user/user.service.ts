@@ -14,6 +14,7 @@ export class UserSerivce {
 
   // Create
   async create(userRegisterDto: UserRegisterDto): Promise<User> {
+    userRegisterDto._id = new Types.ObjectId();
     const createdUser = new this.userModel(userRegisterDto);
     return createdUser.save();
   }
@@ -37,9 +38,11 @@ export class UserSerivce {
 
   // Update
   async update(email: string, userUpdateDto: UserUpdateDto): Promise<User> {
-    return this.userModel.findOneAndUpdate({ email }, userUpdateDto, {
-      new: true,
-    });
+    return this.userModel
+      .findOneAndUpdate({ email }, userUpdateDto, {
+        new: true,
+      })
+      .exec();
   }
 
   async joinClass(email: string, classId: ObjectId) {
