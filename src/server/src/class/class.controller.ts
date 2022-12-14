@@ -11,7 +11,7 @@ import { UserSerivce } from 'src/user/user.service';
 import { ClassService } from './class.service';
 import { ClassCreateDto, ClassDto } from './dto';
 
-@Controller('class')
+@Controller()
 @ApiTags('class')
 export class ClassController {
   constructor(

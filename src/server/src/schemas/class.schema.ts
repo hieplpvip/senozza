@@ -14,10 +14,10 @@ export class Post {
   @Prop()
   content: string;
 
-  @Prop({ index: true })
+  @Prop({ index: true, default: 0 })
   upvote: number;
 
-  @Prop({ index: true })
+  @Prop({ index: true, default: false })
   bestAnswer: boolean;
 }
 
@@ -39,7 +39,7 @@ export class Feed {
   @Prop([{ type: [{ type: PostSchema }] }])
   answers: Post[];
 
-  @Prop({ index: true })
+  @Prop({ index: true, default: false })
   pin: boolean;
 }
 
@@ -61,6 +61,9 @@ export class Class {
   @Prop()
   semester: number;
 
+  @Prop({ type: [{ type: String }] })
+  categories: string[];
+
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
   members: ObjectId[];
 
@@ -70,7 +73,7 @@ export class Class {
   @Prop({ type: [{ type: FeedSchema }] })
   feed: Feed[];
 
-  @Prop({ index: true })
+  @Prop({ index: true, default: false })
   archived: boolean;
 }
 
