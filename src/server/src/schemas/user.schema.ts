@@ -4,7 +4,6 @@ import { UserRole } from 'src/common/enum';
 
 @Schema()
 export class User {
-  @Prop({ type: Types.ObjectId })
   _id: ObjectId;
 
   @Prop()

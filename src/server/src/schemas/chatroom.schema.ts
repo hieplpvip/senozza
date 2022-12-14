@@ -3,7 +3,6 @@ import { Document, HydratedDocument, ObjectId, Types } from 'mongoose';
 
 @Schema()
 export class Message {
-  @Prop({ type: Types.ObjectId })
   _id: ObjectId;
 
   @Prop({ index: true })
@@ -20,7 +19,6 @@ const MessageSchema = SchemaFactory.createForClass(Message);
 
 @Schema()
 export class Chatroom extends Document {
-  @Prop({ type: Types.ObjectId })
   _id: ObjectId;
 
   @Prop({ index: true })

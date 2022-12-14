@@ -1,4 +1,8 @@
-import { PartialType } from '@nestjs/swagger';
-import { UserRegisterDto } from './user-register.dto';
+import { OmitType, PartialType } from '@nestjs/swagger';
+import { dto } from 'dto-mapper';
+import { UserDto } from './user.dto';
 
-export class UserUpdateDto extends PartialType(UserRegisterDto) {}
+@dto()
+export class UserUpdateDto extends PartialType(
+  OmitType(UserDto, ['email', 'classes'] as const),
+) {}

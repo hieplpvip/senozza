@@ -6,8 +6,6 @@ import { Feed } from 'src/schemas';
 
 @dto()
 export class ClassDto {
-  _id: ObjectId;
-
   @include()
   @ApiProperty({ example: 'CS300' })
   @IsString()
@@ -19,12 +17,12 @@ export class ClassDto {
   courseName: string;
 
   @include()
-  @ApiProperty({ type: Number, example: 2022 })
+  @ApiProperty({ example: 2022 })
   @IsInt()
   year: number;
 
   @include()
-  @ApiProperty({ type: Number, example: 2 })
+  @ApiProperty({ example: 2 })
   @IsInt()
   semester: number;
 
@@ -36,5 +34,5 @@ export class ClassDto {
 
   @include()
   @IsBoolean()
-  archived: boolean;
+  archived = false;
 }

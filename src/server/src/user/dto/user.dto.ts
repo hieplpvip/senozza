@@ -1,13 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
-import { dto, include } from 'dto-mapper';
+import { dto, include, transform } from 'dto-mapper';
 import { ObjectId } from 'mongoose';
 import { UserRole } from 'src/common/enum';
 
 @dto()
 export class UserDto {
-  _id: ObjectId;
-
   @include()
   @ApiProperty({
     type: String,
@@ -27,7 +25,11 @@ export class UserDto {
   lastName: string;
 
   @include()
-  @ApiProperty({ type: Date, example: '2022-12-24' })
+  @transform({
+    toDto: (date: Date) => date.toISOString().substring(0, 10),
+    fromDto: (str: string) => new Date(str),
+  })
+  @ApiProperty({ example: '2022-12-24', description: 'Format: YYYY-MM-DD' })
   @IsDate()
   birth: Date;
 

@@ -3,7 +3,6 @@ import { HydratedDocument, ObjectId, Types } from 'mongoose';
 
 @Schema()
 export class Post {
-  @Prop({ type: Types.ObjectId })
   _id: ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
@@ -26,7 +25,6 @@ const PostSchema = SchemaFactory.createForClass(Post);
 
 @Schema()
 export class Feed {
-  @Prop({ type: Types.ObjectId })
   _id: ObjectId;
 
   @Prop()
@@ -49,7 +47,6 @@ const FeedSchema = SchemaFactory.createForClass(Feed);
 
 @Schema()
 export class Class {
-  @Prop({ type: Types.ObjectId })
   _id: ObjectId;
 
   @Prop()

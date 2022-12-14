@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Class, ClassDocument } from 'src/schemas';
 import { ClassCreateDto } from './dto';
 
@@ -13,14 +13,12 @@ export class ClassService {
 
   // Create
   async create(classCreateDto: ClassCreateDto): Promise<Class> {
-    classCreateDto._id = new Types.ObjectId();
-    classCreateDto.archived = false;
     const createdClass = new this.classModel(classCreateDto);
     return createdClass.save();
   }
 
   // Find
-  async find(id: string): Promise<Class> {
+  async find(id: ObjectId): Promise<Class> {
     return this.classModel.findById(id).exec();
   }
 
