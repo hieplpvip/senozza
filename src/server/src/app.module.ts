@@ -16,7 +16,7 @@ import { ClassModule } from './class/class.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: '.env.dev',
+      envFilePath: ['.env.production', '.env.dev'],
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.DB_URI),

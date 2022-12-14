@@ -33,6 +33,7 @@ export class ClassDto {
   feeds: Feed[];
 
   @include()
+  @ApiProperty()
   @IsBoolean()
-  archived = false;
+  archived: boolean;
 }

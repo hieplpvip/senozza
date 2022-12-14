@@ -16,21 +16,6 @@ export class AuthService {
     private readonly userService: UserSerivce,
   ) {}
 
-  // async generateRefreshToken(userId: string) {
-  //   return {
-  //     refreshToken: this.jwtService.sign(
-  //       {
-  //         sub: userId
-  //       },
-  //       {
-  //         algorithm: 'HS256',
-  //         secret: jwtConstants.secret,
-  //         expiresIn: '7d',
-  //       }
-  //     )
-  //   }
-  // }
-
   async generateAccessToken(email: string) {
     return {
       accessToken: this.jwtService.sign({

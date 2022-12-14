@@ -9,7 +9,6 @@ import { buildMapper } from 'dto-mapper';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserDto } from 'src/user/dto/user.dto';
 import { UserSerivce } from 'src/user/user.service';
-import { jwtConstants } from '../constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,7 +19,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtConstants.secret,
+      secretOrKey: process.env.JWT_SECRET_KEY,
     });
   }
 

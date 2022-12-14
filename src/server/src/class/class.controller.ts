@@ -29,6 +29,7 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Body() classCreateDto: ClassCreateDto,
   ): Promise<ClassDto> {
+    classCreateDto.archived = false;
     const createdClass = await this.classService.create(classCreateDto);
     await this.userService.joinClass(userDto.email, createdClass._id);
 

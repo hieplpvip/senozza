@@ -32,15 +32,7 @@ export class AuthController {
   ): Promise<unknown> {
     const user = await this.authService.validateUser(userLoginDto);
 
-    // TODO: refresh token
-    // const { refreshToken } = await this.authService.generateRefreshToken(user._id);
-    // console.log(refreshToken);
-    // res.cookie('refreshToken', refreshToken, {
-    //   httpOnly: true,
-    //   maxAge: parseInt(process.env.cookie_max_age),
-    // });
     const accessToken = await this.authService.generateAccessToken(user.email);
-
     return res.send(accessToken);
   }
 
@@ -62,13 +54,7 @@ export class AuthController {
   ): Promise<unknown> {
     const user = await this.authService.registerUser(userRegisterDto);
 
-    // const { refreshToken } = await this.authService.generateRefreshToken(user._id);
-    // res.cookie('refreshToken', refreshToken, {
-    //   httpOnly: true,
-    //   maxAge: parseInt(process.env.cookie_max_age),
-    // });
     const accessToken = await this.authService.generateAccessToken(user.email);
-
     return res.send(accessToken);
   }
 }
