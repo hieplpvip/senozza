@@ -13,15 +13,16 @@ import { UserSerivce } from './user.service';
 export class UserController {
   constructor(private readonly userSerivce: UserSerivce) {}
 
-  @UseGuards(JwtAuthGuard)
+  /** READ */
   @Get('info')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: UserDto })
   async info(@ExtractedUser() userDto: UserDto): Promise<UserDto> {
     return userDto;
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('listClasses')
+  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ isArray: true, type: ClassDto })
   async infoWithClass(@ExtractedUser() userDto: UserDto): Promise<ClassDto[]> {
     const user = await this.userSerivce.findWithClass(userDto.email);
@@ -30,8 +31,9 @@ export class UserController {
     return user.classes.map((item) => mapper.serialize(item));
   }
 
-  @UseGuards(JwtAuthGuard)
+  /** UPDATE */
   @Post('update')
+  @UseGuards(JwtAuthGuard)
   @ApiBody({ type: UserUpdateDto })
   @ApiOkResponse({ type: UserDto })
   async update(

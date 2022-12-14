@@ -2,14 +2,17 @@ import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
 import { buildMapper } from 'dto-mapper';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/common/decorator/roles.decorator';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
+import { UserRole } from 'src/common/enum';
 import { UserDto } from 'src/user/dto';
 import { UserSerivce } from 'src/user/user.service';
 import { ClassService } from './class.service';
 import { ClassCreateDto, ClassDto } from './dto';
 
-@ApiTags('class')
 @Controller('class')
+@ApiTags('class')
 export class ClassController {
   constructor(
     private readonly classService: ClassService,
@@ -17,8 +20,9 @@ export class ClassController {
   ) {}
 
   /** CREATE */
-  @UseGuards(JwtAuthGuard)
   @Post('create')
+  @Roles(UserRole.INSTRUCTOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBody({ type: ClassCreateDto })
   @ApiOkResponse({ type: ClassDto })
   async create(
@@ -33,8 +37,8 @@ export class ClassController {
   }
 
   /** READ */
-  @UseGuards(JwtAuthGuard)
   @Get('find')
+  @UseGuards(JwtAuthGuard)
   @ApiParam({ name: 'code', example: 'CS300' })
   @ApiParam({ name: 'year', example: 2022 })
   @ApiParam({ name: 'semester', example: 2 })
