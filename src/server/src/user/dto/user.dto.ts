@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDate, IsEmail, IsEnum, IsString } from 'class-validator';
 import { dto, include, transform } from 'dto-mapper';
-import { ObjectId } from 'mongoose';
 import { UserRole } from 'src/common/enum';
 
 @dto()
@@ -31,9 +30,7 @@ export class UserDto {
   })
   @ApiProperty({ example: '2022-12-24', description: 'Format: YYYY-MM-DD' })
   @IsDate()
-  birth: Date;
-
-  classes: ObjectId[];
+  birth: string;
 
   @include()
   @ApiProperty({ enum: UserRole })

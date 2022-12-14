@@ -12,14 +12,41 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ClassModule } from './class/class.module';
+import { RouterModule } from '@nestjs/core';
+import { FeedModule } from './class/feed/feed.module';
+import { PostModule } from './class/feed/post/post.module';
+import configuration from './common/config/configuration';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: ['.env.production', '.env.dev'],
+      load: [configuration],
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.DB_URI),
+    RouterModule.register([
+      {
+        path: 'user',
+        module: UserModule,
+      },
+      {
+        path: 'class',
+        module: ClassModule,
+        children: [
+          {
+            path: 'feed',
+            module: FeedModule,
+            children: [
+              {
+                path: 'post',
+                module: PostModule,
+              },
+            ],
+          },
+        ],
+      },
+    ]),
     UserModule,
     ClassModule,
     AuthModule,
