@@ -1,4 +1,28 @@
+import { useForm } from 'react-hook-form';
+import { useSignUpMutation } from '../api/apiSlice';
+import { UserRole } from '../../interface';
+
+interface SignUpFormInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  birth: string;
+  role: UserRole;
+}
+
 export default function SignUp() {
+  const { register, handleSubmit } = useForm<SignUpFormInput>();
+  const [signUp] = useSignUpMutation();
+
+  const onSubmit = async (data: SignUpFormInput) => {
+    try {
+      await signUp(data).unwrap();
+    } catch (err) {
+      console.error('Failed to sign in:', err);
+    }
+  };
+
   return (
     <>
       <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
@@ -9,7 +33,7 @@ export default function SignUp() {
 
         <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
           <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-            <form className='space-y-6' action='#' method='POST'>
+            <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <label htmlFor='firstName' className='block text-sm font-medium text-gray-700'>
                   First Name
@@ -17,11 +41,11 @@ export default function SignUp() {
                 <div className='mt-1'>
                   <input
                     id='firstName'
-                    name='firstName'
                     type='text'
                     autoComplete='given-name'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('firstName')}
                   />
                 </div>
               </div>
@@ -33,11 +57,11 @@ export default function SignUp() {
                 <div className='mt-1'>
                   <input
                     id='lastName'
-                    name='lastName'
                     type='text'
                     autoComplete='family-name'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('lastName')}
                   />
                 </div>
               </div>
@@ -49,11 +73,11 @@ export default function SignUp() {
                 <div className='mt-1'>
                   <input
                     id='email'
-                    name='email'
                     type='email'
                     autoComplete='email'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('email')}
                   />
                 </div>
               </div>
@@ -65,27 +89,27 @@ export default function SignUp() {
                 <div className='mt-1'>
                   <input
                     id='password'
-                    name='password'
                     type='password'
                     autoComplete='new-password'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('password')}
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor='dob' className='block text-sm font-medium text-gray-700'>
+                <label htmlFor='birth' className='block text-sm font-medium text-gray-700'>
                   Date of Birth
                 </label>
                 <div className='mt-1'>
                   <input
-                    id='dob'
-                    name='dob'
+                    id='birth'
                     type='date'
                     autoComplete='bday'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('birth')}
                   />
                 </div>
               </div>
@@ -96,9 +120,9 @@ export default function SignUp() {
                 </label>
                 <select
                   id='role'
-                  name='role'
                   className='mt-1 block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
-                  defaultValue='student'>
+                  defaultValue='student'
+                  {...register('role')}>
                   <option value='student'>Student</option>
                   <option value='ta'>Teacher Assistant</option>
                   <option value='instructor'>Instructor</option>

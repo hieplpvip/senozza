@@ -16,6 +16,11 @@ const slice = createSlice({
       state.token = payload.token;
       state.user = payload.user;
     });
+
+    builder.addMatcher(apiSlice.endpoints.signUp.matchFulfilled, (state, { payload }) => {
+      state.token = payload.token;
+      state.user = payload.user;
+    });
   },
 });
 

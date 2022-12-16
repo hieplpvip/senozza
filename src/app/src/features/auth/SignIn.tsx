@@ -1,4 +1,23 @@
+import { useForm } from 'react-hook-form';
+import { useSignInMutation } from '../api/apiSlice';
+
+interface SignInFormInput {
+  email: string;
+  password: string;
+}
+
 export default function SignIn() {
+  const { register, handleSubmit } = useForm<SignInFormInput>();
+  const [signIn] = useSignInMutation();
+
+  const onSubmit = async (data: SignInFormInput) => {
+    try {
+      await signIn(data).unwrap();
+    } catch (err) {
+      console.error('Failed to sign in:', err);
+    }
+  };
+
   return (
     <>
       <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
@@ -9,7 +28,7 @@ export default function SignIn() {
 
         <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
           <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-            <form className='space-y-6' action='#' method='POST'>
+            <form className='space-y-6' onSubmit={handleSubmit(onSubmit)}>
               <div>
                 <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
                   Email address
@@ -17,11 +36,11 @@ export default function SignIn() {
                 <div className='mt-1'>
                   <input
                     id='email'
-                    name='email'
                     type='email'
                     autoComplete='email'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('email')}
                   />
                 </div>
               </div>
@@ -33,11 +52,11 @@ export default function SignIn() {
                 <div className='mt-1'>
                   <input
                     id='password'
-                    name='password'
                     type='password'
                     autoComplete='current-password'
                     required
                     className='block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+                    {...register('password')}
                   />
                 </div>
               </div>
