@@ -7,7 +7,7 @@ import { Roles } from 'src/common/decorator/roles.decorator';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserRole } from 'src/common/enum';
 import { UserDto } from 'src/user/dto';
-import { UserSerivce } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 import { ClassService } from './class.service';
 import { ClassCreateDto, ClassDto } from './dto';
 
@@ -16,7 +16,7 @@ import { ClassCreateDto, ClassDto } from './dto';
 export class ClassController {
   constructor(
     private readonly classService: ClassService,
-    private readonly userService: UserSerivce,
+    private readonly userService: UserService,
   ) {}
 
   /** CREATE */

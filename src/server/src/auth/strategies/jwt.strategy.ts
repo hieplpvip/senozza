@@ -8,13 +8,13 @@ import { PassportStrategy } from '@nestjs/passport';
 import { buildMapper } from 'dto-mapper';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserDto } from 'src/user/dto/user.dto';
-import { UserSerivce } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    @Inject(forwardRef(() => UserSerivce))
-    private userService: UserSerivce,
+    @Inject(forwardRef(() => UserService))
+    private userService: UserService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

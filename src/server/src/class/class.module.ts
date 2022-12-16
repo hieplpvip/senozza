@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Class, ClassSchema, User, UserSchema } from 'src/schemas';
-import { UserSerivce } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 import { ClassController } from './class.controller';
 import { ClassService } from './class.service';
 import { FeedModule } from './feed/feed.module';
@@ -15,7 +15,7 @@ import { FeedModule } from './feed/feed.module';
     FeedModule,
   ],
   controllers: [ClassController],
-  providers: [ClassService, UserSerivce],
+  providers: [ClassService, UserService],
   exports: [ClassService],
 })
 export class ClassModule {}

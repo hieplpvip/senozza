@@ -6,14 +6,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/schemas';
 import { UserLoginDto, UserRegisterDto } from 'src/user/dto';
-import { UserSerivce } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private readonly userService: UserSerivce,
+    private readonly userService: UserService,
   ) {}
 
   async generateAccessToken(email: string) {

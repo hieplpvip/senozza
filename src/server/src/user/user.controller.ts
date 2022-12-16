@@ -6,12 +6,12 @@ import { ClassDto } from 'src/class/dto';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto, UserUpdateDto } from './dto';
 
-import { UserSerivce } from './user.service';
+import { UserService } from './user.service';
 
 @Controller()
 @ApiTags('user')
 export class UserController {
-  constructor(private readonly userSerivce: UserSerivce) {}
+  constructor(private readonly userService: UserService) {}
 
   /** READ */
   @Get('info')
@@ -25,7 +25,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ isArray: true, type: ClassDto })
   async infoWithClass(@ExtractedUser() userDto: UserDto): Promise<ClassDto[]> {
-    const user = await this.userSerivce.findWithClass(userDto.email);
+    const user = await this.userService.findWithClass(userDto.email);
 
     const mapper = buildMapper(ClassDto);
     return user.classes.map((item) => mapper.serialize(item));
@@ -40,7 +40,7 @@ export class UserController {
     @ExtractedUser() userDto: UserDto,
     @Body() userUpdateDto: UserUpdateDto,
   ): Promise<UserDto> {
-    const updatedUser = await this.userSerivce.update(
+    const updatedUser = await this.userService.update(
       userDto.email,
       userUpdateDto,
     );

@@ -4,14 +4,14 @@ import { AuthService } from './auth.service';
 import { UserLoginDto } from '../user/dto/user-login.dto';
 import { Response } from 'express';
 import { UserRegisterDto } from '../user/dto/user-register.dto';
-import { UserSerivce } from 'src/user/user.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
   constructor(
     readonly authService: AuthService,
-    readonly userService: UserSerivce,
+    readonly userService: UserService,
   ) {}
 
   @Post('login')

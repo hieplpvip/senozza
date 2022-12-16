@@ -6,7 +6,7 @@ import { UserRegisterDto, UserUpdateDto } from './dto';
 
 // TODO: add tests
 @Injectable()
-export class UserSerivce {
+export class UserService {
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
