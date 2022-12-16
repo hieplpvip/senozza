@@ -9,4 +9,5 @@ module.exports = {
   useTabs: false,
   bracketSpacing: true,
   bracketSameLine: true,
+  plugins: [require('prettier-plugin-tailwindcss')],
 };
