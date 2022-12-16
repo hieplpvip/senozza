@@ -4,15 +4,13 @@ import { AuthService } from './auth.service';
 import { UserLoginDto } from '../user/dto/user-login.dto';
 import { Response } from 'express';
 import { UserRegisterDto } from '../user/dto/user-register.dto';
-import { UserService } from 'src/user/user.service';
+import { buildMapper } from 'dto-mapper';
+import { UserDto } from 'src/user/dto';
 
 @Controller('auth')
 @ApiTags('auth')
 export class AuthController {
-  constructor(
-    readonly authService: AuthService,
-    readonly userService: UserService,
-  ) {}
+  constructor(readonly authService: AuthService) {}
 
   @Post('login')
   @ApiBody({ type: UserLoginDto })
@@ -33,7 +31,12 @@ export class AuthController {
     const user = await this.authService.validateUser(userLoginDto);
 
     const accessToken = await this.authService.generateAccessToken(user.email);
-    return res.send(accessToken);
+    const mapper = buildMapper(UserDto);
+    const userDto = mapper.serialize(user);
+    return res.send({
+      accessToken,
+      user: userDto,
+    });
   }
 
   @Post('register')
@@ -55,6 +58,11 @@ export class AuthController {
     const user = await this.authService.registerUser(userRegisterDto);
 
     const accessToken = await this.authService.generateAccessToken(user.email);
-    return res.send(accessToken);
+    const mapper = buildMapper(UserDto);
+    const userDto = mapper.serialize(user);
+    return res.send({
+      accessToken,
+      user: userDto,
+    });
   }
 }

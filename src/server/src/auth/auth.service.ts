@@ -16,12 +16,10 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async generateAccessToken(email: string) {
-    return {
-      accessToken: this.jwtService.sign({
-        sub: email,
-      }),
-    };
+  async generateAccessToken(email: string): Promise<string> {
+    return this.jwtService.sign({
+      sub: email,
+    });
   }
 
   async validateUser(userLoginDto: UserLoginDto): Promise<User> {
