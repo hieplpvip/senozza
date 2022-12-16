@@ -1,4 +1,5 @@
 import { Fragment, useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { Dialog, Transition } from '@headlessui/react';
 import {
   Bars3Icon,
@@ -10,6 +11,7 @@ import {
   UserGroupIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { useAuth } from '../../app/hooks';
 
 const navigation = [
   { name: 'Dashboard', href: '#', icon: HomeIcon, current: true },
@@ -26,16 +28,14 @@ function classNames(...classes: string[]) {
 
 export default function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const { user } = useAuth();
+
+  if (!user) {
+    return <Navigate to='/signin' replace />;
+  }
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-        ```
-        <html class="h-full bg-white">
-        <body class="h-full overflow-hidden">
-        ```
-      */}
       <div className='flex h-full'>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog as='div' className='fixed inset-0 z-40 flex lg:hidden' onClose={setSidebarOpen}>
@@ -81,7 +81,7 @@ export default function Dashboard() {
                     <img
                       className='h-8 w-auto'
                       src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg'
-                      alt='Workflow'
+                      alt='Senozza'
                     />
                   </div>
                   <nav aria-label='Sidebar' className='mt-5'>
@@ -144,7 +144,7 @@ export default function Dashboard() {
                   <img
                     className='h-8 w-auto'
                     src='https://tailwindui.com/img/logos/workflow-logo-indigo-600-mark-gray-900-text.svg'
-                    alt='Workflow'
+                    alt='Senozza'
                   />
                 </div>
                 <nav className='mt-5 flex-1' aria-label='Sidebar'>
@@ -196,11 +196,7 @@ export default function Dashboard() {
           <div className='lg:hidden'>
             <div className='flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-1.5'>
               <div>
-                <img
-                  className='h-8 w-auto'
-                  src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg'
-                  alt='Workflow'
-                />
+                <img className='h-8 w-auto' src={process.env.PUBLIC_URL + '/logo.svg'} alt='Senozza' />
               </div>
               <div>
                 <button

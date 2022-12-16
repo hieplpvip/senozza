@@ -1,5 +1,7 @@
 import { useForm } from 'react-hook-form';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useSignUpMutation } from '../api/apiSlice';
+import { useAuth } from '../../app/hooks';
 import { UserRole } from '../../interface';
 
 interface SignUpFormInput {
@@ -14,10 +16,17 @@ interface SignUpFormInput {
 export default function SignUp() {
   const { register, handleSubmit } = useForm<SignUpFormInput>();
   const [signUp] = useSignUpMutation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+
+  if (user) {
+    return <Navigate to='/dashboard' replace />;
+  }
 
   const onSubmit = async (data: SignUpFormInput) => {
     try {
       await signUp(data).unwrap();
+      navigate('/dashboard');
     } catch (err) {
       console.error('Failed to sign in:', err);
     }
@@ -27,7 +36,7 @@ export default function SignUp() {
     <>
       <div className='flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-          <img className='mx-auto h-12 w-auto' src={process.env.PUBLIC_URL + '/logo.svg'} alt='Workflow' />
+          <img className='mx-auto h-12 w-auto' src={process.env.PUBLIC_URL + '/logo.svg'} alt='Senozza' />
           <h2 className='mt-6 text-center text-3xl font-extrabold text-gray-900'>Create an account</h2>
         </div>
 
