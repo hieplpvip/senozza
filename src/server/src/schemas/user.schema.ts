@@ -26,6 +26,9 @@ export class User {
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Class' }] })
   classes: ObjectId[];
+
+  @Prop()
+  imgUrl: string;
 }
 
 export type UserDocument = HydratedDocument<User>;
