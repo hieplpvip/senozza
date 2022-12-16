@@ -11,6 +11,7 @@ module.exports = {
     ecmaVersion: 2022,
     sourceType: 'module',
     project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
   },
   rules: {
     'react/react-in-jsx-scope': 'off',
