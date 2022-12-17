@@ -9,10 +9,10 @@ interface SignInFormInput {
 }
 
 export default function SignIn() {
-  const { register, handleSubmit } = useForm<SignInFormInput>();
-  const [signIn] = useSignInMutation();
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [signIn] = useSignInMutation();
+  const { register, handleSubmit } = useForm<SignInFormInput>();
 
   if (user) {
     return <Navigate to='/dashboard' replace />;

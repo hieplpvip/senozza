@@ -11,7 +11,12 @@ type AuthState = {
 const slice = createSlice({
   name: 'auth',
   initialState: { user: null, token: null } as AuthState,
-  reducers: {},
+  reducers: {
+    signOut: (state) => {
+      state.user = null;
+      state.token = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(apiSlice.endpoints.signIn.matchFulfilled, (state, { payload }) => {
       state.token = payload.token;
@@ -26,5 +31,7 @@ const slice = createSlice({
 });
 
 export default slice.reducer;
+
+export const { signOut } = slice.actions;
 
 export const selectCurrentUser = (state: RootState) => state.auth.user;

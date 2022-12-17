@@ -14,10 +14,10 @@ interface SignUpFormInput {
 }
 
 export default function SignUp() {
-  const { register, handleSubmit } = useForm<SignUpFormInput>();
-  const [signUp] = useSignUpMutation();
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [signUp] = useSignUpMutation();
+  const { register, handleSubmit } = useForm<SignUpFormInput>();
 
   if (user) {
     return <Navigate to='/dashboard' replace />;
