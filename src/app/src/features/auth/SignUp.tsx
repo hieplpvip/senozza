@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useSignUpMutation } from '../api/apiSlice';
 import { useAuth } from '../../app/hooks';
 import { UserRole } from '../../interface';
@@ -144,6 +144,12 @@ export default function SignUp() {
                   className='flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
                   Sign Up
                 </button>
+                <p className='mt-6 text-center text-base font-medium text-gray-500'>
+                  Existing user?{' '}
+                  <Link to='/signin' className='text-indigo-600 hover:text-indigo-500'>
+                    Sign In
+                  </Link>
+                </p>
               </div>
             </form>
           </div>
