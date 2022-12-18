@@ -164,9 +164,9 @@ export default function Dashboard() {
   return (
     <>
       <div className='flex h-full'>
-        <div className='flex flex-shrink-0'>
+        <div className='flex flex-shrink-0 border-r-2 border-gray-200'>
           <div className='flex w-64 flex-col'>
-            <div className='flex min-h-0 flex-1 flex-col border-r border-gray-200 bg-gray-100'>
+            <div className='flex min-h-0 flex-1 flex-col border-gray-200 bg-gray-100'>
               <div className='flex flex-1 flex-col overflow-y-auto pt-5 pb-4'>
                 <div className='flex flex-shrink-0 items-center px-4'>
                   <img
