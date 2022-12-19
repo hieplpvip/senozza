@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId, Types } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import { UserRole } from 'src/common/enum';
 
 @Schema()
 export class User {
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
   @Prop()
   password: string;
@@ -25,7 +25,7 @@ export class User {
   role: UserRole;
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Class' }] })
-  classes: ObjectId[];
+  classes: Types.ObjectId[];
 
   @Prop()
   imgUrl: string;

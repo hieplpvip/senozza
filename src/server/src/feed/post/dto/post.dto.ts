@@ -1,15 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsNumber, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 import { dto, include, nested, transform } from 'dto-mapper';
 import { UserDto } from 'src/user/dto';
 
 @dto()
 export class PostDto {
-  @include()
-  @ApiProperty()
-  @IsUUID()
-  _id: string;
-
   @include()
   @nested(() => UserDto, false)
   @ApiProperty({ type: () => UserDto })

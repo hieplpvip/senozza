@@ -1,11 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsString } from 'class-validator';
-import { dto, include } from 'dto-mapper';
-import { ObjectId } from 'mongoose';
-import { Feed } from 'src/schemas';
+import { IsBoolean, IsInt, IsString, IsUUID } from 'class-validator';
+import { dto, include, transform } from 'dto-mapper';
+import { Types } from 'mongoose';
 
 @dto()
 export class ClassDto {
+  @include()
+  @transform({
+    toDto: (_id) => _id.toString(),
+    fromDto: (_id) => new Types.ObjectId(_id),
+  })
+  @ApiProperty({ example: '63a56430c4811d03571c88f1' })
+  @IsUUID()
+  _id: string;
+
   @include()
   @ApiProperty({ example: 'CS300' })
   @IsString()
@@ -25,12 +33,6 @@ export class ClassDto {
   @ApiProperty({ example: 2 })
   @IsInt()
   semester: number;
-
-  members: ObjectId[];
-
-  chatrooms: ObjectId[];
-
-  feeds: Feed[];
 
   @include()
   @ApiProperty()

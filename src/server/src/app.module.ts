@@ -13,9 +13,9 @@ import { AuthModule } from './auth/auth.module';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { ClassModule } from './class/class.module';
 import { RouterModule } from '@nestjs/core';
-import { FeedModule } from './class/feed/feed.module';
-import { PostModule } from './class/feed/post/post.module';
 import configuration from './common/config/configuration';
+import { FeedModule } from './feed/feed.module';
+import { PostModule } from './feed/post/post.module';
 
 @Module({
   imports: [
@@ -33,22 +33,22 @@ import configuration from './common/config/configuration';
       {
         path: 'class',
         module: ClassModule,
+      },
+      {
+        path: 'feed',
+        module: FeedModule,
         children: [
           {
-            path: 'feed',
-            module: FeedModule,
-            children: [
-              {
-                path: 'post',
-                module: PostModule,
-              },
-            ],
+            path: 'post',
+            module: PostModule,
           },
         ],
       },
     ]),
     UserModule,
     ClassModule,
+    FeedModule,
+    PostModule,
     AuthModule,
   ],
   controllers: [AppController],

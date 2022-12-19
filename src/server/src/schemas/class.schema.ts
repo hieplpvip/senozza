@@ -1,53 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, ObjectId, Types } from 'mongoose';
-
-@Schema()
-export class Post {
-  _id: ObjectId;
-
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  user: ObjectId;
-
-  @Prop({ index: true })
-  createdDate: Date;
-
-  @Prop()
-  content: string;
-
-  @Prop({ index: true, default: 0 })
-  upvote: number;
-
-  @Prop({ index: true, default: false })
-  bestAnswer: boolean;
-}
-
-const PostSchema = SchemaFactory.createForClass(Post);
-
-@Schema()
-export class Feed {
-  _id: ObjectId;
-
-  @Prop()
-  title: string;
-
-  @Prop({ index: true })
-  category: string;
-
-  @Prop({ type: PostSchema })
-  question: Post;
-
-  @Prop([{ type: [{ type: PostSchema }] }])
-  answers: Post[];
-
-  @Prop({ index: true, default: false })
-  pin: boolean;
-}
-
-const FeedSchema = SchemaFactory.createForClass(Feed);
+import { HydratedDocument, Types } from 'mongoose';
 
 @Schema()
 export class Class {
-  _id: ObjectId;
+  _id: Types.ObjectId;
 
   @Prop()
   courseCode: string;
@@ -65,13 +21,13 @@ export class Class {
   categories: string[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
-  members: ObjectId[];
+  members: Types.ObjectId[];
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Chatroom' }] })
-  chatrooms: ObjectId[];
+  chatrooms: Types.ObjectId[];
 
-  @Prop({ type: [{ type: FeedSchema }] })
-  feed: Feed[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Feed' }] })
+  feed: Types.ObjectId[];
 
   @Prop({ index: true, default: false })
   archived: boolean;

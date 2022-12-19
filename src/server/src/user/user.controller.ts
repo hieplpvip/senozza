@@ -45,7 +45,6 @@ export class UserController {
       userUpdateDto,
     );
 
-    const mapper = buildMapper(UserDto);
-    return mapper.serialize(updatedUser);
+    return this.userService.userMapper(updatedUser);
   }
 }

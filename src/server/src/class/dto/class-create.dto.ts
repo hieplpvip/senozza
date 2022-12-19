@@ -4,12 +4,7 @@ import { dto } from 'dto-mapper';
 import { ClassDto } from './class.dto';
 
 @dto()
-export class ClassCreateDto extends OmitType(ClassDto, [
-  'members',
-  'feeds',
-  'chatrooms',
-  'archived',
-] as const) {
+export class ClassCreateDto extends OmitType(ClassDto, ['archived'] as const) {
   @IsBoolean()
   archived: boolean;
 }

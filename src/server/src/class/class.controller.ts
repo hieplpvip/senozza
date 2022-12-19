@@ -33,8 +33,7 @@ export class ClassController {
     const createdClass = await this.classService.create(classCreateDto);
     await this.userService.joinClass(userDto.email, createdClass._id);
 
-    const mapper = buildMapper(ClassDto);
-    return mapper.serialize(createdClass);
+    return this.classService.classMapper(createdClass);
   }
 
   /** READ */
@@ -56,8 +55,7 @@ export class ClassController {
       semester,
     );
 
-    const mapper = buildMapper(ClassDto);
-    return mapper.serialize(foundClass);
+    return this.classService.classMapper(foundClass);
   }
 
   /** UPDATE */

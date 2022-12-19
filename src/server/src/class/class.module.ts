@@ -4,7 +4,6 @@ import { Class, ClassSchema, User, UserSchema } from 'src/schemas';
 import { UserService } from 'src/user/user.service';
 import { ClassController } from './class.controller';
 import { ClassService } from './class.service';
-import { FeedModule } from './feed/feed.module';
 
 @Module({
   imports: [
@@ -12,7 +11,6 @@ import { FeedModule } from './feed/feed.module';
       { name: Class.name, schema: ClassSchema },
       { name: User.name, schema: UserSchema },
     ]),
-    FeedModule,
   ],
   controllers: [ClassController],
   providers: [ClassService, UserService],
