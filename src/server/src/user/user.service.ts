@@ -55,4 +55,9 @@ export class UserService {
     user.classes.push(classId);
     user.save();
   }
+
+  // Delete
+  async delete(id: Types.ObjectId) {
+    this.userModel.findByIdAndDelete(id);
+  }
 }

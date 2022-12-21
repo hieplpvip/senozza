@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { buildMapper } from 'dto-mapper';
+import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ClassDto } from 'src/class/dto';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
@@ -12,6 +13,8 @@ import { UserService } from './user.service';
 @ApiTags('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+
+  /** CREATE */
 
   /** READ */
   @Get('info')
@@ -46,5 +49,14 @@ export class UserController {
     );
 
     return this.userService.userMapper(updatedUser);
+  }
+
+  /** DELETE */
+  @Delete('delete')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: Boolean })
+  async delete(@ExtractedUser() userDto: UserDto): Promise<boolean> {
+    await this.userService.delete(new Types.ObjectId(userDto._id));
+    return true;
   }
 }
