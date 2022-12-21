@@ -31,11 +31,6 @@ export class FeedDto {
   question: PostDto;
 
   @include()
-  @nested(() => PostDto, true)
-  @ApiProperty({ type: () => PostDto, isArray: true })
-  answers: PostDto[];
-
-  @include()
   @ApiProperty()
   @IsBoolean()
   pin: boolean;

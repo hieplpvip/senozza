@@ -1,11 +1,20 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ClassService } from 'src/class/class.service';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto } from 'src/user/dto';
-import { FeedCreateDto, FeedInfoDto } from './dto';
+import { FeedCreateDto, FeedDto, FeedUpdateDto } from './dto';
 import { FeedService } from './feed.service';
 
 @Controller()
@@ -20,12 +29,12 @@ export class FeedController {
   @Post('create')
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: FeedCreateDto })
-  @ApiOkResponse({ type: FeedInfoDto })
+  @ApiOkResponse({ type: FeedDto })
   async create(
     @ExtractedUser() userDto: UserDto,
     @Query('classId') classId: string,
     @Body() feedCreateDto: FeedCreateDto,
-  ): Promise<FeedInfoDto> {
+  ): Promise<FeedDto> {
     // create feed
     feedCreateDto.classId = new Types.ObjectId(classId);
     feedCreateDto.question.user = new Types.ObjectId(userDto._id);
@@ -39,10 +48,29 @@ export class FeedController {
   /** READ */
   @Get('all')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: FeedInfoDto, isArray: true })
-  async listAll(@Query('classId') classId: string): Promise<FeedInfoDto[]> {
+  @ApiOkResponse({ type: FeedDto, isArray: true })
+  async listAll(@Query('classId') classId: string): Promise<FeedDto[]> {
     const feeds = await this.feedService.listAll(new Types.ObjectId(classId));
 
     return await this.feedService.feedsMapper(feeds);
+  }
+
+  /** UPDATE */
+  @Put('edit')
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: FeedUpdateDto })
+  async edit(
+    @ExtractedUser() userDto: UserDto,
+    @Query('feedId') feedId: string,
+    @Body() feedUpdateDto: FeedUpdateDto,
+  ) {
+    await this.feedService.edit(new Types.ObjectId(feedId), feedUpdateDto);
+  }
+
+  /** DELETE */
+  @Delete('delete')
+  @UseGuards(JwtAuthGuard)
+  async delete(@Query('feedId') feedId: string) {
+    await this.feedService.delete(new Types.ObjectId(feedId));
   }
 }

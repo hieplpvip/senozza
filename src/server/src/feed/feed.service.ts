@@ -3,8 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { buildMapper } from 'dto-mapper';
 import { Model, Types } from 'mongoose';
 import { Feed, FeedDocument } from 'src/schemas';
-import { FeedCreateDto, FeedInfoDto } from './dto';
+import { FeedCreateDto, FeedDto, FeedUpdateDto } from './dto';
 import { PostDto } from './post/dto/post.dto';
+import * as flatten from 'flat';
 
 @Injectable()
 export class FeedService {
@@ -13,8 +14,8 @@ export class FeedService {
     private feedModel: Model<FeedDocument>,
   ) {}
 
-  async feedMapper(feed: Feed): Promise<FeedInfoDto> {
-    const feedMapper = buildMapper(FeedInfoDto);
+  async feedMapper(feed: Feed): Promise<FeedDto> {
+    const feedMapper = buildMapper(FeedDto);
     const postMapper = buildMapper(PostDto);
 
     const feedDto = feedMapper.serialize(feed);
@@ -22,8 +23,8 @@ export class FeedService {
     return feedDto;
   }
 
-  async feedsMapper(feeds: Feed[]): Promise<FeedInfoDto[]> {
-    const feedMapper = buildMapper(FeedInfoDto);
+  async feedsMapper(feeds: Feed[]): Promise<FeedDto[]> {
+    const feedMapper = buildMapper(FeedDto);
     const postMapper = buildMapper(PostDto);
 
     return feeds.map((feed) => {
@@ -48,5 +49,15 @@ export class FeedService {
       .sort('-question.createdDate')
       .populate('question.user')
       .exec();
+  }
+
+  /** UPDATE */
+  async edit(feedId: Types.ObjectId, feedUpdateDto: FeedUpdateDto) {
+    await this.feedModel.updateOne({ _id: feedId }, flatten(feedUpdateDto));
+  }
+
+  /** DELETE */
+  async delete(id: Types.ObjectId) {
+    await this.feedModel.findByIdAndDelete(id);
   }
 }

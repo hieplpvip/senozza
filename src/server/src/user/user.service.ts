@@ -58,6 +58,6 @@ export class UserService {
 
   // Delete
   async delete(id: Types.ObjectId) {
-    this.userModel.findByIdAndDelete(id);
+    await this.userModel.findByIdAndDelete(id);
   }
 }

@@ -57,5 +57,22 @@ export class PostService {
     );
   }
 
+  async edit(feedId: Types.ObjectId, postId: Types.ObjectId, postUpdateDto) {
+    const set = {};
+    for (const field in postUpdateDto) {
+      set['answers.$.' + field] = postUpdateDto[field];
+    }
+
+    await this.feedModel.updateOne(
+      { _id: feedId, 'answers._id': postId },
+      { $set: set },
+    );
+  }
+
   /** DELETE */
+  async delete(feedId: Types.ObjectId, postId: Types.ObjectId) {
+    await this.feedModel.findByIdAndUpdate(feedId, {
+      $pull: { answers: { _id: postId } },
+    });
+  }
 }

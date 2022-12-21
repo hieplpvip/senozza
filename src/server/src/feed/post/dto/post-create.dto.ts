@@ -8,6 +8,7 @@ export class PostCreateDto extends OmitType(PostDto, [
   'bestAnswer',
   'upvote',
   'user',
+  '_id',
 ] as const) {
   user: Types.ObjectId;
 }

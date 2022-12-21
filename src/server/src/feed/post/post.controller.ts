@@ -1,19 +1,21 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   ParseIntPipe,
   Patch,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto } from 'src/user/dto';
-import { PostCreateDto, PostDto } from './dto';
+import { PostCreateDto, PostDto, PostUpdateDto } from './dto';
 import { PostService } from './post.service';
 
 @Controller()
@@ -37,6 +39,7 @@ export class PostController {
   /** READ */
   @Get('all')
   @UseGuards(JwtAuthGuard)
+  @ApiQuery({ name: 'sortBy', description: '"createdDate" or "upvote"' })
   @ApiOkResponse({ type: PostDto, isArray: true })
   async listAll(
     @ExtractedUser() userDto: UserDto,
@@ -67,5 +70,32 @@ export class PostController {
     );
   }
 
+  @Put('edit')
+  @UseGuards(JwtAuthGuard)
+  @ApiBody({ type: PostUpdateDto })
+  async edit(
+    @ExtractedUser() userDto: UserDto,
+    @Query('feedId') feedId: string,
+    @Query('postId') postId: string,
+    @Body() postUpdateDto: PostUpdateDto,
+  ) {
+    await this.postService.edit(
+      new Types.ObjectId(feedId),
+      new Types.ObjectId(postId),
+      postUpdateDto,
+    );
+  }
+
   /** DELETE */
+  @Delete('delete')
+  @UseGuards(JwtAuthGuard)
+  async delete(
+    @Query('feedId') feedId: string,
+    @Query('postId') postId: string,
+  ) {
+    await this.postService.delete(
+      new Types.ObjectId(feedId),
+      new Types.ObjectId(postId),
+    );
+  }
 }

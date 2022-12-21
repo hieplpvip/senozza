@@ -1,10 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsString, IsUUID } from 'class-validator';
 import { dto, include, nested, transform } from 'dto-mapper';
+import { Types } from 'mongoose';
 import { UserDto } from 'src/user/dto';
 
 @dto()
 export class PostDto {
+  @include()
+  @transform({
+    toDto: (_id) => _id.toString(),
+    fromDto: (_id) => new Types.ObjectId(_id),
+  })
+  @ApiProperty({ example: '63a6d616c3a7a193da3da5fd' })
+  @IsUUID()
+  _id: string;
+
   @include()
   @nested(() => UserDto, false)
   @ApiProperty({ type: () => UserDto })
@@ -12,10 +22,13 @@ export class PostDto {
 
   @include()
   @transform({
-    toDto: (date: Date) => date.toISOString().substring(0, 10),
+    toDto: (date: Date) => date.toISOString(),
     fromDto: (str: string) => new Date(str),
   })
-  @ApiProperty({ example: '2022-12-24', description: 'Format: YYYY-MM-DD' })
+  @ApiProperty({
+    example: '2022-12-24T00:00:00.000Z',
+    description: 'Format: ISOString',
+  })
   @IsDate()
   createdDate: string;
 

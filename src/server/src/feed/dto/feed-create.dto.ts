@@ -6,7 +6,6 @@ import { FeedDto } from './feed.dto';
 @dto()
 export class FeedCreateDto extends OmitType(FeedDto, [
   '_id',
-  'answers',
   'pin',
   'question',
 ] as const) {
