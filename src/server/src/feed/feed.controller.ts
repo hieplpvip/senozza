@@ -5,7 +5,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ClassService } from 'src/class/class.service';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto } from 'src/user/dto';
-import { FeedCreateDto, FeedDto, FeedInfoDto } from './dto';
+import { FeedCreateDto, FeedInfoDto } from './dto';
 import { FeedService } from './feed.service';
 
 @Controller()

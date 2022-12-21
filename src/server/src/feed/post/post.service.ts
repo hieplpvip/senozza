@@ -25,15 +25,37 @@ export class PostService {
   }
 
   /** READ */
-  async listAll(feedId: Types.ObjectId) {
-    return this.feedModel
-      .findById(feedId, 'answers')
-      .populate('answers.user')
-      .sort('-answer.createdDate')
-      .exec();
+  async listAll(
+    feedId: Types.ObjectId,
+    sortedField: string,
+  ): Promise<Record<string, any>> {
+    const sort = {};
+    sort[`answers.${sortedField}`] = -1;
+
+    return this.feedModel.aggregate([
+      { $match: { _id: feedId } },
+      { $unwind: { path: '$answers' } },
+      { $sort: sort },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'answers.user',
+          foreignField: '_id',
+          as: 'answers.user',
+        },
+      },
+      { $unwind: { path: '$answers.user' } },
+      { $group: { _id: '_id', answers: { $push: '$answers' } } },
+    ]);
   }
 
   /** UPDATE */
+  async vote(feedId: Types.ObjectId, postId: Types.ObjectId, upvote: number) {
+    await this.feedModel.updateOne(
+      { _id: feedId, 'answers._id': postId },
+      { $inc: { 'answers.$.upvote': upvote } },
+    );
+  }
 
   /** DELETE */
 }
