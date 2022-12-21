@@ -39,4 +39,13 @@ export class FeedDto {
   @ApiProperty()
   @IsBoolean()
   pin: boolean;
+
+  @include()
+  @transform({
+    toDto: (_id) => _id.toString(),
+    fromDto: (_id) => new Types.ObjectId(_id),
+  })
+  @ApiProperty({ example: '63a6d616c3a7a193da3da5fd' })
+  @IsUUID()
+  classId;
 }

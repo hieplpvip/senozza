@@ -4,7 +4,7 @@ import { dto, include } from 'dto-mapper';
 import { UserDto } from './user.dto';
 
 @dto()
-export class UserRegisterDto extends OmitType(UserDto, [] as const) {
+export class UserRegisterDto extends OmitType(UserDto, ['_id'] as const) {
   @include()
   @ApiProperty({ example: 'demo' })
   @IsString()

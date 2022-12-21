@@ -36,11 +36,14 @@ export class Feed {
   @Prop({ type: PostSchema })
   question: Post;
 
-  @Prop([{ type: [{ type: PostSchema }] }])
+  @Prop({ type: [{ type: PostSchema }] })
   answers: Post[];
 
   @Prop({ index: true, default: false })
   pin: boolean;
+
+  @Prop({ index: true, type: Types.ObjectId, ref: 'Class' })
+  classId: Types.ObjectId;
 }
 
 export type FeedDocument = HydratedDocument<Feed>;

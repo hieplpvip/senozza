@@ -24,7 +24,7 @@ export class UserService {
     return createdUser.save();
   }
 
-  // Find
+  // Read
   async find(id: Types.ObjectId): Promise<User> {
     return this.userModel.findById(id).exec();
   }

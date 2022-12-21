@@ -4,5 +4,5 @@ import { UserDto } from './user.dto';
 
 @dto()
 export class UserUpdateDto extends PartialType(
-  OmitType(UserDto, ['email'] as const),
+  OmitType(UserDto, ['email', '_id'] as const),
 ) {}
