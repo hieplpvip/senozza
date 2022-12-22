@@ -41,19 +41,30 @@ export class UserService {
     return this.userModel.findOne({ email }).populate('classes').exec();
   }
 
+  async findIdsByEmails(emails: string[]): Promise<any[]> {
+    return this.userModel.find({ email: { $in: emails } }, '_id').exec();
+  }
+
   // Update
   async update(email: string, userUpdateDto: UserUpdateDto): Promise<User> {
     return this.userModel
-      .findOneAndUpdate({ email }, userUpdateDto, {
-        new: true,
-      })
+      .findOneAndUpdate({ email }, userUpdateDto, { new: true })
       .exec();
   }
 
   async joinClass(email: string, classId: Types.ObjectId) {
-    const user = await this.userModel.findOne({ email });
-    user.classes.push(classId);
-    user.save();
+    await this.userModel.updateOne({ email }, { $push: { classes: classId } });
+  }
+
+  async joinClassMany(ids: string[], classId: Types.ObjectId) {
+    await this.userModel.updateMany(
+      { _id: { $in: ids } },
+      { $push: { classes: classId } },
+    );
+  }
+
+  async leave(_id: Types.ObjectId, classId: Types.ObjectId) {
+    await this.userModel.updateOne({ _id }, { $pull: { classes: classId } });
   }
 
   // Delete

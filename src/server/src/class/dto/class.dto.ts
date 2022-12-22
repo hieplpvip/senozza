@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsInt, IsString, IsUUID, Length } from 'class-validator';
 import { dto, include, transform } from 'dto-mapper';
 import { Types } from 'mongoose';
 
@@ -38,4 +38,10 @@ export class ClassDto {
   @ApiProperty()
   @IsBoolean()
   archived: boolean;
+
+  @include()
+  @ApiProperty()
+  @IsString()
+  @Length(6)
+  inviteCode: string;
 }

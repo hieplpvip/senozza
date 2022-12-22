@@ -31,6 +31,9 @@ export class Class {
 
   @Prop({ index: true, default: false })
   archived: boolean;
+
+  @Prop({ index: true })
+  inviteCode: string;
 }
 
 export type ClassDocument = HydratedDocument<Class>;

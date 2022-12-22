@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { buildMapper } from 'dto-mapper';
 import { Model, Types } from 'mongoose';
 import { Class, ClassDocument } from 'src/schemas';
-import { ClassCreateDto, ClassDto } from './dto';
+import { ClassCreateDto, ClassDto, ClassUpdateDto } from './dto';
+import * as referralCodeGenerator from 'referral-code-generator';
 
 @Injectable()
 export class ClassService {
@@ -17,8 +18,14 @@ export class ClassService {
     return mapper.serialize(foundClass);
   }
 
+  generateCode(): string {
+    return referralCodeGenerator.alpha('uppercase', 6);
+  }
+
   // Create
   async create(classCreateDto: ClassCreateDto): Promise<Class> {
+    classCreateDto.archived = false;
+    classCreateDto.inviteCode = this.generateCode();
     const createdClass = new this.classModel(classCreateDto);
     return createdClass.save();
   }
@@ -36,10 +43,37 @@ export class ClassService {
     return this.classModel.findOne({ courseCode, year, semester }).exec();
   }
 
+  async findIdByCode(code: string): Promise<Class> {
+    return this.classModel.findOne({ inviteCode: code }, '_id').exec();
+  }
+
   // Update
   async addFeed(id: Types.ObjectId, feedId: Types.ObjectId) {
-    const foundClass = await this.classModel.findById(id).exec();
-    foundClass.feed.push(feedId);
-    foundClass.save();
+    await this.classModel.updateOne({ _id: id }, { $push: { feed: feedId } });
   }
+
+  async addMembers(id: Types.ObjectId, userIds: Types.ObjectId[]) {
+    await this.classModel.updateOne(
+      { _id: id },
+      { $push: { members: { $each: userIds } } },
+    );
+  }
+
+  async update(
+    id: Types.ObjectId,
+    classUpdateDto: ClassUpdateDto,
+  ): Promise<Class> {
+    return this.classModel
+      .findByIdAndUpdate(id, classUpdateDto, { new: true })
+      .exec();
+  }
+
+  async leave(id: Types.ObjectId, memberId: Types.ObjectId) {
+    await this.classModel.updateOne(
+      { _id: id },
+      { $pull: { members: memberId } },
+    );
+  }
+
+  // Delete
 }
