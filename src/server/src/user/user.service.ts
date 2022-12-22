@@ -38,7 +38,13 @@ export class UserService {
   }
 
   async findWithClass(email: string): Promise<User> {
-    return this.userModel.findOne({ email }).populate('classes').exec();
+    return this.userModel
+      .findOne({ email })
+      .populate({
+        path: 'classes',
+        match: { archived: { $eq: false } },
+      })
+      .exec();
   }
 
   async findIdsByEmails(emails: string[]): Promise<any[]> {
@@ -53,13 +59,16 @@ export class UserService {
   }
 
   async joinClass(email: string, classId: Types.ObjectId) {
-    await this.userModel.updateOne({ email }, { $push: { classes: classId } });
+    await this.userModel.updateOne(
+      { email },
+      { $addToSet: { classes: classId } },
+    );
   }
 
   async joinClassMany(ids: string[], classId: Types.ObjectId) {
     await this.userModel.updateMany(
       { _id: { $in: ids } },
-      { $push: { classes: classId } },
+      { $addToSet: { classes: classId } },
     );
   }
 

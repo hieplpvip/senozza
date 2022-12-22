@@ -1,5 +1,5 @@
 import { OmitType, PartialType } from '@nestjs/swagger';
-import { IsString, Length } from 'class-validator';
+import { IsOptional, IsString, Length } from 'class-validator';
 import { dto } from 'dto-mapper';
 import { ClassDto } from './class.dto';
 
@@ -9,5 +9,6 @@ export class ClassUpdateDto extends PartialType(
 ) {
   @IsString()
   @Length(6)
-  inviteCode: string;
+  @IsOptional()
+  inviteCode?: string;
 }

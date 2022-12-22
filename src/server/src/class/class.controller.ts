@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   NotFoundException,
   Post,
@@ -73,7 +74,8 @@ export class ClassController {
 
   /** UPDATE */
   @Put('update')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.INSTRUCTOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: ClassDto })
   async update(
     @Query('classId') id: string,
@@ -88,7 +90,8 @@ export class ClassController {
   }
 
   @Get('renewCode')
-  @UseGuards(JwtAuthGuard)
+  @Roles(UserRole.INSTRUCTOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: String })
   async renewCode(@Query('classId') classId: string): Promise<string> {
     const inviteCode = this.classService.generateCode();
@@ -141,4 +144,10 @@ export class ClassController {
   }
 
   /** DELETE */
+  @Delete('delete')
+  @Roles(UserRole.INSTRUCTOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async delete(@Query('classId') classId: string) {
+    await this.classService.delete(new Types.ObjectId(classId));
+  }
 }

@@ -55,7 +55,7 @@ export class ClassService {
   async addMembers(id: Types.ObjectId, userIds: Types.ObjectId[]) {
     await this.classModel.updateOne(
       { _id: id },
-      { $push: { members: { $each: userIds } } },
+      { $addToSet: { members: { $each: userIds } } },
     );
   }
 
@@ -76,4 +76,7 @@ export class ClassService {
   }
 
   // Delete
+  async delete(id: Types.ObjectId) {
+    await this.classModel.findByIdAndDelete(id);
+  }
 }
