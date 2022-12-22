@@ -51,6 +51,25 @@ export class FeedService {
       .exec();
   }
 
+  async listPin(classId: Types.ObjectId): Promise<Feed[]> {
+    return this.feedModel
+      .find({ classId, pin: true })
+      .sort('-question.createdDate')
+      .populate('question.user')
+      .exec();
+  }
+
+  async filterCategory(
+    classId: Types.ObjectId,
+    category: string,
+  ): Promise<Feed[]> {
+    return this.feedModel
+      .find({ classId, category })
+      .sort('-question.createdDate')
+      .populate('question.user')
+      .exec();
+  }
+
   /** UPDATE */
   async edit(feedId: Types.ObjectId, feedUpdateDto: FeedUpdateDto) {
     await this.feedModel.updateOne({ _id: feedId }, flatten(feedUpdateDto));

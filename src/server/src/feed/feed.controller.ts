@@ -55,6 +55,30 @@ export class FeedController {
     return await this.feedService.feedsMapper(feeds);
   }
 
+  @Get('pin')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: FeedDto, isArray: true })
+  async listPin(@Query('classId') classId: string): Promise<FeedDto[]> {
+    const feeds = await this.feedService.listPin(new Types.ObjectId(classId));
+
+    return await this.feedService.feedsMapper(feeds);
+  }
+
+  @Get('filter')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: FeedDto, isArray: true })
+  async listFilter(
+    @Query('classId') classId: string,
+    @Query('category') category: string,
+  ): Promise<FeedDto[]> {
+    const feeds = await this.feedService.filterCategory(
+      new Types.ObjectId(classId),
+      category,
+    );
+
+    return await this.feedService.feedsMapper(feeds);
+  }
+
   /** UPDATE */
   @Put('edit')
   @UseGuards(JwtAuthGuard)
