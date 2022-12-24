@@ -1,5 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useDisclosure } from '@chakra-ui/react';
 import { Listbox, Transition } from '@headlessui/react';
 import {
   ArrowLeftOnRectangleIcon,
@@ -10,6 +11,9 @@ import {
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
+
+import CreateClassModal from './components/CreateClassModal';
+
 import { signOut } from '../auth/authSlice';
 import { useAuth, useAppDispatch } from '../../app/hooks';
 import { classNames } from '../../utils';
@@ -43,92 +47,92 @@ const people = [
 
 function ClassSelector() {
   const [selected, setSelected] = useState(-1);
-
-  const handleCreateClass = () => {
-    alert('aaa');
-  };
+  const { isOpen: isCreateClassOpen, onOpen: onCreateClassOpen, onClose: onCreateClassClose } = useDisclosure();
 
   return (
-    <Listbox value={selected} onChange={setSelected}>
-      {({ open }) => (
-        <>
-          <div className='relative mt-1'>
-            <Listbox.Button className='relative w-full cursor-default border border-gray-300 bg-white py-2 pl-3 pr-10 text-left focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm'>
-              <span className='flex items-center'>
-                {selected === -1 ? (
-                  <span className='mx-auto block italic text-gray-400'>No class selected</span>
-                ) : (
-                  <>
-                    <img src={people[selected].avatar} alt='' className='h-6 w-6 flex-shrink-0 rounded-full' />
-                    <span className='ml-3 block truncate'>{people[selected].name}</span>
-                  </>
-                )}
-              </span>
-              <span className='pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2'>
-                <ChevronUpDownIcon className='h-5 w-5 text-gray-400' aria-hidden='true' />
-              </span>
-            </Listbox.Button>
+    <>
+      <CreateClassModal isOpen={isCreateClassOpen} onClose={onCreateClassClose} />
+      <Listbox value={selected} onChange={setSelected}>
+        {({ open }) => (
+          <>
+            <div className='relative mt-1'>
+              <Listbox.Button className='relative w-full cursor-default border border-gray-300 bg-white py-2 pl-3 pr-10 text-left focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm'>
+                <span className='flex items-center'>
+                  {selected === -1 ? (
+                    <span className='mx-auto block italic text-gray-400'>No class selected</span>
+                  ) : (
+                    <>
+                      <img src={people[selected].avatar} alt='' className='h-6 w-6 flex-shrink-0 rounded-full' />
+                      <span className='ml-3 block truncate'>{people[selected].name}</span>
+                    </>
+                  )}
+                </span>
+                <span className='pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2'>
+                  <ChevronUpDownIcon className='h-5 w-5 text-gray-400' aria-hidden='true' />
+                </span>
+              </Listbox.Button>
 
-            <Transition
-              show={open}
-              as={Fragment}
-              leave='transition ease-in duration-100'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'>
-              <Listbox.Options className='absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
-                <Listbox.Option key={-1} value={selected}>
-                  <div className='p-2'>
-                    <button
-                      type='button'
-                      className='mx-auto w-full rounded-full border border-gray-300 p-1 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-                      onClick={handleCreateClass}>
-                      <span className='text-sm font-medium text-gray-500'>
-                        <PlusIcon className='-mt-[0.22rem] mr-1 inline-block h-5 w-5' aria-hidden='true' />
-                        Create new class
-                      </span>
-                    </button>
-                  </div>
-                </Listbox.Option>
-
-                {people.map((person, index) => (
-                  <Listbox.Option
-                    key={person.id}
-                    className={({ active }) =>
-                      classNames(
-                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                        'relative cursor-default select-none py-2 pl-3 pr-9',
-                      )
-                    }
-                    value={index}>
-                    {({ selected, active }) => (
-                      <>
-                        <div className='flex items-center'>
-                          <img src={person.avatar} alt='' className='h-6 w-6 flex-shrink-0 rounded-full' />
-                          <span
-                            className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}>
-                            {person.name}
-                          </span>
-                        </div>
-
-                        {selected ? (
-                          <span
-                            className={classNames(
-                              active ? 'text-white' : 'text-indigo-600',
-                              'absolute inset-y-0 right-0 flex items-center pr-4',
-                            )}>
-                            <CheckIcon className='h-5 w-5' aria-hidden='true' />
-                          </span>
-                        ) : null}
-                      </>
-                    )}
+              <Transition
+                show={open}
+                as={Fragment}
+                leave='transition ease-in duration-100'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'>
+                <Listbox.Options className='absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
+                  <Listbox.Option key={-1} value={selected}>
+                    <div className='p-2'>
+                      <button
+                        type='button'
+                        className='mx-auto w-full rounded-full border border-gray-300 p-1 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+                        onClick={onCreateClassOpen}>
+                        <span className='text-sm font-medium text-gray-500'>
+                          <PlusIcon className='-mt-[0.22rem] mr-1 inline-block h-5 w-5' aria-hidden='true' />
+                          Create new class
+                        </span>
+                      </button>
+                    </div>
                   </Listbox.Option>
-                ))}
-              </Listbox.Options>
-            </Transition>
-          </div>
-        </>
-      )}
-    </Listbox>
+
+                  {people.map((person, index) => (
+                    <Listbox.Option
+                      key={person.id}
+                      className={({ active }) =>
+                        classNames(
+                          active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                          'relative cursor-default select-none py-2 pl-3 pr-9',
+                        )
+                      }
+                      value={index}>
+                      {({ selected, active }) => (
+                        <>
+                          <div className='flex items-center'>
+                            <img src={person.avatar} alt='' className='h-6 w-6 flex-shrink-0 rounded-full' />
+                            <span
+                              className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}>
+                              {person.name}
+                            </span>
+                          </div>
+
+                          {selected ? (
+                            <span
+                              className={classNames(
+                                active ? 'text-white' : 'text-indigo-600',
+                                'absolute inset-y-0 right-0 flex items-center pr-4',
+                              )}>
+                              <CheckIcon className='h-5 w-5' aria-hidden='true' />
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                    </Listbox.Option>
+                  ))}
+                </Listbox.Options>
+              </Transition>
+            </div>
+          </>
+        )}
+      </Listbox>
+    </>
   );
 }
 
