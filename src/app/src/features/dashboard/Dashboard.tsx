@@ -13,6 +13,7 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 
 import CreateClassModal from './components/CreateClassModal';
+import JoinClassModal from './components/JoinClassModal';
 
 import { signOut } from '../auth/authSlice';
 import { useAuth, useAppDispatch } from '../../app/hooks';
@@ -51,7 +52,7 @@ function ClassSelector() {
 
   return (
     <>
-      <CreateClassModal isOpen={isCreateClassOpen} onClose={onCreateClassClose} />
+      <JoinClassModal isOpen={isCreateClassOpen} onClose={onCreateClassClose} />
       <Listbox value={selected} onChange={setSelected}>
         {({ open }) => (
           <>
