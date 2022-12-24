@@ -28,7 +28,7 @@ export default function JoinClassModal({ isOpen, onClose }: { isOpen: boolean; o
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' onClick={onClose}>
+            <Button colorScheme='indigo' onClick={onClose}>
               Join
             </Button>
           </ModalFooter>

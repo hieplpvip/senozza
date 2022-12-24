@@ -55,7 +55,7 @@ export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean;
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' onClick={onClose}>
+            <Button colorScheme='indigo' onClick={onClose}>
               Create
             </Button>
           </ModalFooter>

@@ -85,13 +85,13 @@ export default function PostList() {
   return (
     <div className='relative flex h-full w-full flex-col border-gray-200 bg-gray-100'>
       <div className='flex-shrink-0'>
-        <div className='flex h-16 flex-col justify-center bg-white px-6'>
+        <div className='flex h-16 flex-col justify-center bg-white px-4'>
           <div className='flex items-baseline space-x-3'>
-            <h2 className='text-lg font-medium text-gray-900'>Inbox</h2>
+            <h2 className='text-lg font-medium text-gray-900'>Feed</h2>
             <p className='text-sm font-medium text-gray-500'>{messages.length} messages</p>
           </div>
         </div>
-        <div className='border-t border-b border-gray-200 bg-gray-50 px-6 py-2 text-sm font-medium text-gray-500'>
+        <div className='border-t border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm font-medium text-gray-500'>
           Sorted by date
         </div>
       </div>
@@ -101,8 +101,8 @@ export default function PostList() {
             <li
               key={message.id}
               className={classNames(
-                message.selected ? 'rounded bg-blue-100' : 'bg-white hover:bg-gray-50',
-                'relative py-5 px-6',
+                message.selected ? 'rounded bg-gray-200' : 'bg-white hover:bg-gray-50',
+                'relative py-5 px-4',
               )}>
               <div className='flex justify-between space-x-3'>
                 <img className='my-auto h-6 w-6 rounded-full' src={message.imageUrl} alt='' />

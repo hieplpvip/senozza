@@ -5,14 +5,13 @@ import { Listbox, Transition } from '@headlessui/react';
 import {
   ArrowLeftOnRectangleIcon,
   ChatBubbleLeftEllipsisIcon,
+  BellIcon,
   CogIcon,
-  EyeIcon,
   UserGroupIcon,
   PlusIcon,
 } from '@heroicons/react/24/outline';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 
-import CreateClassModal from './components/CreateClassModal';
 import JoinClassModal from './components/JoinClassModal';
 
 import { signOut } from '../auth/authSlice';
@@ -20,7 +19,7 @@ import { useAuth, useAppDispatch } from '../../app/hooks';
 import { classNames } from '../../utils';
 
 const navigation = [
-  { name: 'Notifications', to: 'notifications', icon: EyeIcon },
+  { name: 'Notifications', to: 'notifications', icon: BellIcon },
   { name: 'Chatroom', to: 'chat', icon: ChatBubbleLeftEllipsisIcon },
   { name: 'Class Feed', to: 'feed', icon: UserGroupIcon },
 ];
@@ -137,7 +136,7 @@ function ClassSelector() {
   );
 }
 
-function NavigationLink(item: { name: string; to: string; icon: typeof EyeIcon }) {
+function NavigationLink(item: { name: string; to: string; icon: typeof BellIcon }) {
   const location = useLocation();
   const current = location.pathname.endsWith(item.to);
 
@@ -147,7 +146,7 @@ function NavigationLink(item: { name: string; to: string; icon: typeof EyeIcon }
       to={item.to}
       className={classNames(
         current ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-        'group flex items-center rounded-md px-2 py-2 text-sm font-medium',
+        'group flex items-center px-3 py-2 text-sm font-medium',
       )}>
       <item.icon
         className={classNames(current ? 'text-gray-500' : 'text-gray-400 group-hover:text-gray-500', 'mr-3 h-6 w-6')}
@@ -182,7 +181,7 @@ export default function Dashboard() {
                 </div>
                 <nav className='mt-5 flex-1' aria-label='Sidebar'>
                   <ClassSelector />
-                  <div className='space-y-1 px-2'>
+                  <div className='space-y-1'>
                     {navigation.map((item) => (
                       <NavigationLink key={item.name} {...item} />
                     ))}
@@ -190,17 +189,11 @@ export default function Dashboard() {
                 </nav>
               </div>
               <div className='block w-full flex-shrink-0'>
-                <a
-                  key='settings'
-                  href='#'
-                  className='group flex items-center border-l-4 border-transparent py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900'>
-                  <CogIcon className='mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500' aria-hidden='true' />
-                  Settings
-                </a>
+                <NavigationLink name='Settings' to='settings' icon={CogIcon} />
                 <a
                   key='signOut'
                   href='#'
-                  className='group flex items-center border-l-4 border-transparent py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  className='group flex items-center py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   onClick={() => dispatch(signOut())}>
                   <ArrowLeftOnRectangleIcon
                     className='mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500'

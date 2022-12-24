@@ -9,10 +9,16 @@ import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from './tailwind.config';
 
 const tailwind = resolveConfig(tailwindConfig);
+
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 chakraTheme.colors.blue = tailwind!.theme!.colors!.blue;
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-expect-error
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+chakraTheme.colors.indigo = tailwind!.theme!.colors!.indigo;
 
 import { router } from './app/router';
 import { store } from './app/store';

@@ -4,6 +4,7 @@ import Dashboard from '../features/dashboard/Dashboard';
 import SignIn from '../features/auth/SignIn';
 import SignUp from '../features/auth/SignUp';
 import ClassFeed from '../features/class/ClassFeed';
+import ClassSettings from '../features/class/ClassSettings';
 import ChatRoom from '../features/chatroom/ChatRoom';
 
 export const router = createBrowserRouter(
@@ -16,6 +17,7 @@ export const router = createBrowserRouter(
         <Route path='feed' element={<ClassFeed />} />
         <Route path='chat' element={<ChatRoom />} />
         <Route path='notifications' element={<></>} />
+        <Route path='settings' element={<ClassSettings />} />
       </Route>
     </Route>,
   ),
