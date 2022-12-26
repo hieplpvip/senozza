@@ -185,22 +185,21 @@ export default function Dashboard() {
                     {navigation.map((item) => (
                       <NavigationLink key={item.name} {...item} />
                     ))}
+                    <NavigationLink name='Settings' to='settings' icon={CogIcon} />
                   </div>
                 </nav>
               </div>
               <div className='block w-full flex-shrink-0'>
-                <NavigationLink name='Settings' to='settings' icon={CogIcon} />
-                <a
+                <button
                   key='signOut'
-                  href='#'
-                  className='group flex items-center py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                  className='group flex w-full items-center py-2 px-3 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                   onClick={() => dispatch(signOut())}>
                   <ArrowLeftOnRectangleIcon
                     className='mr-3 h-6 w-6 text-gray-400 group-hover:text-gray-500'
                     aria-hidden='true'
                   />
                   Sign Out
-                </a>
+                </button>
               </div>
               <div className='flex flex-shrink-0 border-t border-gray-200 p-4'>
                 <a href='#' className='group block w-full flex-shrink-0'>
