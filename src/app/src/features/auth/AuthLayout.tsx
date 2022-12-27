@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { Spinner } from '@chakra-ui/react';
 
 import { signOut, setUser } from './authSlice';
 import { useGetUserDetailsQuery } from '../api/apiSlice';
@@ -31,7 +32,11 @@ export default function AuthLayout() {
   }, [isSuccess]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <Spinner size='xl' />
+      </div>
+    );
   }
 
   return <Outlet />;
