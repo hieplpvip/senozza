@@ -5,26 +5,26 @@ import { User } from '../../interface';
 
 type AuthState = {
   user: User | null;
-  token: string | null;
+  accessToken: string | null;
 };
 
 const slice = createSlice({
   name: 'auth',
-  initialState: { user: null, token: null } as AuthState,
+  initialState: { user: null, accessToken: null } as AuthState,
   reducers: {
     signOut: (state) => {
       state.user = null;
-      state.token = null;
+      state.accessToken = null;
     },
   },
   extraReducers: (builder) => {
     builder.addMatcher(apiSlice.endpoints.signIn.matchFulfilled, (state, { payload }) => {
-      state.token = payload.token;
+      state.accessToken = payload.accessToken;
       state.user = payload.user;
     });
 
     builder.addMatcher(apiSlice.endpoints.signUp.matchFulfilled, (state, { payload }) => {
-      state.token = payload.token;
+      state.accessToken = payload.accessToken;
       state.user = payload.user;
     });
   },

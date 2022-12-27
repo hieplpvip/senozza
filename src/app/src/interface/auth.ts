@@ -15,6 +15,6 @@ export interface SignInRequest {
 }
 
 export interface AuthResponse {
-  token: string;
+  accessToken: string;
   user: User;
 }
