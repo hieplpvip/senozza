@@ -1,7 +1,6 @@
 import { useForm } from 'react-hook-form';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSignInMutation } from '../api/apiSlice';
-import { useAuth } from '../../app/hooks';
 
 interface SignInFormInput {
   email: string;
@@ -9,19 +8,16 @@ interface SignInFormInput {
 }
 
 export default function SignIn() {
+  const location = useLocation();
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [signIn] = useSignInMutation();
   const { register, handleSubmit } = useForm<SignInFormInput>();
-
-  if (user) {
-    return <Navigate to='/dashboard' replace />;
-  }
 
   const onSubmit = async (data: SignInFormInput) => {
     try {
       await signIn(data).unwrap();
-      navigate('/dashboard');
+      const origin = location.state?.from?.pathname || '/dashboard';
+      navigate(origin);
     } catch (err) {
       console.error('Failed to sign in:', err);
     }
