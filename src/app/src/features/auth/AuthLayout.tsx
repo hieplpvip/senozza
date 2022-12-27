@@ -10,16 +10,20 @@ import { AUTH_TOKEN_KEY } from '../../constants';
 export default function AuthLayout() {
   const dispatch = useAppDispatch();
   const [skip, setSkip] = useState(true);
-  const { data, isError, isLoading, isSuccess } = useGetUserDetailsQuery(undefined, { skip: skip });
+  const [isLoading, setIsLoading] = useState(true);
+  const { data, isError, isSuccess } = useGetUserDetailsQuery(undefined, { skip: skip });
 
   useEffect(() => {
     if (localStorage.getItem(AUTH_TOKEN_KEY)) {
       setSkip(false);
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
   useEffect(() => {
     if (isError) {
+      setIsLoading(false);
       dispatch(signOut());
     }
   }, [isError]);
@@ -27,6 +31,7 @@ export default function AuthLayout() {
   useEffect(() => {
     const accessToken = localStorage.getItem(AUTH_TOKEN_KEY);
     if (isSuccess && accessToken && data) {
+      setIsLoading(false);
       dispatch(setUser({ accessToken, user: data }));
     }
   }, [isSuccess]);
