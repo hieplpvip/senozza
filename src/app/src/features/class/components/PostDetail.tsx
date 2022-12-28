@@ -1,6 +1,8 @@
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
 
+import { MarkdownPreview } from '../../../components/Markdown';
+
 function Comment() {
   return (
     <div className='mx-auto mt-3 w-full flex-col border-b-2 border-r-2 border-gray-200 bg-white p-4 sm:rounded-lg sm:shadow-sm'>
@@ -80,7 +82,7 @@ export default function PostDetail() {
           </div>
         </div>
 
-        <div className='h-full rounded-lg border-2 border-dashed border-gray-200' />
+        <MarkdownPreview />
       </div>
       <div>
         <CommentBox />
