@@ -1,12 +1,12 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import { useAuth } from '../../app/hooks';
+import { useAuthAccessToken } from '../../app/hooks';
 
 export default function AuthenticatedRoute() {
-  const { user } = useAuth();
+  const accessToken = useAuthAccessToken();
   const location = useLocation();
 
-  if (!user) {
+  if (!accessToken) {
     return <Navigate to='/signin' replace state={{ from: location }} />;
   }
 

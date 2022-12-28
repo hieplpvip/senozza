@@ -2,20 +2,20 @@ import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';
 
-import { signOut, setUser } from './authSlice';
-import { useGetUserDetailsQuery } from '../api/apiSlice';
-import { useAppDispatch } from '../../app/hooks';
-import { AUTH_TOKEN_KEY } from '../../constants';
+import { setAccessToken } from './authSlice';
+import { apiSlice } from '../api/apiSlice';
+import { useAppDispatch, useAuthAccessToken } from '../../app/hooks';
+import { AUTH_ACCESS_TOKEN_KEY } from '../../constants';
 
 export default function AuthLayout() {
   const dispatch = useAppDispatch();
-  const [skip, setSkip] = useState(true);
+  const accessToken = useAuthAccessToken() || localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
   const [isLoading, setIsLoading] = useState(true);
-  const { data, isError, isSuccess } = useGetUserDetailsQuery(undefined, { skip: skip });
+  const [trigger, { isError, isSuccess }] = apiSlice.endpoints.getUserInfo.useLazyQuery();
 
   useEffect(() => {
-    if (localStorage.getItem(AUTH_TOKEN_KEY)) {
-      setSkip(false);
+    if (accessToken) {
+      trigger();
     } else {
       setIsLoading(false);
     }
@@ -24,15 +24,13 @@ export default function AuthLayout() {
   useEffect(() => {
     if (isError) {
       setIsLoading(false);
-      dispatch(signOut());
     }
   }, [isError]);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem(AUTH_TOKEN_KEY);
-    if (isSuccess && accessToken && data) {
+    if (isLoading && isSuccess && accessToken) {
       setIsLoading(false);
-      dispatch(setUser({ accessToken, user: data }));
+      dispatch(setAccessToken(accessToken));
     }
   }, [isSuccess]);
 

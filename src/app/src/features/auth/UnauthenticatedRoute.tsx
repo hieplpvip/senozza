@@ -1,11 +1,11 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { useAuth } from '../../app/hooks';
+import { useAuthAccessToken } from '../../app/hooks';
 
 export default function UnauthenticatedRoute() {
-  const { user } = useAuth();
+  const accessToken = useAuthAccessToken();
 
-  if (user) {
+  if (accessToken) {
     return <Navigate to='/dashboard' replace />;
   }
 

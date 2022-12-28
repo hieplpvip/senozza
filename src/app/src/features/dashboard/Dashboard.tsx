@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
-import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useDisclosure } from '@chakra-ui/react';
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { Listbox, Transition } from '@headlessui/react';
 import {
   ArrowLeftOnRectangleIcon,
@@ -14,8 +14,9 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 
 import JoinClassModal from './components/JoinClassModal';
 
+import { useGetUserInfoQuery } from '../api/apiSlice';
 import { signOut } from '../auth/authSlice';
-import { useAuth, useAppDispatch } from '../../app/hooks';
+import { useAppDispatch } from '../../app/hooks';
 import { classNames } from '../../utils';
 
 const navigation = [
@@ -159,10 +160,14 @@ function NavigationLink(item: { name: string; to: string; icon: typeof BellIcon 
 
 export default function Dashboard() {
   const dispatch = useAppDispatch();
-  const { user } = useAuth();
+  const { data: user, isLoading, isSuccess } = useGetUserInfoQuery();
 
-  if (!user) {
-    return <Navigate to='/signin' replace />;
+  if (isLoading || !isSuccess) {
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <Spinner size='xl' />
+      </div>
+    );
   }
 
   return (
