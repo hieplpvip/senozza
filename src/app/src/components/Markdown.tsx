@@ -30,7 +30,7 @@ const rehypeRewrite: RehypeRewriteOptions['rewrite'] = (node, _index, parent) =>
 };
 
 const previewProps = {
-  emarkPlugins: [remarkMath],
+  remarkPlugins: [remarkMath],
   rehypePlugins: [rehypeKatex],
   rehypeRewrite,
 };
