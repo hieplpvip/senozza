@@ -1,15 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSignUpMutation } from '../api/apiSlice';
+import { useSignUpMutation } from '../api';
 import { UserRole } from '../../interface';
 
 interface SignUpFormInput {
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  password: string;
   birth: string;
   role: UserRole;
+  imgUrl: string;
+  password: string;
 }
 
 export default function SignUp() {

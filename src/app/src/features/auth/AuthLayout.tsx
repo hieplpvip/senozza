@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Spinner } from '@chakra-ui/react';
 
 import { setAccessToken } from './authSlice';
-import { apiSlice } from '../api/apiSlice';
+import { userApiSlice } from '../api';
 import { useAppDispatch, useAuthAccessToken } from '../../app/hooks';
 import { AUTH_ACCESS_TOKEN_KEY } from '../../constants';
 
@@ -11,7 +11,7 @@ export default function AuthLayout() {
   const dispatch = useAppDispatch();
   const accessToken = useAuthAccessToken() || localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
   const [isLoading, setIsLoading] = useState(true);
-  const [trigger, { isError, isSuccess }] = apiSlice.endpoints.getUserInfo.useLazyQuery();
+  const [trigger, { isError, isSuccess }] = userApiSlice.endpoints.getUserProfile.useLazyQuery();
 
   useEffect(() => {
     if (accessToken) {

@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSignInMutation } from '../api/apiSlice';
+import { useSignInMutation } from '../api';
 
 interface SignInFormInput {
   email: string;

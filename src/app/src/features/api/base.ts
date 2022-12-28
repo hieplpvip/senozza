@@ -3,7 +3,6 @@ import { createApi, fetchBaseQuery, BaseQueryFn, FetchArgs, FetchBaseQueryError 
 import { signOut } from '../auth/authSlice';
 import { RootState } from '../../app/store';
 import { AUTH_ACCESS_TOKEN_KEY } from '../../constants';
-import { AuthResponse, SignInRequest, SignUpRequest, User } from '../../interface';
 
 const baseQuery = fetchBaseQuery({
   baseUrl: process.env.REACT_APP_API_BASE_URL,
@@ -29,30 +28,7 @@ const baseQueryWithSignOut: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
   return result;
 };
 
-export const apiSlice = createApi({
+export const baseApiSlice = createApi({
   baseQuery: baseQueryWithSignOut,
-  endpoints: (builder) => ({
-    signIn: builder.mutation<AuthResponse, SignInRequest>({
-      query: (credentials) => ({
-        url: 'auth/login',
-        method: 'POST',
-        body: credentials,
-      }),
-    }),
-    signUp: builder.mutation<AuthResponse, SignUpRequest>({
-      query: (credentials) => ({
-        url: 'auth/register',
-        method: 'POST',
-        body: credentials,
-      }),
-    }),
-    getUserInfo: builder.query<User, void>({
-      query: () => ({
-        url: 'user/info',
-        method: 'GET',
-      }),
-    }),
-  }),
+  endpoints: () => ({}),
 });
-
-export const { useSignInMutation, useSignUpMutation, useGetUserInfoQuery } = apiSlice;

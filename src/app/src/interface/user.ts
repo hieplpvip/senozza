@@ -11,4 +11,5 @@ export interface User {
   lastName: string;
   birth: string;
   role: UserRole;
+  imgUrl: string;
 }

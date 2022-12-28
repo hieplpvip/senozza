@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { apiSlice } from '../api/apiSlice';
+import { authApiSlice } from '../api';
 import { AUTH_ACCESS_TOKEN_KEY } from '../../constants';
 
 type AuthState = {
@@ -20,12 +20,12 @@ const slice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addMatcher(apiSlice.endpoints.signIn.matchFulfilled, (state, { payload }) => {
+    builder.addMatcher(authApiSlice.endpoints.signIn.matchFulfilled, (state, { payload }) => {
       localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, payload.accessToken);
       state.accessToken = payload.accessToken;
     });
 
-    builder.addMatcher(apiSlice.endpoints.signUp.matchFulfilled, (state, { payload }) => {
+    builder.addMatcher(authApiSlice.endpoints.signUp.matchFulfilled, (state, { payload }) => {
       localStorage.setItem(AUTH_ACCESS_TOKEN_KEY, payload.accessToken);
       state.accessToken = payload.accessToken;
     });

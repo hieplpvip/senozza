@@ -14,7 +14,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 
 import JoinClassModal from './components/JoinClassModal';
 
-import { useGetUserInfoQuery } from '../api/apiSlice';
+import { useGetUserProfileQuery } from '../api';
 import { signOut } from '../auth/authSlice';
 import { useAppDispatch } from '../../app/hooks';
 import { classNames } from '../../utils';
@@ -160,7 +160,7 @@ function NavigationLink(item: { name: string; to: string; icon: typeof BellIcon 
 
 export default function Dashboard() {
   const dispatch = useAppDispatch();
-  const { data: user, isLoading, isSuccess } = useGetUserInfoQuery();
+  const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
 
   if (isLoading || !isSuccess) {
     return (
