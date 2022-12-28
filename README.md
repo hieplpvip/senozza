@@ -2,9 +2,21 @@
 
 ## Tech Stack
 
+### Programming Languages
+
 - TypeScript
+
+### Frontend
+
 - [React](https://reactjs.org/)
-- [Fastify](https://www.fastify.io/)
+- [React Router](https://reactrouter.com/)
+- [Redux Toolkit](https://redux-toolkit.js.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Chakra UI](https://chakra-ui.com/)
+
+### Backend
+
+- [NestJS](https://nestjs.com/)
 - [Mongoose](https://mongoosejs.com/)
 
 ## Setup Development Environment
