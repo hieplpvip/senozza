@@ -26,8 +26,8 @@ export class Class {
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Chatroom' }] })
   chatrooms: Types.ObjectId[];
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Feed' }] })
-  feed: Types.ObjectId[];
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'Post' }] })
+  post: Types.ObjectId[];
 
   @Prop({ index: true, default: false })
   archived: boolean;

@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
 
 @Schema()
-export class Post {
+export class Comment {
   _id: Types.ObjectId;
 
   @Prop({ type: Types.ObjectId, ref: 'User' })
@@ -21,10 +21,10 @@ export class Post {
   bestAnswer: boolean;
 }
 
-const PostSchema = SchemaFactory.createForClass(Post);
+const CommentSchema = SchemaFactory.createForClass(Comment);
 
 @Schema()
-export class Feed {
+export class Post {
   _id: Types.ObjectId;
 
   @Prop()
@@ -33,10 +33,10 @@ export class Feed {
   @Prop({ index: true })
   category: string;
 
-  @Prop({ type: PostSchema })
+  @Prop({ type: CommentSchema })
   question: Post;
 
-  @Prop({ type: [{ type: PostSchema }] })
+  @Prop({ type: [{ type: CommentSchema }] })
   answers: Post[];
 
   @Prop({ index: true, default: false })
@@ -46,6 +46,6 @@ export class Feed {
   classId: Types.ObjectId;
 }
 
-export type FeedDocument = HydratedDocument<Feed>;
+export type PostDocument = HydratedDocument<Post>;
 
-export const FeedSchema = SchemaFactory.createForClass(Feed);
+export const PostSchema = SchemaFactory.createForClass(Post);

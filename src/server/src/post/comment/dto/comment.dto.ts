@@ -5,7 +5,7 @@ import { Types } from 'mongoose';
 import { UserDto } from 'src/user/dto';
 
 @dto()
-export class PostDto {
+export class CommentDto {
   @include()
   @transform({
     toDto: (_id) => _id.toString(),

@@ -15,39 +15,39 @@ import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto } from 'src/user/dto';
-import { PostCreateDto, PostDto, PostUpdateDto } from './dto';
-import { PostService } from './post.service';
+import { CommentCreateDto, CommentDto, CommentUpdateDto } from './dto';
+import { CommentService } from './comment.service';
 
 @Controller()
 @ApiTags('post')
-export class PostController {
-  constructor(private readonly postService: PostService) {}
+export class CommentController {
+  constructor(private readonly postService: CommentService) {}
 
   /** CREATE */
   @Post('answer')
   @UseGuards(JwtAuthGuard)
-  @ApiBody({ type: PostCreateDto })
+  @ApiBody({ type: CommentCreateDto })
   async answer(
     @ExtractedUser() userDto: UserDto,
-    @Query('feedId') feedId: string,
-    @Body() postCreatedDto: PostCreateDto,
+    @Query('postId') postId: string,
+    @Body() postCreatedDto: CommentCreateDto,
   ) {
     postCreatedDto.user = new Types.ObjectId(userDto._id);
-    await this.postService.answer(new Types.ObjectId(feedId), postCreatedDto);
+    await this.postService.answer(new Types.ObjectId(postId), postCreatedDto);
   }
 
   /** READ */
   @Get('all')
   @UseGuards(JwtAuthGuard)
   @ApiQuery({ name: 'sortBy', description: '"createdDate" or "upvote"' })
-  @ApiOkResponse({ type: PostDto, isArray: true })
+  @ApiOkResponse({ type: CommentDto, isArray: true })
   async listAll(
     @ExtractedUser() userDto: UserDto,
-    @Query('feedId') feedId: string,
+    @Query('postId') postId: string,
     @Query('sortBy') sortedField: string,
-  ): Promise<PostDto[]> {
+  ): Promise<CommentDto[]> {
     const coll = await this.postService.listAll(
-      new Types.ObjectId(feedId),
+      new Types.ObjectId(postId),
       sortedField,
     );
     const { answers } = coll[0];
@@ -59,29 +59,29 @@ export class PostController {
   @UseGuards(JwtAuthGuard)
   async vote(
     @ExtractedUser() userDto: UserDto,
-    @Query('feedId') feedId: string,
     @Query('postId') postId: string,
+    @Query('commentId') commentId: string,
     @Query('upvote', ParseIntPipe) upvote: number,
   ) {
     await this.postService.vote(
-      new Types.ObjectId(feedId),
       new Types.ObjectId(postId),
+      new Types.ObjectId(commentId),
       upvote,
     );
   }
 
   @Put('edit')
   @UseGuards(JwtAuthGuard)
-  @ApiBody({ type: PostUpdateDto })
+  @ApiBody({ type: CommentUpdateDto })
   async edit(
     @ExtractedUser() userDto: UserDto,
-    @Query('feedId') feedId: string,
     @Query('postId') postId: string,
-    @Body() postUpdateDto: PostUpdateDto,
+    @Query('commentId') commentId: string,
+    @Body() postUpdateDto: CommentUpdateDto,
   ) {
     await this.postService.edit(
-      new Types.ObjectId(feedId),
       new Types.ObjectId(postId),
+      new Types.ObjectId(commentId),
       postUpdateDto,
     );
   }
@@ -90,12 +90,12 @@ export class PostController {
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
   async delete(
-    @Query('feedId') feedId: string,
     @Query('postId') postId: string,
+    @Query('commentId') commentId: string,
   ) {
     await this.postService.delete(
-      new Types.ObjectId(feedId),
       new Types.ObjectId(postId),
+      new Types.ObjectId(commentId),
     );
   }
 }

@@ -1,10 +1,10 @@
 import { OmitType } from '@nestjs/swagger';
 import { dto } from 'dto-mapper';
 import { Types } from 'mongoose';
-import { PostDto } from './post.dto';
+import { CommentDto } from './comment.dto';
 
 @dto()
-export class PostCreateDto extends OmitType(PostDto, [
+export class CommentCreateDto extends OmitType(CommentDto, [
   'bestAnswer',
   'upvote',
   'user',

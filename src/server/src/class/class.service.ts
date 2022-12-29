@@ -48,8 +48,8 @@ export class ClassService {
   }
 
   // Update
-  async addFeed(id: Types.ObjectId, feedId: Types.ObjectId) {
-    await this.classModel.updateOne({ _id: id }, { $push: { feed: feedId } });
+  async addPost(id: Types.ObjectId, postId: Types.ObjectId) {
+    await this.classModel.updateOne({ _id: id }, { $push: { post: postId } });
   }
 
   async addMembers(id: Types.ObjectId, userIds: Types.ObjectId[]) {

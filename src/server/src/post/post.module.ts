@@ -4,25 +4,25 @@ import { ClassService } from 'src/class/class.service';
 import {
   Class,
   ClassSchema,
-  Feed,
-  FeedSchema,
+  Post,
+  PostSchema,
   User,
   UserSchema,
 } from 'src/schemas';
-import { FeedController } from './feed.controller';
-import { FeedService } from './feed.service';
-import { PostService } from './post/post.service';
+import { PostService } from './post.service';
+import { CommentService } from './comment/comment.service';
+import { PostController } from './post.controller';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Class.name, schema: ClassSchema },
       { name: User.name, schema: UserSchema },
-      { name: Feed.name, schema: FeedSchema },
+      { name: Post.name, schema: PostSchema },
     ]),
   ],
-  controllers: [FeedController],
-  providers: [FeedService, ClassService, PostService],
-  exports: [FeedService],
+  controllers: [PostController],
+  providers: [PostService, ClassService, CommentService],
+  exports: [PostService],
 })
-export class FeedModule {}
+export class PostModule {}

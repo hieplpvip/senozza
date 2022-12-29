@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsString, IsUUID } from 'class-validator';
 import { dto, include, nested, transform } from 'dto-mapper';
 import { Types } from 'mongoose';
-import { PostDto } from '../post/dto/post.dto';
+import { CommentDto } from '../comment/dto';
 
 @dto()
-export class FeedDto {
+export class PostDto {
   @include()
   @transform({
     toDto: (_id) => _id.toString(),
@@ -26,9 +26,9 @@ export class FeedDto {
   category: string;
 
   @include()
-  @nested(() => PostDto, false)
-  @ApiProperty({ type: () => PostDto })
-  question: PostDto;
+  @nested(() => CommentDto, false)
+  @ApiProperty({ type: () => CommentDto })
+  question: CommentDto;
 
   @include()
   @ApiProperty()
