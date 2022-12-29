@@ -7,7 +7,7 @@ import { UserRegisterDto } from '../user/dto/user-register.dto';
 import { buildMapper } from 'dto-mapper';
 import { UserDto } from 'src/user/dto';
 
-@Controller('auth')
+@Controller()
 @ApiTags('auth')
 export class AuthController {
   constructor(readonly authService: AuthService) {}

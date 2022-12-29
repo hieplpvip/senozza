@@ -4,6 +4,8 @@ import { ClassService } from 'src/class/class.service';
 import {
   Class,
   ClassSchema,
+  Notification,
+  NotificationSchema,
   Post,
   PostSchema,
   User,
@@ -12,6 +14,8 @@ import {
 import { PostService } from './post.service';
 import { CommentService } from './comment/comment.service';
 import { PostController } from './post.controller';
+import { NotificationService } from 'src/notification/notification.service';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -19,10 +23,17 @@ import { PostController } from './post.controller';
       { name: Class.name, schema: ClassSchema },
       { name: User.name, schema: UserSchema },
       { name: Post.name, schema: PostSchema },
+      { name: Notification.name, schema: NotificationSchema },
     ]),
   ],
   controllers: [PostController],
-  providers: [PostService, ClassService, CommentService],
+  providers: [
+    PostService,
+    ClassService,
+    CommentService,
+    NotificationService,
+    UserService,
+  ],
   exports: [PostService],
 })
 export class PostModule {}

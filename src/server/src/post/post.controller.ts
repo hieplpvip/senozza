@@ -13,6 +13,8 @@ import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ClassService } from 'src/class/class.service';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
+import { NotificationCreateDto } from 'src/notification/dto';
+import { NotificationService } from 'src/notification/notification.service';
 import { UserDto } from 'src/user/dto';
 import { PostCreateDto, PostDto, PostUpdateDto } from './dto';
 import { PostService } from './post.service';
@@ -23,6 +25,7 @@ export class PostController {
   constructor(
     private readonly postService: PostService,
     private readonly classService: ClassService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   /** CREATE */
@@ -39,8 +42,25 @@ export class PostController {
     postCreateDto.classId = new Types.ObjectId(classId);
     postCreateDto.question.user = new Types.ObjectId(userDto._id);
     const post = await this.postService.create(postCreateDto);
+
     // add post to class
     this.classService.addPost(postCreateDto.classId, post._id);
+
+    // add notification
+    const postType =
+      postCreateDto.category == 'announcement'
+        ? 'an announcement'
+        : 'a question';
+    const { courseCode, courseName } = await this.classService.find(
+      postCreateDto.classId,
+    );
+    const notification = new NotificationCreateDto({
+      message: `${userDto.firstName} ${userDto.lastName} has posted ${postType} in ${courseCode}-${courseName}`,
+      createdAt: new Date().toISOString(),
+      to: [],
+      class: postCreateDto.classId,
+    });
+    await this.notificationService.create(notification);
 
     return await this.postService.postMapper(post);
   }

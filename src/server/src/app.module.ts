@@ -16,6 +16,7 @@ import { RouterModule } from '@nestjs/core';
 import configuration from './common/config/configuration';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './post/comment/comment.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -26,6 +27,10 @@ import { CommentModule } from './post/comment/comment.module';
     }),
     MongooseModule.forRoot(process.env.DB_URI),
     RouterModule.register([
+      {
+        path: 'auth',
+        module: AuthModule,
+      },
       {
         path: 'user',
         module: UserModule,
@@ -44,11 +49,16 @@ import { CommentModule } from './post/comment/comment.module';
           },
         ],
       },
+      {
+        path: 'notification',
+        module: NotificationModule,
+      },
     ]),
     UserModule,
     ClassModule,
     PostModule,
     CommentModule,
+    NotificationModule,
     AuthModule,
   ],
   controllers: [AppController],
