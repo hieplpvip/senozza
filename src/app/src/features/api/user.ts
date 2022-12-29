@@ -1,37 +1,39 @@
 import { baseApiSlice } from './base';
-import { User } from '../../interface';
+import { ClassDto, UserDto } from '../../interface';
 
-interface UpdateProfileRequest {
-  firstName: string;
-  lastName: string;
-  birth: string;
-  imgUrl: string;
+interface editProfileRequest {
+  firstName?: string;
+  lastName?: string;
+  birth?: string;
+  imgUrl?: string;
 }
 
 export const userApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getUserProfile: builder.query<User, void>({
+    getUserProfile: builder.query<UserDto, void>({
       query: () => ({
         url: '/user/info',
         method: 'GET',
       }),
+      providesTags: [{ type: 'User', id: 'PROFILE' }],
     }),
 
-    getJoinedClasses: builder.query<void, void>({
+    getJoinedClasses: builder.query<ClassDto[], void>({
       query: () => ({
         url: '/user/listClasses',
         method: 'GET',
       }),
     }),
 
-    updateUserProfile: builder.mutation<User, UpdateProfileRequest>({
+    editUserProfile: builder.mutation<UserDto, editProfileRequest>({
       query: (body) => ({
-        url: `/user/update`,
+        url: '/user/update',
         method: 'POST',
         body,
       }),
+      invalidatesTags: [{ type: 'User', id: 'PROFILE' }],
     }),
   }),
 });
 
-export const { useGetUserProfileQuery, useGetJoinedClassesQuery, useUpdateUserProfileMutation } = userApiSlice;
+export const { useGetUserProfileQuery, useGetJoinedClassesQuery, useEditUserProfileMutation } = userApiSlice;

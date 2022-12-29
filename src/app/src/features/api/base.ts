@@ -31,4 +31,5 @@ const baseQueryWithSignOut: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQu
 export const baseApiSlice = createApi({
   baseQuery: baseQueryWithSignOut,
   endpoints: () => ({}),
+  tagTypes: ['Class', 'Comment', 'Post', 'User'],
 });

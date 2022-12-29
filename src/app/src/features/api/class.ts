@@ -1,38 +1,61 @@
 import { baseApiSlice } from './base';
+import { ClassDto } from '../../interface';
+
+interface CreateClassArg {
+  courseCode: string;
+  courseName: string;
+  year: number;
+  semester: number;
+  categories: string[];
+}
+
+interface EditClassArg {
+  classId: string;
+  body: {
+    courseCode?: string;
+    courseName?: string;
+    year?: number;
+    semester?: number;
+    categories?: string[];
+    archived?: boolean;
+  };
+}
+
+interface InviteToClassByEmailsArg {
+  classId: string;
+  emails: string[];
+}
 
 export const classApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    createClass: builder.mutation<void, void>({
-      query: () => ({
-        url: `/class/create`,
+    createClass: builder.mutation<ClassDto, CreateClassArg>({
+      query: (body) => ({
+        url: '/class/create',
         method: 'POST',
+        body,
       }),
     }),
 
-    updateClass: builder.mutation<void, void>({
-      query: () => ({
-        url: `/class/update`,
+    editClass: builder.mutation<ClassDto, EditClassArg>({
+      query: ({ classId, body }) => ({
+        url: '/class/update',
         method: 'PUT',
+        params: { classId },
+        body,
       }),
     }),
 
     deleteClass: builder.mutation<void, string>({
       query: (classId) => ({
-        url: `/class/delete`,
+        url: '/class/delete',
         method: 'DELETE',
         params: { classId },
       }),
     }),
 
-    inviteToClassByMails: builder.mutation<
-      void,
-      {
-        classId: string;
-        emails: string[];
-      }
-    >({
+    inviteToClassByEmails: builder.mutation<void, InviteToClassByEmailsArg>({
       query: ({ classId, emails }) => ({
-        url: `/class/invite`,
+        url: '/class/invite',
         method: 'PUT',
         body: emails,
         params: { classId },
@@ -41,7 +64,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
 
     joinClassByCode: builder.mutation<void, string>({
       query: (code) => ({
-        url: `/class/join`,
+        url: '/class/join',
         method: 'PUT',
         params: { code },
       }),
@@ -49,7 +72,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
 
     leaveClass: builder.mutation<void, string>({
       query: (classId) => ({
-        url: `/class/leave`,
+        url: '/class/leave',
         method: 'PUT',
         params: { classId },
       }),
@@ -59,8 +82,9 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
 
 export const {
   useCreateClassMutation,
-  useUpdateClassMutation,
+  useEditClassMutation,
   useDeleteClassMutation,
+  useInviteToClassByEmailsMutation,
   useJoinClassByCodeMutation,
   useLeaveClassMutation,
 } = classApiSlice;

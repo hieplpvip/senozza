@@ -11,8 +11,8 @@ const config = {
     './generated_apis/class.ts': {
       filterEndpoints: [/^class/],
     },
-    './generated_apis/feed.ts': {
-      filterEndpoints: [/^feed/],
+    './generated_apis/comment.ts': {
+      filterEndpoints: [/^comment/],
     },
     './generated_apis/post.ts': {
       filterEndpoints: [/^post/],

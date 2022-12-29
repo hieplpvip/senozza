@@ -1,7 +1,12 @@
 import { baseApiSlice } from './base';
-import { User, UserRole } from '../../interface';
+import { UserDto, UserRole } from '../../interface';
 
-interface SignUpRequest {
+interface SignInArg {
+  email: string;
+  password: string;
+}
+
+interface SignUpArg {
   email: string;
   firstName: string;
   lastName: string;
@@ -11,19 +16,14 @@ interface SignUpRequest {
   password: string;
 }
 
-interface SignInRequest {
-  email: string;
-  password: string;
-}
-
 interface AuthResponse {
   accessToken: string;
-  user: User;
+  user: UserDto;
 }
 
 export const authApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    signIn: builder.mutation<AuthResponse, SignInRequest>({
+    signIn: builder.mutation<AuthResponse, SignInArg>({
       query: (credentials) => ({
         url: '/auth/login',
         method: 'POST',
@@ -31,7 +31,7 @@ export const authApiSlice = baseApiSlice.injectEndpoints({
       }),
     }),
 
-    signUp: builder.mutation<AuthResponse, SignUpRequest>({
+    signUp: builder.mutation<AuthResponse, SignUpArg>({
       query: (credentials) => ({
         url: '/auth/register',
         method: 'POST',

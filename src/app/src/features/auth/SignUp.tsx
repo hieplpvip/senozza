@@ -134,7 +134,6 @@ export default function SignUp() {
                   defaultValue='student'
                   {...register('role')}>
                   <option value='student'>Student</option>
-                  <option value='ta'>Teacher Assistant</option>
                   <option value='instructor'>Instructor</option>
                 </select>
               </div>

@@ -1,10 +1,9 @@
 export enum UserRole {
   INSTRUCTOR = 'instructor',
   STUDENT = 'student',
-  TEACHER_ASSISTANT = 'ta',
 }
 
-export interface User {
+export type UserDto = {
   _id: string;
   email: string;
   firstName: string;
@@ -12,4 +11,4 @@ export interface User {
   birth: string;
   role: UserRole;
   imgUrl: string;
-}
+};

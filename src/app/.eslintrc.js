@@ -24,5 +24,5 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: ['.eslintrc.js', 'openapi-config.js', 'tailwind.config.js'],
+  ignorePatterns: ['.eslintrc.js', 'openapi-config.js', 'tailwind.config.js', 'generated_apis'],
 };
