@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSignUpMutation } from '../api';
 import { UserRole } from '../../interface';
+import { simpleHash } from '../../utils';
 
 interface SignUpFormInput {
   email: string;
@@ -21,7 +22,10 @@ export default function SignUp() {
 
   const onSubmit = async (data: SignUpFormInput) => {
     try {
-      await signUp(data).unwrap();
+      await signUp({
+        ...data,
+        imgUrl: `https://avatars.dicebear.com/api/bottts/${simpleHash(data.email)}.svg?size=128`,
+      }).unwrap();
       const origin = location.state?.from?.pathname || '/dashboard';
       navigate(origin);
     } catch (err) {
