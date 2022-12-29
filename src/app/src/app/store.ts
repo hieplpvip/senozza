@@ -1,5 +1,7 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
+
 import { baseApiSlice } from '../features/api/base';
+import { listenerMiddleware } from '../features/api/listener';
 import authReducer from '../features/auth/authSlice';
 
 export const store = configureStore({
@@ -7,7 +9,8 @@ export const store = configureStore({
     [baseApiSlice.reducerPath]: baseApiSlice.reducer,
     auth: authReducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApiSlice.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(baseApiSlice.middleware, listenerMiddleware.middleware),
 });
 
 export type AppDispatch = typeof store.dispatch;
