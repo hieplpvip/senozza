@@ -1,5 +1,6 @@
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
+import { MacScrollbar } from 'mac-scrollbar';
 
 import { MarkdownPreview } from '../../../components/Markdown';
 
@@ -39,14 +40,15 @@ function CommentBox() {
           </span>
         </nav>
       </div>
-      <section className='min-h-0 flex-1 overflow-y-auto'>
+
+      <MacScrollbar as='section' className='min-h-0 flex-1'>
         <div className='container mx-auto px-0 sm:px-5'>
           <Comment />
           <Comment />
           <Comment />
           <Comment />
         </div>
-      </section>
+      </MacScrollbar>
     </div>
   );
 }

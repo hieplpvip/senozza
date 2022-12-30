@@ -1,3 +1,5 @@
+import { MacScrollbar } from 'mac-scrollbar';
+
 import { classNames } from '../../../utils';
 
 const messages = [
@@ -95,7 +97,7 @@ export default function PostList() {
           Sorted by date
         </div>
       </div>
-      <nav aria-label='Message list' className='min-h-0 flex-1 overflow-y-auto'>
+      <MacScrollbar as='nav' className='min-h-0 flex-1'>
         <ul role='list' className='divide-y divide-gray-200 border-b border-gray-200'>
           {messages.map((message) => (
             <li
@@ -123,7 +125,7 @@ export default function PostList() {
             </li>
           ))}
         </ul>
-      </nav>
+      </MacScrollbar>
     </div>
   );
 }

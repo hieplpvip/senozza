@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { theme as chakraTheme } from '@chakra-ui/theme';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import 'mac-scrollbar/dist/mac-scrollbar.css';
 
 import resolveConfig from 'tailwindcss/resolveConfig';
 import tailwindConfig from './tailwind.config';

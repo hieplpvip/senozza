@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
+import { MacScrollbar } from 'mac-scrollbar';
 
 import { classNames } from '../../utils';
 
@@ -99,7 +100,7 @@ function Members({ setPanel }: { setPanel: (panel: string) => void }) {
           Add student
         </Button>
       </div>
-      <div className='mt-8 overflow-auto rounded-lg align-middle shadow ring-1 ring-black ring-opacity-5'>
+      <MacScrollbar className='mt-8 rounded-lg align-middle shadow ring-1 ring-black ring-opacity-5'>
         <table className='min-w-full divide-y divide-gray-300'>
           <thead className='sticky top-0 bg-gray-50'>
             <tr>
@@ -142,7 +143,7 @@ function Members({ setPanel }: { setPanel: (panel: string) => void }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </MacScrollbar>
     </div>
   );
 }
@@ -205,14 +206,14 @@ export default function ClassSettings() {
   return (
     <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>
       <div className='relative z-0 flex flex-1 overflow-hidden'>
-        <aside className='relative flex w-1/3 flex-shrink-0 flex-col overflow-y-auto border-r-2 border-gray-200'>
+        <aside className='relative flex w-1/3 flex-shrink-0 flex-col border-r-2 border-gray-200'>
           <div className='border-blue-gray-200 flex h-16 flex-shrink-0 flex-col justify-center border-b bg-white px-4'>
             <div className='flex flex-col items-baseline'>
               <h2 className='text-lg font-medium text-gray-900'>Settings</h2>
               <p className='text-sm font-medium text-gray-500'>CS300: Elements of Software Engineering</p>
             </div>
           </div>
-          <div className='min-h-0 flex-1 overflow-y-auto'>
+          <MacScrollbar className='min-h-0 flex-1'>
             {panels.map((item) => (
               <button
                 type='button'
@@ -229,7 +230,7 @@ export default function ClassSettings() {
                 <p className='mt-1 text-sm text-gray-500'>{item.description}</p>
               </button>
             ))}
-          </div>
+          </MacScrollbar>
         </aside>
 
         <main className='relative z-0 flex-1 overflow-hidden focus:outline-none'>
