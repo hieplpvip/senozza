@@ -3,6 +3,7 @@ import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { buildMapper } from 'dto-mapper';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ClassService } from 'src/class/class.service';
 import { ClassDto } from 'src/class/dto';
 import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto, UserUpdateDto } from './dto';
@@ -12,7 +13,10 @@ import { UserService } from './user.service';
 @Controller()
 @ApiTags('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly classService: ClassService,
+  ) {}
 
   /** CREATE */
 
@@ -56,7 +60,11 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: Boolean })
   async delete(@ExtractedUser() userDto: UserDto): Promise<boolean> {
-    await this.userService.delete(new Types.ObjectId(userDto._id));
+    const { classes } = await this.userService.findWithClass(userDto.email);
+    await Promise.all([
+      this.userService.delete(new Types.ObjectId(userDto._id)),
+      this.classService.leaveMany(classes, new Types.ObjectId(userDto._id)),
+    ]);
     return true;
   }
 }

@@ -69,6 +69,7 @@ export class ClassService {
       .exec();
   }
 
+  // Delete
   async leave(id: Types.ObjectId, memberId: Types.ObjectId) {
     await this.classModel.updateOne(
       { _id: id },
@@ -76,7 +77,17 @@ export class ClassService {
     );
   }
 
-  // Delete
+  async leaveMany(ids: Types.ObjectId[], memberId: Types.ObjectId) {
+    await this.classModel.updateMany(
+      { _id: { $in: ids } },
+      { $pull: { members: memberId } },
+    );
+  }
+
+  async removePost(id: Types.ObjectId, postId: Types.ObjectId) {
+    await this.classModel.updateOne({ _id: id }, { $pull: { post: postId } });
+  }
+
   async delete(id: Types.ObjectId) {
     await this.classModel.findByIdAndDelete(id);
   }

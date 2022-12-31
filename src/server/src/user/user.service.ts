@@ -77,11 +77,18 @@ export class UserService {
     );
   }
 
-  async leave(_id: Types.ObjectId, classId: Types.ObjectId) {
+  // Delete
+  async leaveClass(_id: Types.ObjectId, classId: Types.ObjectId) {
     await this.userModel.updateOne({ _id }, { $pull: { classes: classId } });
   }
 
-  // Delete
+  async leaveClassMany(_ids: Types.ObjectId[], classId: Types.ObjectId) {
+    await this.userModel.updateMany(
+      { _id: { $in: _ids } },
+      { $pull: { classes: classId } },
+    );
+  }
+
   async delete(id: Types.ObjectId) {
     await this.userModel.findByIdAndDelete(id);
   }

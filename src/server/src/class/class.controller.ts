@@ -145,8 +145,20 @@ export class ClassController {
     const userId = new Types.ObjectId(userDto._id);
     const classId = new Types.ObjectId(_id);
     await Promise.all([
-      this.userService.leave(userId, classId),
+      this.userService.leaveClass(userId, classId),
       this.classService.leave(classId, userId),
+    ]);
+  }
+
+  @Put('kick')
+  @Roles(UserRole.INSTRUCTOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async kick(@Query('classId') _id: string, @Query('userId') userId: string) {
+    const classId = new Types.ObjectId(_id);
+    const user = new Types.ObjectId(userId);
+    await Promise.all([
+      this.userService.leaveClass(user, classId),
+      this.classService.leave(classId, user),
     ]);
   }
 
@@ -154,7 +166,16 @@ export class ClassController {
   @Delete('delete')
   @Roles(UserRole.INSTRUCTOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async delete(@Query('classId') classId: string) {
-    await this.classService.delete(new Types.ObjectId(classId));
+  @ApiOkResponse({ type: Boolean })
+  async delete(@Query('classId') classId: string): Promise<boolean> {
+    const { members } = await this.classService.find(
+      new Types.ObjectId(classId),
+    );
+    await Promise.all([
+      this.classService.delete(new Types.ObjectId(classId)),
+      this.userService.leaveClassMany(members, new Types.ObjectId(classId)),
+    ]);
+
+    return true;
   }
 }

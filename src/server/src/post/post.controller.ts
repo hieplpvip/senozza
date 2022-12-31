@@ -114,7 +114,19 @@ export class PostController {
   /** DELETE */
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
-  async delete(@Query('postId') postId: string) {
-    await this.postService.delete(new Types.ObjectId(postId));
+  @ApiOkResponse({ type: Boolean })
+  async delete(
+    @Query('classId') classId: string,
+    @Query('postId') postId: string,
+  ): Promise<boolean> {
+    await Promise.all([
+      this.postService.delete(new Types.ObjectId(postId)),
+      this.classService.removePost(
+        new Types.ObjectId(classId),
+        new Types.ObjectId(postId),
+      ),
+    ]);
+
+    return true;
   }
 }
