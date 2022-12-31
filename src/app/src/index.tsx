@@ -11,14 +11,10 @@ import tailwindConfig from './tailwind.config';
 
 const tailwind = resolveConfig(tailwindConfig);
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 chakraTheme.colors.blue = tailwind!.theme!.colors!.blue;
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 chakraTheme.colors.indigo = tailwind!.theme!.colors!.indigo;
 
 import { router } from './app/router';
@@ -43,7 +39,6 @@ const theme = extendTheme({
   },
 });
 
-// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 
