@@ -11,9 +11,11 @@ import tailwindConfig from './tailwind.config';
 
 const tailwind = resolveConfig(tailwindConfig);
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 chakraTheme.colors.blue = tailwind!.theme!.colors!.blue;
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 chakraTheme.colors.indigo = tailwind!.theme!.colors!.indigo;
 

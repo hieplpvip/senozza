@@ -23,6 +23,7 @@ export const userApiSlice = baseApiSlice.injectEndpoints({
         url: '/user/listClasses',
         method: 'GET',
       }),
+      providesTags: [{ type: 'Class', id: 'LIST' }],
     }),
 
     editUserProfile: builder.mutation<UserDto, editProfileRequest>({

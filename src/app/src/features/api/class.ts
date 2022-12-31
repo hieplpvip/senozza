@@ -28,12 +28,22 @@ interface InviteToClassByEmailsArg {
 
 export const classApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    getClass: builder.query<ClassDto, string>({
+      query: (classId) => ({
+        url: '/class/find',
+        method: 'GET',
+        params: { classId },
+      }),
+      providesTags: (_result, _error, arg) => [{ type: 'Class', id: arg }],
+    }),
+
     createClass: builder.mutation<ClassDto, CreateClassArg>({
       query: (body) => ({
         url: '/class/create',
         method: 'POST',
         body,
       }),
+      invalidatesTags: [{ type: 'Class', id: 'LIST' }],
     }),
 
     editClass: builder.mutation<ClassDto, EditClassArg>({
@@ -43,6 +53,10 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         params: { classId },
         body,
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Class', id: 'LIST' },
+        { type: 'Class', id: arg.classId },
+      ],
     }),
 
     deleteClass: builder.mutation<void, string>({
@@ -51,6 +65,10 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         method: 'DELETE',
         params: { classId },
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Class', id: 'LIST' },
+        { type: 'Class', id: arg },
+      ],
     }),
 
     inviteToClassByEmails: builder.mutation<void, InviteToClassByEmailsArg>({
@@ -60,6 +78,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         body: emails,
         params: { classId },
       }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Class', id: arg.classId }],
     }),
 
     joinClassByCode: builder.mutation<void, string>({
@@ -68,6 +87,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         method: 'PUT',
         params: { code },
       }),
+      invalidatesTags: [{ type: 'Class', id: 'LIST' }],
     }),
 
     leaveClass: builder.mutation<void, string>({
@@ -76,11 +96,16 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         method: 'PUT',
         params: { classId },
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Class', id: 'LIST' },
+        { type: 'Class', id: arg },
+      ],
     }),
   }),
 });
 
 export const {
+  useGetClassQuery,
   useCreateClassMutation,
   useEditClassMutation,
   useDeleteClassMutation,

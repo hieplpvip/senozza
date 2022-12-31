@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { Listbox, Transition } from '@headlessui/react';
@@ -13,11 +13,13 @@ import {
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import { MacScrollbar } from 'mac-scrollbar';
 
+import CreateClassModal from './components/CreateClassModal';
 import JoinClassModal from './components/JoinClassModal';
 
-import { useGetUserProfileQuery } from '../api';
+import { useGetClassQuery, useGetJoinedClassesQuery, useGetUserProfileQuery } from '../api';
 import { signOut } from '../auth/authSlice';
-import { useAppDispatch } from '../../app/hooks';
+import { setSelectedClassId } from '../class/classSlide';
+import { useAppDispatch, useAppSelector, useUserProfile } from '../../app/hooks';
 import { classNames } from '../../utils';
 
 const navigation = [
@@ -26,46 +28,45 @@ const navigation = [
   { name: 'Class Feed', to: 'feed', icon: UserGroupIcon },
 ];
 
-const people = [
-  {
-    id: 1,
-    name: 'CS311',
-    avatar:
-      'https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    id: 2,
-    name: 'CS426',
-    avatar:
-      'https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    id: 3,
-    name: 'CS300',
-    avatar:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80',
-  },
-];
-
 function ClassSelector() {
-  const [selected, setSelected] = useState(-1);
-  const { isOpen: isCreateClassOpen, onOpen: onCreateClassOpen, onClose: onCreateClassClose } = useDisclosure();
+  const userProfile = useUserProfile();
+  const dispatch = useAppDispatch();
+  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
+
+  const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
+  const { data: joinedClasses } = useGetJoinedClassesQuery();
+  const { data: selectedClass, isSuccess: hasClassData } = useGetClassQuery(selectedClassId || '', {
+    skip: !selectedClassId,
+  });
+
+  const handleSelect = (classId: string) => {
+    dispatch(setSelectedClassId(classId));
+  };
 
   return (
     <>
-      <JoinClassModal isOpen={isCreateClassOpen} onClose={onCreateClassClose} />
-      <Listbox value={selected} onChange={setSelected}>
+      {userProfile.role === 'instructor' ? (
+        <CreateClassModal isOpen={isModalOpen} onClose={onModalClose} />
+      ) : (
+        <JoinClassModal isOpen={isModalOpen} onClose={onModalClose} />
+      )}
+      <Listbox value={selectedClassId || ''} onChange={handleSelect}>
         {({ open }) => (
           <>
             <div className='relative mt-1'>
               <Listbox.Button className='relative w-full cursor-default border border-gray-300 bg-white py-2 pl-3 pr-10 text-left focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm'>
                 <span className='flex items-center'>
-                  {selected === -1 ? (
+                  {!selectedClassId ? (
                     <span className='mx-auto block italic text-gray-400'>No class selected</span>
+                  ) : !hasClassData ? (
+                    <span className='mx-auto block italic text-gray-400'>Loading</span>
                   ) : (
                     <>
-                      <img src={people[selected].avatar} alt='' className='h-6 w-6 flex-shrink-0 rounded-full' />
-                      <span className='ml-3 block truncate'>{people[selected].name}</span>
+                      <img
+                        src={'https://ui-avatars.com/api/?background=random&name=' + selectedClass.courseName}
+                        className='h-6 w-6 flex-shrink-0 rounded-full'
+                      />
+                      <span className='ml-3 block truncate'>{selectedClass.courseName}</span>
                     </>
                   )}
                 </span>
@@ -81,53 +82,60 @@ function ClassSelector() {
                 leaveFrom='opacity-100'
                 leaveTo='opacity-0'>
                 <Listbox.Options className='absolute z-10 mt-1 max-h-56 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm'>
-                  <Listbox.Option key={-1} value={selected}>
+                  <Listbox.Option key={-1} value=''>
                     <div className='p-2'>
                       <button
                         type='button'
                         className='mx-auto w-full rounded-full border border-gray-300 p-1 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-                        onClick={onCreateClassOpen}>
+                        onClick={onModalOpen}>
                         <span className='text-sm font-medium text-gray-500'>
                           <PlusIcon className='-mt-[0.22rem] mr-1 inline-block h-5 w-5' aria-hidden='true' />
-                          Create new class
+                          {userProfile.role === 'instructor' ? 'Create new class' : 'Join class'}
                         </span>
                       </button>
                     </div>
                   </Listbox.Option>
 
-                  {people.map((person, index) => (
-                    <Listbox.Option
-                      key={person.id}
-                      className={({ active }) =>
-                        classNames(
-                          active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                          'relative cursor-default select-none py-2 pl-3 pr-9',
-                        )
-                      }
-                      value={index}>
-                      {({ selected, active }) => (
-                        <>
-                          <div className='flex items-center'>
-                            <img src={person.avatar} alt='' className='h-6 w-6 flex-shrink-0 rounded-full' />
-                            <span
-                              className={classNames(selected ? 'font-semibold' : 'font-normal', 'ml-3 block truncate')}>
-                              {person.name}
-                            </span>
-                          </div>
+                  {joinedClasses &&
+                    joinedClasses.map((c) => (
+                      <Listbox.Option
+                        key={c._id}
+                        value={c._id}
+                        className={({ active }) =>
+                          classNames(
+                            active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                            'relative cursor-default select-none py-2 pl-3 pr-9',
+                          )
+                        }>
+                        {({ selected, active }) => (
+                          <>
+                            <div className='flex items-center'>
+                              <img
+                                src={'https://ui-avatars.com/api/?background=random&name=' + c.courseName}
+                                className='h-6 w-6 flex-shrink-0 rounded-full'
+                              />
+                              <span
+                                className={classNames(
+                                  selected ? 'font-semibold' : 'font-normal',
+                                  'ml-3 block truncate',
+                                )}>
+                                {c.courseCode} - {c.courseName}
+                              </span>
+                            </div>
 
-                          {selected ? (
-                            <span
-                              className={classNames(
-                                active ? 'text-white' : 'text-indigo-600',
-                                'absolute inset-y-0 right-0 flex items-center pr-4',
-                              )}>
-                              <CheckIcon className='h-5 w-5' aria-hidden='true' />
-                            </span>
-                          ) : null}
-                        </>
-                      )}
-                    </Listbox.Option>
-                  ))}
+                            {selected ? (
+                              <span
+                                className={classNames(
+                                  active ? 'text-white' : 'text-indigo-600',
+                                  'absolute inset-y-0 right-0 flex items-center pr-4',
+                                )}>
+                                <CheckIcon className='h-5 w-5' aria-hidden='true' />
+                              </span>
+                            ) : null}
+                          </>
+                        )}
+                      </Listbox.Option>
+                    ))}
                 </Listbox.Options>
               </Transition>
             </div>

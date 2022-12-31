@@ -19,7 +19,7 @@ export default function SignIn() {
       const origin = location.state?.from?.pathname || '/dashboard';
       navigate(origin);
     } catch (err) {
-      console.error('Failed to sign in:', err);
+      alert(`Failed to sign in: ${err}`);
     }
   };
 
