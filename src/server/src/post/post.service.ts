@@ -46,15 +46,7 @@ export class PostService {
   async listAll(classId: Types.ObjectId): Promise<Post[]> {
     return this.postModel
       .find({ classId })
-      .sort('-question.createdDate')
-      .populate('question.user')
-      .exec();
-  }
-
-  async listPin(classId: Types.ObjectId): Promise<Post[]> {
-    return this.postModel
-      .find({ classId, pin: true })
-      .sort('-question.createdDate')
+      .sort('-pin -question.createdDate')
       .populate('question.user')
       .exec();
   }
@@ -71,8 +63,13 @@ export class PostService {
   }
 
   /** UPDATE */
-  async edit(postId: Types.ObjectId, postUpdateDto: PostUpdateDto) {
-    await this.postModel.updateOne({ _id: postId }, flatten(postUpdateDto));
+  async edit(
+    postId: Types.ObjectId,
+    postUpdateDto: PostUpdateDto,
+  ): Promise<Post> {
+    return this.postModel
+      .findOneAndUpdate({ _id: postId }, flatten(postUpdateDto))
+      .exec();
   }
 
   /** DELETE */

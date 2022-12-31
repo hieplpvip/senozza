@@ -75,15 +75,6 @@ export class PostController {
     return await this.postService.postsMapper(posts);
   }
 
-  @Get('pin')
-  @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: PostDto, isArray: true })
-  async listPin(@Query('classId') classId: string): Promise<PostDto[]> {
-    const posts = await this.postService.listPin(new Types.ObjectId(classId));
-
-    return await this.postService.postsMapper(posts);
-  }
-
   @Get('filter')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: PostDto, isArray: true })
@@ -107,8 +98,12 @@ export class PostController {
     @ExtractedUser() userDto: UserDto,
     @Query('postId') postId: string,
     @Body() postUpdateDto: PostUpdateDto,
-  ) {
-    await this.postService.edit(new Types.ObjectId(postId), postUpdateDto);
+  ): Promise<PostDto> {
+    const post = await this.postService.edit(
+      new Types.ObjectId(postId),
+      postUpdateDto,
+    );
+    return this.postService.postMapper(post);
   }
 
   /** DELETE */
