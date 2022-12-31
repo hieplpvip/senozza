@@ -39,6 +39,13 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Body() classCreateDto: ClassCreateDto,
   ): Promise<ClassDto> {
+    classCreateDto.archived = false;
+    classCreateDto.inviteCode = this.classService.generateCode();
+    while (
+      (await this.classService.findIdByCode(classCreateDto.inviteCode)) !== null
+    ) {
+      classCreateDto.inviteCode = this.classService.generateCode();
+    }
     const createdClass = await this.classService.create(classCreateDto);
 
     const userIds = [new Types.ObjectId(userDto._id)];
@@ -94,16 +101,6 @@ export class ClassController {
     );
 
     return this.classService.classMapper(foundClass);
-  }
-
-  @Get('renewCode')
-  @Roles(UserRole.INSTRUCTOR)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOkResponse({ type: String })
-  async renewCode(@Query('classId') classId: string): Promise<string> {
-    const inviteCode = this.classService.generateCode();
-    await this.classService.update(new Types.ObjectId(classId), { inviteCode });
-    return inviteCode;
   }
 
   @Put('invite')

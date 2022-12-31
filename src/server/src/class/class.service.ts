@@ -24,8 +24,6 @@ export class ClassService {
 
   // Create
   async create(classCreateDto: ClassCreateDto): Promise<Class> {
-    classCreateDto.archived = false;
-    classCreateDto.inviteCode = this.generateCode();
     const createdClass = new this.classModel(classCreateDto);
     return createdClass.save();
   }
