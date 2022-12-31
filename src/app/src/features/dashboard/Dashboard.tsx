@@ -1,14 +1,14 @@
 import { Fragment } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { Listbox, Transition } from '@headlessui/react';
 import {
+  AcademicCapIcon,
   ArrowLeftOnRectangleIcon,
-  ChatBubbleLeftEllipsisIcon,
   BellIcon,
   CogIcon,
-  UserGroupIcon,
   PlusIcon,
+  InboxStackIcon,
 } from '@heroicons/react/24/outline';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/24/solid';
 import { MacScrollbar } from 'mac-scrollbar';
@@ -22,16 +22,17 @@ import { setSelectedClassId } from '../class/classSlide';
 import { useAppDispatch, useAppSelector, useUserProfile } from '../../app/hooks';
 import { classNames } from '../../utils';
 
-const navigation = [
-  { name: 'Notifications', to: 'notifications', icon: BellIcon },
-  { name: 'Chatroom', to: 'chat', icon: ChatBubbleLeftEllipsisIcon },
-  { name: 'Class Feed', to: 'feed', icon: UserGroupIcon },
-];
-
-function ClassSelector() {
+function ClassSelector({
+  isClassModalOpen,
+  onClassModalOpen,
+  onClassModalClose,
+}: {
+  isClassModalOpen: boolean;
+  onClassModalOpen: () => void;
+  onClassModalClose: () => void;
+}) {
   const userProfile = useUserProfile();
   const dispatch = useAppDispatch();
-  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
 
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const { data: joinedClasses } = useGetJoinedClassesQuery();
@@ -46,9 +47,9 @@ function ClassSelector() {
   return (
     <>
       {userProfile.role === 'instructor' ? (
-        <CreateClassModal isOpen={isModalOpen} onClose={onModalClose} />
+        <CreateClassModal isOpen={isClassModalOpen} onClose={onClassModalClose} />
       ) : (
-        <JoinClassModal isOpen={isModalOpen} onClose={onModalClose} />
+        <JoinClassModal isOpen={isClassModalOpen} onClose={onClassModalClose} />
       )}
       <Listbox value={selectedClassId || ''} onChange={handleSelect}>
         {({ open }) => (
@@ -87,7 +88,7 @@ function ClassSelector() {
                       <button
                         type='button'
                         className='mx-auto w-full rounded-full border border-gray-300 p-1 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
-                        onClick={onModalOpen}>
+                        onClick={onClassModalOpen}>
                         <span className='text-sm font-medium text-gray-500'>
                           <PlusIcon className='-mt-[0.22rem] mr-1 inline-block h-5 w-5' aria-hidden='true' />
                           {userProfile.role === 'instructor' ? 'Create new class' : 'Join class'}
@@ -146,7 +147,13 @@ function ClassSelector() {
   );
 }
 
-function NavigationLink(item: { name: string; to: string; icon: typeof BellIcon }) {
+function NavigationLink(item: {
+  name: string;
+  to: string;
+  icon: typeof InboxStackIcon;
+  classNames?: string;
+  disabled?: boolean;
+}) {
   const location = useLocation();
   const current = location.pathname.endsWith(item.to);
 
@@ -155,7 +162,11 @@ function NavigationLink(item: { name: string; to: string; icon: typeof BellIcon 
       key={item.name}
       to={item.to}
       className={classNames(
-        current ? 'bg-gray-200 text-gray-900' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
+        item.classNames || '',
+        current
+          ? 'bg-gray-200 text-gray-900'
+          : (item.disabled ? 'pointer-events-none text-gray-400' : 'text-gray-600') +
+              ' hover:bg-gray-50 hover:text-gray-900',
         'group flex items-center px-3 py-2 text-sm font-medium',
       )}>
       <item.icon
@@ -168,8 +179,12 @@ function NavigationLink(item: { name: string; to: string; icon: typeof BellIcon 
 }
 
 export default function Dashboard() {
+  const location = useLocation();
   const dispatch = useAppDispatch();
-  const { data: user, isLoading, isSuccess } = useGetUserProfileQuery();
+  const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
+  const { data: joinedClasses } = useGetJoinedClassesQuery();
+  const { data: userProfile, isLoading, isSuccess } = useGetUserProfileQuery();
+  const { isOpen: isClassModalOpen, onOpen: onClassModalOpen, onClose: onClassModalClose } = useDisclosure();
 
   if (isLoading || !isSuccess) {
     return (
@@ -177,6 +192,12 @@ export default function Dashboard() {
         <Spinner size='xl' />
       </div>
     );
+  }
+
+  const isCurrentPageDashboard = location.pathname === '/dashboard';
+
+  if (isCurrentPageDashboard && selectedClassId) {
+    return <Navigate to='/dashboard/feed' replace />;
   }
 
   return (
@@ -190,12 +211,15 @@ export default function Dashboard() {
               </div>
               <MacScrollbar className='flex flex-1 flex-col py-4'>
                 <nav className='flex-1' aria-label='Sidebar'>
-                  <ClassSelector />
+                  <NavigationLink name='Notifications' to='#' icon={BellIcon} classNames='mb-10' />
+                  <ClassSelector
+                    isClassModalOpen={isClassModalOpen}
+                    onClassModalOpen={onClassModalOpen}
+                    onClassModalClose={onClassModalClose}
+                  />
                   <div className='space-y-1'>
-                    {navigation.map((item) => (
-                      <NavigationLink key={item.name} {...item} />
-                    ))}
-                    <NavigationLink name='Settings' to='settings' icon={CogIcon} />
+                    <NavigationLink name='Class Feed' to='feed' icon={InboxStackIcon} disabled={!selectedClassId} />
+                    <NavigationLink name='Settings' to='settings' icon={CogIcon} disabled={!selectedClassId} />
                   </div>
                 </nav>
               </MacScrollbar>
@@ -215,11 +239,11 @@ export default function Dashboard() {
                 <a href='#' className='group block w-full flex-shrink-0'>
                   <div className='flex items-center'>
                     <div>
-                      <img className='inline-block h-9 w-9 rounded-full' src={user.imgUrl} />
+                      <img className='inline-block h-9 w-9 rounded-full' src={userProfile.imgUrl} />
                     </div>
                     <div className='ml-3'>
                       <p className='text-sm font-medium text-gray-700 group-hover:text-gray-900'>
-                        {user.firstName} {user.lastName}
+                        {userProfile.firstName} {userProfile.lastName}
                       </p>
                       <p className='text-xs font-medium text-gray-500 group-hover:text-gray-700'>View profile</p>
                     </div>
@@ -230,7 +254,32 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <Outlet />
+        {isCurrentPageDashboard && !selectedClassId ? (
+          <div className='flex w-full flex-col items-center justify-center'>
+            <AcademicCapIcon className='h-12 w-12 text-gray-400' />
+            <h3 className='mt-2 text-sm font-medium text-gray-900'>No class selected</h3>
+            <p className='mt-1 text-sm text-gray-500'>
+              {joinedClasses && joinedClasses.length > 0
+                ? 'Choose a class in the left sidebar to get started.'
+                : userProfile.role === 'instructor'
+                ? 'Get started by creating a new class.'
+                : 'Get started by joining a class.'}
+            </p>
+            {joinedClasses && joinedClasses.length === 0 && (
+              <div className='mt-6'>
+                <button
+                  type='button'
+                  onClick={onClassModalOpen}
+                  className='inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
+                  <PlusIcon className='-ml-1 mr-2 h-5 w-5' aria-hidden='true' />
+                  {userProfile.role === 'instructor' ? 'Create new class' : 'Join class'}
+                </button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Outlet />
+        )}
       </div>
     </>
   );

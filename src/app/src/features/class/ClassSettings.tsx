@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
 import { Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { MacScrollbar } from 'mac-scrollbar';
 
+import { useAppSelector, useUserProfile } from '../../app/hooks';
 import { classNames } from '../../utils';
 
 const panels = [
@@ -201,7 +203,13 @@ function Invite() {
 }
 
 export default function ClassSettings() {
+  const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
+  const userProfile = useUserProfile();
   const [panel, setPanel] = useState('details');
+
+  if (!selectedClassId || userProfile.role !== 'instructor') {
+    return <Navigate to='/dashboard' replace />;
+  }
 
   return (
     <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>

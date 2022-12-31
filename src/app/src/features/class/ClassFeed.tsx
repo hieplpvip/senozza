@@ -1,7 +1,16 @@
+import { Navigate } from 'react-router-dom';
+
 import PostDetail from './components/PostDetail';
 import PostList from './components/PostList';
+import { useAppSelector } from '../../app/hooks';
 
 export default function ClassFeed() {
+  const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
+
+  if (!selectedClassId) {
+    return <Navigate to='/dashboard' replace />;
+  }
+
   return (
     <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>
       <div className='relative z-0 flex flex-1 overflow-hidden'>

@@ -25,7 +25,6 @@ export const router = createBrowserRouter(
           <Route path='/dashboard' element={<Dashboard />}>
             <Route path='feed' element={<ClassFeed />} />
             <Route path='chat' element={<ChatRoom />} />
-            <Route path='notifications' element={<></>} />
             <Route path='settings' element={<ClassSettings />} />
           </Route>
         </Route>
