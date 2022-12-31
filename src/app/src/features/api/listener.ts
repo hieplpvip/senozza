@@ -2,6 +2,7 @@ import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 
 import { authApiSlice } from './auth';
 import { signOut, setAccessToken } from '../auth/authSlice';
+import { resetClassState } from '../class/classSlide';
 
 export const listenerMiddleware = createListenerMiddleware();
 
@@ -15,5 +16,6 @@ listenerMiddleware.startListening({
   ),
   effect: (_, listenerApi) => {
     listenerApi.dispatch(authApiSlice.util.resetApiState());
+    listenerApi.dispatch(resetClassState());
   },
 });
