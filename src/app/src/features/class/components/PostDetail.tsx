@@ -1,8 +1,10 @@
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
+import { Spinner } from '@chakra-ui/react';
 import { MacScrollbar } from 'mac-scrollbar';
 
 import { MarkdownPreview } from '../../../components/Markdown';
+import { useGetPostByIdQuery } from '../../api';
 
 function Comment() {
   return (
@@ -53,22 +55,33 @@ function CommentBox() {
   );
 }
 
-export default function PostDetail() {
+export default function PostDetail({ postId }: { postId: string }) {
+  const { data: post, isSuccess } = useGetPostByIdQuery(postId);
+
+  if (postId === '') {
+    return <></>;
+  }
+
+  if (!isSuccess) {
+    return (
+      <div className='row-span-2 flex h-full items-center justify-center'>
+        <Spinner size='xl' />
+      </div>
+    );
+  }
+
   return (
     <>
       <div className='flex flex-col py-4 px-4'>
         <div className='flex items-center justify-between space-x-4 pb-2'>
           <div>
             <div className='flex flex-1 items-center font-bold leading-tight'>
-              <img
-                className='mr-2 h-7 w-7 rounded-full border-2 border-gray-300'
-                src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&faces=1&faceindex=1&facepad=2.5&w=500&h=500&q=80'
-              />
-              Anonymous
+              <img className='mr-2 h-7 w-7 rounded-full border-2 border-gray-300' src={post.question.user.imgUrl} />
+              {post.question.user.firstName} {post.question.user.lastName}
               <span className='ml-1 text-xs font-normal text-gray-500'>asked a question 3 days ago</span>
             </div>
             <div className='flex flex-row'>
-              <h1 className='text-2xl font-bold text-gray-900'>ARIA attribute misspelled</h1>
+              <h1 className='text-2xl font-bold text-gray-900'>{post.title}</h1>
               <div className='ml-2 flex flex-col justify-center'>
                 <span className='text-sm text-gray-500'>#1111</span>
               </div>

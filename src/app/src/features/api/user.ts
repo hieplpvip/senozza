@@ -1,5 +1,5 @@
 import { baseApiSlice } from './base';
-import { ClassDto, UserDto } from '../../interface';
+import { UserDto } from '../../interface';
 
 interface editProfileRequest {
   firstName?: string;
@@ -18,14 +18,6 @@ export const userApiSlice = baseApiSlice.injectEndpoints({
       providesTags: [{ type: 'User', id: 'PROFILE' }],
     }),
 
-    getJoinedClasses: builder.query<ClassDto[], void>({
-      query: () => ({
-        url: '/user/listClasses',
-        method: 'GET',
-      }),
-      providesTags: [{ type: 'Class', id: 'LIST' }],
-    }),
-
     editUserProfile: builder.mutation<UserDto, editProfileRequest>({
       query: (body) => ({
         url: '/user/update',
@@ -37,4 +29,4 @@ export const userApiSlice = baseApiSlice.injectEndpoints({
   }),
 });
 
-export const { useGetUserProfileQuery, useGetJoinedClassesQuery, useEditUserProfileMutation } = userApiSlice;
+export const { useGetUserProfileQuery, useEditUserProfileMutation } = userApiSlice;

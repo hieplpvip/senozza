@@ -47,6 +47,15 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
       }),
     }),
 
+    getPostById: builder.query<PostDto, string>({
+      query: (postId) => ({
+        url: '/post/get',
+        method: 'GET',
+        params: { postId },
+      }),
+      providesTags: (_result, _error, arg) => [{ type: 'Post', id: arg }],
+    }),
+
     createPost: builder.mutation<PostDto, CreatePostArg>({
       query: ({ classId, body }) => ({
         url: '/post/create',
@@ -96,6 +105,7 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
 export const {
   useGetAllPostsQuery,
   useGetPostsByCategoryQuery,
+  useGetPostByIdQuery,
   useCreatePostMutation,
   useEditPostMutation,
   useDeletePostMutation,

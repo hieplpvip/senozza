@@ -28,7 +28,15 @@ interface InviteToClassByEmailsArg {
 
 export const classApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getClass: builder.query<ClassDto, string>({
+    getJoinedClasses: builder.query<ClassDto[], void>({
+      query: () => ({
+        url: '/user/listClasses',
+        method: 'GET',
+      }),
+      providesTags: [{ type: 'Class', id: 'LIST' }],
+    }),
+
+    getClassById: builder.query<ClassDto, string>({
       query: (classId) => ({
         url: '/class/find',
         method: 'GET',
@@ -105,7 +113,8 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
 });
 
 export const {
-  useGetClassQuery,
+  useGetJoinedClassesQuery,
+  useGetClassByIdQuery,
   useCreateClassMutation,
   useEditClassMutation,
   useDeleteClassMutation,
