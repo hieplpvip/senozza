@@ -43,6 +43,10 @@ export class PostService {
   }
 
   /** READ */
+  async getOne(id: Types.ObjectId): Promise<Post> {
+    return this.postModel.findById(id).populate('question.user').exec();
+  }
+
   async listAll(classId: Types.ObjectId): Promise<Post[]> {
     return this.postModel
       .find({ classId })

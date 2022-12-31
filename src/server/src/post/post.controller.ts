@@ -66,6 +66,15 @@ export class PostController {
   }
 
   /** READ */
+  @Get('get')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: PostDto })
+  async get(@Query('postId') postId: string): Promise<PostDto> {
+    const post = await this.postService.getOne(new Types.ObjectId(postId));
+
+    return await this.postService.postMapper(post);
+  }
+
   @Get('all')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: PostDto, isArray: true })
