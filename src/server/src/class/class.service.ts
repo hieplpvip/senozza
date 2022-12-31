@@ -35,14 +35,6 @@ export class ClassService {
     return this.classModel.findById(id).exec();
   }
 
-  async findByCourse(
-    courseCode: string,
-    year: number,
-    semester: number,
-  ): Promise<Class> {
-    return this.classModel.findOne({ courseCode, year, semester }).exec();
-  }
-
   async findIdByCode(code: string): Promise<Class> {
     return this.classModel.findOne({ inviteCode: code }, '_id').exec();
   }

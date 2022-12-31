@@ -53,20 +53,13 @@ export class ClassController {
   /** READ */
   @Get('find')
   @UseGuards(JwtAuthGuard)
-  @ApiParam({ name: 'code', example: 'CS300' })
-  @ApiParam({ name: 'year', example: 2022 })
-  @ApiParam({ name: 'semester', example: 2 })
   @ApiOkResponse({ type: ClassDto })
   async find(
     @ExtractedUser() userDto: UserDto,
-    @Query('code') courseCode: string,
-    @Query('year') year: number,
-    @Query('semester') semester: number,
+    @Query('classId') classId: string,
   ): Promise<ClassDto> {
-    const foundClass = await this.classService.findByCourse(
-      courseCode,
-      year,
-      semester,
+    const foundClass = await this.classService.find(
+      new Types.ObjectId(classId),
     );
 
     return this.classService.classMapper(foundClass);
