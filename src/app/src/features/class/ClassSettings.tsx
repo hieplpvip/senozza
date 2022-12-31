@@ -4,7 +4,7 @@ import { Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { MacScrollbar } from 'mac-scrollbar';
 
-import { useAppSelector, useUserProfile } from '../../app/hooks';
+import { useAppSelector } from '../../app/hooks';
 import { classNames } from '../../utils';
 
 const panels = [
@@ -28,9 +28,9 @@ const panels = [
   },
 ];
 
-function Details() {
+function Details({ show }: { show?: boolean }) {
   return (
-    <div className='w-full p-4'>
+    <div className={'w-full p-4' + (!show ? ' hidden' : '')}>
       <h1 className='text-blue-gray-900 text-2xl font-medium'>CS300: Elements of Software Engineering</h1>
       <p className='text-m font-medium text-gray-500'>Fall 2022</p>
 
@@ -79,23 +79,11 @@ const people = [
     image:
       'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
   },
-  {
-    name: 'Lindsay Walton',
-    email: 'lindsay.walton@example.com',
-    image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Lindsay Walton',
-    email: 'lindsay.walton@example.com',
-    image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
 ];
 
-function Members({ setPanel }: { setPanel: (panel: string) => void }) {
+function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?: boolean }) {
   return (
-    <div className='flex h-full w-full flex-col p-4'>
+    <div className={'flex h-full w-full flex-col p-4' + (!show ? ' hidden' : '')}>
       <div className='flex items-center'>
         <h1 className='text-blue-gray-900 flex-auto text-2xl font-medium'>Students (10)</h1>
         <Button colorScheme='indigo' onClick={() => setPanel('invite')}>
@@ -126,7 +114,7 @@ function Members({ setPanel }: { setPanel: (panel: string) => void }) {
                 <td className='whitespace-nowrap py-4 pr-3 pl-6 text-sm'>
                   <div className='flex items-center'>
                     <div className='h-10 w-10 flex-shrink-0'>
-                      <img className='h-10 w-10 rounded-full' src={person.image} alt='' />
+                      <img className='h-10 w-10 rounded-full' src={person.image} />
                     </div>
                     <div className='ml-4'>
                       <div className='font-medium text-gray-900'>{person.name}</div>
@@ -150,9 +138,9 @@ function Members({ setPanel }: { setPanel: (panel: string) => void }) {
   );
 }
 
-function Invite() {
+function Invite({ show }: { show?: boolean }) {
   return (
-    <div className='w-full p-4'>
+    <div className={'w-full p-4' + (!show ? ' hidden' : '')}>
       <div className='divide-y-blue-gray-200 space-y-8 divide-y'>
         <div className='flex flex-col gap-y-4'>
           <div>
@@ -202,17 +190,16 @@ function Invite() {
   );
 }
 
-export default function ClassSettings() {
+export default function ClassSettings({ show }: { show?: boolean }) {
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
-  const userProfile = useUserProfile();
   const [panel, setPanel] = useState('details');
 
-  if (!selectedClassId || userProfile.role !== 'instructor') {
+  if (!selectedClassId) {
     return <Navigate to='/dashboard' replace />;
   }
 
   return (
-    <div className='flex min-w-0 flex-1 flex-col overflow-hidden'>
+    <div className={'flex min-w-0 flex-1 flex-col overflow-hidden' + (!show ? ' hidden' : '')}>
       <div className='relative z-0 flex flex-1 overflow-hidden'>
         <aside className='relative flex w-1/3 flex-shrink-0 flex-col border-r-2 border-gray-200'>
           <div className='border-blue-gray-200 flex h-16 flex-shrink-0 flex-col justify-center border-b bg-white px-4'>
@@ -242,9 +229,9 @@ export default function ClassSettings() {
         </aside>
 
         <main className='relative z-0 flex-1 overflow-hidden focus:outline-none'>
-          {panel === 'details' && <Details />}
-          {panel === 'members' && <Members setPanel={setPanel} />}
-          {panel === 'invite' && <Invite />}
+          <Details show={panel === 'details'} />
+          <Members setPanel={setPanel} show={panel === 'members'} />
+          <Invite show={panel === 'invite'} />
         </main>
       </div>
     </div>

@@ -6,9 +6,6 @@ import AuthenticatedRoute from '../features/auth/AuthenticatedRoute';
 import UnauthenticatedRoute from '../features/auth/UnauthenticatedRoute';
 import SignIn from '../features/auth/SignIn';
 import SignUp from '../features/auth/SignUp';
-import ClassFeed from '../features/class/ClassFeed';
-import ClassSettings from '../features/class/ClassSettings';
-import ChatRoom from '../features/chatroom/ChatRoom';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -23,9 +20,8 @@ export const router = createBrowserRouter(
 
         <Route element={<AuthenticatedRoute />}>
           <Route path='/dashboard' element={<Dashboard />}>
-            <Route path='feed' element={<ClassFeed />} />
-            <Route path='chat' element={<ChatRoom />} />
-            <Route path='settings' element={<ClassSettings />} />
+            <Route path='feed' element={<></>} />
+            <Route path='settings' element={<></>} />
           </Route>
         </Route>
       </Route>

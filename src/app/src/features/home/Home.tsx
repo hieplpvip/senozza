@@ -12,7 +12,7 @@ export default function Home() {
             <div className='flex justify-start lg:w-0 lg:flex-1'>
               <a href='#'>
                 <span className='sr-only'>Senozza</span>
-                <img className='h-8 w-auto sm:h-10' src={process.env.PUBLIC_URL + '/logo.svg'} alt='' />
+                <img className='h-8 w-auto sm:h-10' src={process.env.PUBLIC_URL + '/logo.svg'} />
               </a>
             </div>
             <div className='-my-2 -mr-2 md:hidden'>
@@ -103,7 +103,7 @@ export default function Home() {
           </div>
           <div className='relative mt-12 sm:mx-auto sm:max-w-lg lg:col-span-6 lg:mx-0 lg:mt-0 lg:flex lg:max-w-none lg:items-center'>
             <div className='relative mx-auto w-full'>
-              <img className='w-full' src='https://static.campuswire.com/images/platform-banner.png' alt='' />
+              <img className='w-full' src='https://static.campuswire.com/images/platform-banner.png' />
             </div>
           </div>
         </div>
