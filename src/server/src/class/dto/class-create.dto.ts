@@ -8,6 +8,7 @@ export class ClassCreateDto extends OmitType(ClassDto, [
   'archived',
   '_id',
   'inviteCode',
+  'memberCount',
 ] as const) {
   @IsBoolean()
   archived: boolean;

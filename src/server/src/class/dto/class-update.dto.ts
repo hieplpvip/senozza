@@ -5,7 +5,7 @@ import { ClassDto } from './class.dto';
 
 @dto()
 export class ClassUpdateDto extends PartialType(
-  OmitType(ClassDto, ['_id', 'inviteCode'] as const),
+  OmitType(ClassDto, ['_id', 'inviteCode', 'memberCount'] as const),
 ) {
   @IsString()
   @Length(6)

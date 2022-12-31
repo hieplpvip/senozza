@@ -7,7 +7,7 @@ import {
   IsUUID,
   Length,
 } from 'class-validator';
-import { dto, include, transform } from 'dto-mapper';
+import { dto, include, mapTo, transform } from 'dto-mapper';
 import { Types } from 'mongoose';
 
 @dto()
@@ -46,6 +46,16 @@ export class ClassDto {
   @IsArray()
   @IsString({ each: true })
   categories: string[];
+
+  @include()
+  @mapTo('members')
+  @transform({
+    toDto: (members) => members.length,
+    fromDto: (members) => members,
+  })
+  @ApiProperty({ example: 2 })
+  @IsInt()
+  memberCount: number;
 
   @include()
   @ApiProperty()
