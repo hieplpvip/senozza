@@ -39,6 +39,15 @@ export class ClassService {
     return this.classModel.findOne({ inviteCode: code }, '_id').exec();
   }
 
+  async listStudent(id: Types.ObjectId): Promise<any> {
+    return this.classModel
+      .findById(id)
+      .populate({
+        path: 'members',
+      })
+      .exec();
+  }
+
   // Update
   async addPost(id: Types.ObjectId, postId: Types.ObjectId) {
     await this.classModel.updateOne({ _id: id }, { $push: { post: postId } });

@@ -18,6 +18,11 @@ export class UserService {
     return mapper.serialize(user);
   }
 
+  async usersMapper(users: User[]): Promise<UserDto[]> {
+    const mapper = buildMapper(UserDto);
+    return users.map((user) => mapper.serialize(user));
+  }
+
   // Create
   async create(userRegisterDto: UserRegisterDto): Promise<User> {
     const createdUser = new this.userModel(userRegisterDto);

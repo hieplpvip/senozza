@@ -65,6 +65,20 @@ export class ClassController {
     return this.classService.classMapper(foundClass);
   }
 
+  @Get('listStudent')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: ClassDto, isArray: true })
+  async listStudent(
+    @ExtractedUser() userDto: UserDto,
+    @Query('classId') classId: string,
+  ): Promise<UserDto[]> {
+    const { members } = await this.classService.listStudent(
+      new Types.ObjectId(classId),
+    );
+
+    return await this.userService.usersMapper(members);
+  }
+
   /** UPDATE */
   @Put('update')
   @Roles(UserRole.INSTRUCTOR)
