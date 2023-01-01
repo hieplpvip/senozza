@@ -20,7 +20,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "prettier-check": "prettier --check src",
-    "prettier-fix": "prettier --write src"
+    "prettier-fix": "prettier --write src",
+    "init-db": "ts-node initDb.ts"
   },
   "dependencies": {
     "@nestjs/common": "^9.0.0",
@@ -37,6 +38,7 @@
     "dto-mapper": "^0.2.3",
     "flat": "^5.0.2",
     "mongoose": "^6.7.2",
+    "node-fetch": "^2.6.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -52,6 +54,7 @@
     "@types/express": "^4.17.13",
     "@types/jest": "28.1.8",
     "@types/node": "^16.0.0",
+    "@types/node-fetch": "^2.6.2",
     "@types/passport-jwt": "^3.0.7",
     "@types/passport-local": "^1.0.34",
     "@types/supertest": "^2.0.11",
