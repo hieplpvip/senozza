@@ -7,7 +7,7 @@ import CreateClassModal from './CreateClassModal';
 import JoinClassModal from './JoinClassModal';
 import { useGetClassByIdQuery, useGetJoinedClassesQuery } from '../../api';
 import { setSelectedClassId } from '../../class/classSlide';
-import { useAppDispatch, useAppSelector, useUserProfile } from '../../../app/hooks';
+import { useAppDispatch, useAppSelector, useIsInstructor } from '../../../app/hooks';
 import { classNames } from '../../../utils';
 
 export default function ClassSelector({
@@ -19,7 +19,7 @@ export default function ClassSelector({
   onClassModalOpen: () => void;
   onClassModalClose: () => void;
 }) {
-  const userProfile = useUserProfile();
+  const isInstructor = useIsInstructor();
   const dispatch = useAppDispatch();
 
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
@@ -34,7 +34,7 @@ export default function ClassSelector({
 
   return (
     <>
-      {userProfile.role === 'instructor' ? (
+      {isInstructor ? (
         <CreateClassModal isOpen={isClassModalOpen} onClose={onClassModalClose} />
       ) : (
         <JoinClassModal isOpen={isClassModalOpen} onClose={onClassModalClose} />
@@ -55,7 +55,9 @@ export default function ClassSelector({
                         src={'https://ui-avatars.com/api/?background=random&name=' + selectedClass.courseName}
                         className='h-6 w-6 flex-shrink-0 rounded-full'
                       />
-                      <span className='ml-3 block truncate'>{selectedClass.courseName}</span>
+                      <span className='ml-3 block truncate'>
+                        {selectedClass.courseCode}: {selectedClass.courseName}
+                      </span>
                     </>
                   )}
                 </span>
@@ -79,7 +81,7 @@ export default function ClassSelector({
                         onClick={onClassModalOpen}>
                         <span className='text-sm font-medium text-gray-500'>
                           <PlusIcon className='-mt-[0.22rem] mr-1 inline-block h-5 w-5' aria-hidden='true' />
-                          {userProfile.role === 'instructor' ? 'Create new class' : 'Join class'}
+                          {isInstructor ? 'Create new class' : 'Join class'}
                         </span>
                       </button>
                     </div>
@@ -108,7 +110,7 @@ export default function ClassSelector({
                                   selected ? 'font-semibold' : 'font-normal',
                                   'ml-3 block truncate',
                                 )}>
-                                {c.courseCode} - {c.courseName}
+                                {c.courseCode}: {c.courseName}
                               </span>
                             </div>
 

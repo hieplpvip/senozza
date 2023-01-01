@@ -25,7 +25,7 @@ export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean;
           <ModalCloseButton />
           <ModalBody>
             <FormControl className='mb-3'>
-              <FormLabel>Class number</FormLabel>
+              <FormLabel>Class code</FormLabel>
               <Input type='text' placeholder='e.g. CS300' />
             </FormControl>
             <FormControl className='mb-3'>

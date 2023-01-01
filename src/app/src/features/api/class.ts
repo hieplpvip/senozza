@@ -1,5 +1,5 @@
 import { baseApiSlice } from './base';
-import { ClassDto } from '../../interface';
+import { ClassDto, UserDto } from '../../interface';
 
 interface CreateClassArg {
   courseCode: string;
@@ -43,6 +43,14 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         params: { classId },
       }),
       providesTags: (_result, _error, arg) => [{ type: 'Class', id: arg }],
+    }),
+
+    getStudentsInClass: builder.query<UserDto[], string>({
+      query: (classId) => ({
+        url: '/class/listStudent',
+        method: 'GET',
+        params: { classId },
+      }),
     }),
 
     createClass: builder.mutation<ClassDto, CreateClassArg>({
@@ -115,6 +123,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
 export const {
   useGetJoinedClassesQuery,
   useGetClassByIdQuery,
+  useGetStudentsInClassQuery,
   useCreateClassMutation,
   useEditClassMutation,
   useDeleteClassMutation,

@@ -11,3 +11,7 @@ export const simpleHash = (str: string) => {
   }
   return new Uint32Array([hash])[0].toString(36);
 };
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};

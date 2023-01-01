@@ -1,11 +1,13 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
-import { Button, FormControl, FormLabel, Input } from '@chakra-ui/react';
+import { Button, FormControl, FormLabel, Input, Spinner } from '@chakra-ui/react';
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { MacScrollbar } from 'mac-scrollbar';
 
-import { useAppSelector } from '../../app/hooks';
-import { classNames } from '../../utils';
+import { useEditClassMutation, useGetClassByIdQuery, useGetStudentsInClassQuery } from '../api';
+import { useAppSelector, useIsInstructor } from '../../app/hooks';
+import { capitalize, classNames } from '../../utils';
 
 const panels = [
   {
@@ -28,64 +30,110 @@ const panels = [
   },
 ];
 
+function useClassData() {
+  const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
+  const { data } = useGetClassByIdQuery(selectedClassId, { skip: !selectedClassId });
+  return data!;
+}
+
 function Details({ show }: { show?: boolean }) {
+  interface ClassDetailsInput {
+    courseCode: string;
+    courseName: string;
+  }
+
+  const data = useClassData();
+  const isInstructor = useIsInstructor();
+  const [editClass] = useEditClassMutation();
+  const { register, handleSubmit } = useForm<ClassDetailsInput>({
+    values: { courseCode: data.courseCode, courseName: data.courseName },
+  });
+
+  const onSubmit = async (body: ClassDetailsInput) => {
+    try {
+      await editClass({ classId: data._id, body }).unwrap();
+    } catch (err) {
+      alert(`Failed to change class details: ${err}`);
+    }
+  };
+
   return (
     <div className={'w-full p-4' + (!show ? ' hidden' : '')}>
-      <h1 className='text-blue-gray-900 text-2xl font-medium'>CS300: Elements of Software Engineering</h1>
+      <h1 className='text-blue-gray-900 text-2xl font-medium'>
+        {data.courseCode}: {data.courseName}
+      </h1>
       <p className='text-m font-medium text-gray-500'>Fall 2022</p>
 
       <div className='divide-y-blue-gray-200 mt-6 space-y-8 divide-y'>
-        <div className='grid grid-cols-6 gap-y-4 gap-x-6'>
+        <form className='grid grid-cols-6 gap-y-4 gap-x-6' onSubmit={handleSubmit(onSubmit)}>
           <div className='col-span-3'>
             <FormControl className='mb-3'>
-              <FormLabel>Class number</FormLabel>
-              <Input type='text' placeholder='e.g. CS300' />
+              <FormLabel>Class code</FormLabel>
+              <Input type='text' placeholder='e.g. CS300' readOnly={!isInstructor} {...register('courseCode')} />
             </FormControl>
           </div>
 
           <div className='col-span-3'>
             <FormControl className='mb-3'>
               <FormLabel>Class name</FormLabel>
-              <Input type='text' placeholder='e.g. Elements of Software Engineering' />
+              <Input
+                type='text'
+                placeholder='e.g. Elements of Software Engineering'
+                readOnly={!isInstructor}
+                {...register('courseName')}
+              />
             </FormControl>
           </div>
 
-          <div className='col-span-6 flex justify-end'>
-            <Button colorScheme='indigo'>Save</Button>
-          </div>
-        </div>
+          {isInstructor && (
+            <div className='col-span-6 flex justify-end'>
+              <Button type='submit' colorScheme='indigo'>
+                Save
+              </Button>
+            </div>
+          )}
+        </form>
 
-        <div className='flex flex-col gap-y-4 pt-8'>
-          <div>
-            <h2 className='text-xl font-bold text-gray-900'>Delete class</h2>
-            <p className='mt-1 text-sm text-gray-500'>
-              We will permanently delete this class and all of its data. This action cannot be undone. Be careful!
-            </p>
-          </div>
+        {isInstructor && (
+          <div className='flex flex-col gap-y-4 pt-8'>
+            <div>
+              <h2 className='text-xl font-bold text-gray-900'>Delete class</h2>
+              <p className='mt-1 text-sm text-gray-500'>
+                We will permanently delete this class and all of its data. This action cannot be undone. Be careful!
+              </p>
+            </div>
 
-          <div>
-            <Button colorScheme='red'>Delete class</Button>
+            <div>
+              <Button colorScheme='red'>Delete class</Button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
-const people = [
-  {
-    name: 'Lindsay Walton',
-    email: 'lindsay.walton@example.com',
-    image:
-      'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-];
-
 function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?: boolean }) {
+  const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
+  const {
+    data: members,
+    isSuccess,
+    isLoading,
+  } = useGetStudentsInClassQuery(selectedClassId, { skip: !selectedClassId });
+  const isInstructor = useIsInstructor();
+
+  if (isLoading || !isSuccess) {
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <Spinner size='xl' />
+      </div>
+    );
+  }
+
   return (
     <div className={'flex h-full w-full flex-col p-4' + (!show ? ' hidden' : '')}>
       <div className='flex items-center'>
-        <h1 className='text-blue-gray-900 flex-auto text-2xl font-medium'>Students (10)</h1>
+        <h1 className='text-blue-gray-900 flex-auto text-2xl font-medium'>Members ({members.length})</h1>
         <Button colorScheme='indigo' onClick={() => setPanel('invite')}>
           Add student
         </Button>
@@ -109,25 +157,29 @@ function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?:
             </tr>
           </thead>
           <tbody className='divide-y divide-gray-200 bg-white'>
-            {people.map((person) => (
-              <tr key={person.email}>
+            {members.map((member) => (
+              <tr key={member._id}>
                 <td className='whitespace-nowrap py-4 pr-3 pl-6 text-sm'>
                   <div className='flex items-center'>
                     <div className='h-10 w-10 flex-shrink-0'>
-                      <img className='h-10 w-10 rounded-full' src={person.image} />
+                      <img className='h-10 w-10 rounded-full' src={member.imgUrl} />
                     </div>
                     <div className='ml-4'>
-                      <div className='font-medium text-gray-900'>{person.name}</div>
-                      <div className='text-gray-500'>{person.email}</div>
+                      <div className='font-medium text-gray-900'>
+                        {member.firstName} {member.lastName}
+                      </div>
+                      <div className='text-gray-500'>{member.email}</div>
                     </div>
                   </div>
                 </td>
                 <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>7 months ago</td>
-                <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>Student</td>
+                <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>{capitalize(member.role)}</td>
                 <td className='whitespace-nowrap py-4 pl-3 pr-6 text-right text-sm font-medium'>
-                  <a href='#' className='text-indigo-600 hover:text-indigo-900'>
-                    Remove
-                  </a>
+                  {isInstructor && member.role !== 'instructor' && (
+                    <a href='#' className='text-indigo-600 hover:text-indigo-900'>
+                      Remove
+                    </a>
+                  )}
                 </td>
               </tr>
             ))}
@@ -139,6 +191,8 @@ function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?:
 }
 
 function Invite({ show }: { show?: boolean }) {
+  const data = useClassData();
+
   return (
     <div className={'w-full p-4' + (!show ? ' hidden' : '')}>
       <div className='divide-y-blue-gray-200 space-y-8 divide-y'>
@@ -151,7 +205,9 @@ function Invite({ show }: { show?: boolean }) {
           <div className='flex flex-col gap-y-2'>
             <div className='flex items-center'>
               <div className='ml-8'>
-                <div className='text-sm font-medium text-gray-900'>https://senozza.com/join-class/abc123</div>
+                <div className='text-sm font-medium text-gray-900'>
+                  https://senozza.com/join-class/{data.inviteCode}
+                </div>
               </div>
               <div className='ml-4 flex-1'>
                 <button className='group flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900'>
@@ -174,7 +230,7 @@ function Invite({ show }: { show?: boolean }) {
           <div className='flex flex-col gap-y-2'>
             <div className='flex items-center'>
               <div className='ml-8'>
-                <div className='text-sm font-medium text-gray-900'>abc123</div>
+                <div className='text-sm font-medium text-gray-900'>{data.inviteCode}</div>
               </div>
               <div className='ml-4 flex-1'>
                 <button className='group flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900'>
@@ -193,9 +249,18 @@ function Invite({ show }: { show?: boolean }) {
 export default function ClassSettings({ show }: { show?: boolean }) {
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const [panel, setPanel] = useState('details');
+  const { data, isLoading, isSuccess } = useGetClassByIdQuery(selectedClassId, { skip: !selectedClassId });
 
   if (!selectedClassId) {
     return <Navigate to='/dashboard' replace />;
+  }
+
+  if (isLoading || !isSuccess) {
+    return (
+      <div className='flex h-full items-center justify-center'>
+        <Spinner size='xl' />
+      </div>
+    );
   }
 
   return (
@@ -205,7 +270,9 @@ export default function ClassSettings({ show }: { show?: boolean }) {
           <div className='border-blue-gray-200 flex h-16 flex-shrink-0 flex-col justify-center border-b bg-white px-4'>
             <div className='flex flex-col items-baseline'>
               <h2 className='text-lg font-medium text-gray-900'>Settings</h2>
-              <p className='text-sm font-medium text-gray-500'>CS300: Elements of Software Engineering</p>
+              <p className='text-sm font-medium text-gray-500'>
+                {data.courseCode}: {data.courseName}
+              </p>
             </div>
           </div>
           <MacScrollbar className='min-h-0 flex-1'>

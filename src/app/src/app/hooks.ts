@@ -15,3 +15,8 @@ export const useUserProfile = () => {
   const { data } = useGetUserProfileQuery();
   return data!;
 };
+
+export const useIsInstructor = () => {
+  const { role } = useUserProfile();
+  return role === 'instructor';
+};
