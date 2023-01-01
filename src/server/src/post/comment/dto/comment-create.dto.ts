@@ -6,7 +6,7 @@ import { CommentDto } from './comment.dto';
 @dto()
 export class CommentCreateDto extends OmitType(CommentDto, [
   'bestAnswer',
-  'upvote',
+  'vote',
   'user',
   '_id',
 ] as const) {

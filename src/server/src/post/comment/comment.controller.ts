@@ -21,7 +21,7 @@ import { CommentService } from './comment.service';
 @Controller()
 @ApiTags('post')
 export class CommentController {
-  constructor(private readonly postService: CommentService) {}
+  constructor(private readonly commentService: CommentService) {}
 
   /** CREATE */
   @Post('answer')
@@ -33,7 +33,12 @@ export class CommentController {
     @Body() postCreatedDto: CommentCreateDto,
   ) {
     postCreatedDto.user = new Types.ObjectId(userDto._id);
-    await this.postService.answer(new Types.ObjectId(postId), postCreatedDto);
+    await this.commentService.answer(
+      new Types.ObjectId(postId),
+      postCreatedDto,
+    );
+
+    return { message: 'Answer successfully' };
   }
 
   /** READ */
@@ -46,12 +51,12 @@ export class CommentController {
     @Query('postId') postId: string,
     @Query('sortBy') sortedField: string,
   ): Promise<CommentDto[]> {
-    const coll = await this.postService.listAll(
+    const coll = await this.commentService.listAll(
       new Types.ObjectId(postId),
       sortedField,
     );
     const { answers } = coll[0];
-    return await this.postService.postMapper(answers);
+    return await this.commentService.commentsMapper(answers);
   }
 
   /** UPDATE */
@@ -63,11 +68,21 @@ export class CommentController {
     @Query('commentId') commentId: string,
     @Query('upvote', ParseIntPipe) upvote: number,
   ) {
-    await this.postService.vote(
-      new Types.ObjectId(postId),
-      new Types.ObjectId(commentId),
-      upvote,
-    );
+    if (upvote === 1) {
+      await this.commentService.upvote(
+        new Types.ObjectId(postId),
+        new Types.ObjectId(commentId),
+        new Types.ObjectId(userDto._id),
+      );
+    } else {
+      await this.commentService.downvote(
+        new Types.ObjectId(postId),
+        new Types.ObjectId(commentId),
+        new Types.ObjectId(userDto._id),
+      );
+    }
+
+    return { message: 'Vote successfully' };
   }
 
   @Put('edit')
@@ -78,12 +93,20 @@ export class CommentController {
     @Query('postId') postId: string,
     @Query('commentId') commentId: string,
     @Body() postUpdateDto: CommentUpdateDto,
-  ) {
-    await this.postService.edit(
+  ): Promise<CommentDto[]> {
+    await this.commentService.edit(
       new Types.ObjectId(postId),
       new Types.ObjectId(commentId),
       postUpdateDto,
     );
+
+    const coll = await this.commentService.find(
+      new Types.ObjectId(postId),
+      new Types.ObjectId(commentId),
+    );
+    const { answers } = coll[0];
+    console.log(answers);
+    return this.commentService.commentsMapper(answers);
   }
 
   /** DELETE */
@@ -93,9 +116,11 @@ export class CommentController {
     @Query('postId') postId: string,
     @Query('commentId') commentId: string,
   ) {
-    await this.postService.delete(
+    await this.commentService.delete(
       new Types.ObjectId(postId),
       new Types.ObjectId(commentId),
     );
+
+    return { mesage: 'Delete successfully' };
   }
 }

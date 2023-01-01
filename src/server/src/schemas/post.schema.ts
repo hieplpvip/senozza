@@ -14,8 +14,11 @@ export class Comment {
   @Prop()
   content: string;
 
-  @Prop({ index: true, default: 0 })
-  upvote: number;
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  upvote: Types.ObjectId[];
+
+  @Prop({ type: [{ type: Types.ObjectId, ref: 'User' }] })
+  downvote: Types.ObjectId[];
 
   @Prop({ index: true, default: false })
   bestAnswer: boolean;
@@ -34,10 +37,10 @@ export class Post {
   category: string;
 
   @Prop({ type: CommentSchema })
-  question: Post;
+  question: Comment;
 
   @Prop({ type: [{ type: CommentSchema }] })
-  answers: Post[];
+  answers: Comment[];
 
   @Prop({ index: true, default: false })
   pin: boolean;

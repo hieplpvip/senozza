@@ -12,9 +12,14 @@ export class CommentService {
     private postModel: Model<PostDocument>,
   ) {}
 
-  async postMapper(posts: Post[]): Promise<CommentDto[]> {
+  async commentMapper(comment: Comment): Promise<CommentDto> {
     const mapper = buildMapper(CommentDto);
-    return posts.map((post) => mapper.serialize(post));
+    return mapper.serialize(comment);
+  }
+
+  async commentsMapper(comments: Comment[]): Promise<CommentDto[]> {
+    const mapper = buildMapper(CommentDto);
+    return comments.map((comment) => mapper.serialize(comment));
   }
 
   /** CREATE */
@@ -35,6 +40,13 @@ export class CommentService {
     return this.postModel.aggregate([
       { $match: { _id: postId } },
       { $unwind: { path: '$answers' } },
+      {
+        $addFields: {
+          'answers.vote': {
+            $subtract: ['$answers.upvote', '$answers.downvote'],
+          },
+        },
+      },
       { $sort: sort },
       {
         $lookup: {
@@ -49,15 +61,60 @@ export class CommentService {
     ]);
   }
 
-  /** UPDATE */
-  async vote(
+  async find(
     postId: Types.ObjectId,
     commentId: Types.ObjectId,
-    upvote: number,
+  ): Promise<Record<string, any>> {
+    return this.postModel.aggregate([
+      { $match: { _id: postId } },
+      { $unwind: { path: '$answers' } },
+      { $match: { 'answers._id': commentId } },
+      {
+        $addFields: {
+          'answers.vote': {
+            $subtract: ['$answers.upvote', '$answers.downvote'],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'answers.user',
+          foreignField: '_id',
+          as: 'answers.user',
+        },
+      },
+      { $unwind: { path: '$answers.user' } },
+      { $group: { _id: '_id', answers: { $push: '$answers' } } },
+    ]);
+  }
+
+  /** UPDATE */
+  async upvote(
+    postId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    userId: Types.ObjectId,
   ) {
     await this.postModel.updateOne(
       { _id: postId, 'answers._id': commentId },
-      { $inc: { 'answers.$.upvote': upvote } },
+      {
+        $pull: { 'answers.$.downvote': userId },
+        $push: { 'answers.$.upvote': userId },
+      },
+    );
+  }
+
+  async downvote(
+    postId: Types.ObjectId,
+    commentId: Types.ObjectId,
+    userId: Types.ObjectId,
+  ) {
+    await this.postModel.updateOne(
+      { _id: postId, 'answers._id': commentId },
+      {
+        $push: { 'answers.$.downvote': userId },
+        $pull: { 'answers.$.upvote': userId },
+      },
     );
   }
 

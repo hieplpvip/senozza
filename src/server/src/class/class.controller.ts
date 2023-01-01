@@ -74,7 +74,7 @@ export class ClassController {
 
   @Get('listStudent')
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse({ type: ClassDto, isArray: true })
+  @ApiOkResponse({ type: UserDto, isArray: true })
   async listStudent(
     @ExtractedUser() userDto: UserDto,
     @Query('classId') classId: string,
@@ -105,7 +105,7 @@ export class ClassController {
 
   @Put('invite')
   @UseGuards(JwtAuthGuard)
-  @ApiBody({ type: String, isArray: true })
+  @ApiBody({ type: [String], isArray: true })
   async invite(
     @Query('classId') id: string,
     @Body('emails') userEmails: string[],
@@ -118,6 +118,8 @@ export class ClassController {
       this.classService.addMembers(classId, userIds),
       this.userService.joinClassMany(userIds, classId),
     ]);
+
+    return { message: 'Invited' };
   }
 
   @Put('join')
@@ -131,6 +133,8 @@ export class ClassController {
       this.classService.addMembers(foundClass._id, userIds),
       this.userService.joinClass(userDto.email, foundClass._id),
     ]);
+
+    return { message: 'Joined' };
   }
 
   @Put('leave')
@@ -145,6 +149,8 @@ export class ClassController {
       this.userService.leaveClass(userId, classId),
       this.classService.leave(classId, userId),
     ]);
+
+    return { message: 'Left' };
   }
 
   @Put('kick')
@@ -157,14 +163,15 @@ export class ClassController {
       this.userService.leaveClass(user, classId),
       this.classService.leave(classId, user),
     ]);
+
+    return { message: 'Kicked' };
   }
 
   /** DELETE */
   @Delete('delete')
   @Roles(UserRole.INSTRUCTOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOkResponse({ type: Boolean })
-  async delete(@Query('classId') classId: string): Promise<boolean> {
+  async delete(@Query('classId') classId: string) {
     const { members } = await this.classService.find(
       new Types.ObjectId(classId),
     );
@@ -173,6 +180,6 @@ export class ClassController {
       this.userService.leaveClassMany(members, new Types.ObjectId(classId)),
     ]);
 
-    return true;
+    return { message: 'Deleted' };
   }
 }

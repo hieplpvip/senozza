@@ -40,7 +40,7 @@ export class CommentDto {
   @include()
   @ApiProperty({ example: 17 })
   @IsNumber()
-  upvote: number;
+  vote: number;
 
   @include()
   @ApiProperty()
