@@ -5,7 +5,13 @@ import { Button, FormControl, FormLabel, Input, Spinner } from '@chakra-ui/react
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { MacScrollbar } from 'mac-scrollbar';
 
-import { useEditClassMutation, useGetClassByIdQuery, useGetStudentsInClassQuery } from '../api';
+import {
+  useDeleteClassMutation,
+  useEditClassMutation,
+  useGetClassByIdQuery,
+  useGetStudentsInClassQuery,
+  useLeaveClassMutation,
+} from '../api';
 import { useAppSelector, useIsInstructor } from '../../app/hooks';
 import { capitalize, classNames } from '../../utils';
 
@@ -45,6 +51,8 @@ function Details({ show }: { show?: boolean }) {
   const data = useClassData();
   const isInstructor = useIsInstructor();
   const [editClass] = useEditClassMutation();
+  const [deleteClass] = useDeleteClassMutation();
+  const [leaveClass] = useLeaveClassMutation();
   const { register, handleSubmit } = useForm<ClassDetailsInput>({
     values: { courseCode: data.courseCode, courseName: data.courseName },
   });
@@ -54,6 +62,22 @@ function Details({ show }: { show?: boolean }) {
       await editClass({ classId: data._id, body }).unwrap();
     } catch (err) {
       alert(`Failed to change class details: ${err}`);
+    }
+  };
+
+  const onDeleteClass = async () => {
+    try {
+      await deleteClass(data._id).unwrap();
+    } catch (err) {
+      alert(`Failed to delete class: ${err}`);
+    }
+  };
+
+  const onLeaveClass = async () => {
+    try {
+      await leaveClass(data._id).unwrap();
+    } catch (err) {
+      alert(`Failed to delete class: ${err}`);
     }
   };
 
@@ -104,7 +128,26 @@ function Details({ show }: { show?: boolean }) {
             </div>
 
             <div>
-              <Button colorScheme='red'>Delete class</Button>
+              <Button colorScheme='red' onClick={onDeleteClass}>
+                Delete class
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {!isInstructor && (
+          <div className='flex flex-col gap-y-4 pt-8'>
+            <div>
+              <h2 className='text-xl font-bold text-gray-900'>Leave class</h2>
+              <p className='mt-1 text-sm text-gray-500'>
+                After leaving, you will no longer be able to access this class. Be careful!
+              </p>
+            </div>
+
+            <div>
+              <Button colorScheme='red' onClick={onLeaveClass}>
+                Leave class
+              </Button>
             </div>
           </div>
         )}
