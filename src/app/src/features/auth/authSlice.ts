@@ -8,7 +8,7 @@ type AuthState = {
 
 const slice = createSlice({
   name: 'auth',
-  initialState: { user: null, accessToken: null } as AuthState,
+  initialState: { accessToken: null } as AuthState,
   reducers: {
     signOut: (state) => {
       localStorage.removeItem(AUTH_ACCESS_TOKEN_KEY);

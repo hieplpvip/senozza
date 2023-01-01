@@ -10,31 +10,29 @@ import { AUTH_ACCESS_TOKEN_KEY } from '../../constants';
 export default function AuthLayout() {
   const dispatch = useAppDispatch();
   const accessToken = useAuthAccessToken() || localStorage.getItem(AUTH_ACCESS_TOKEN_KEY);
-  const [isLoading, setIsLoading] = useState(true);
-  const [trigger, { isError, isSuccess }] = userApiSlice.endpoints.getUserProfile.useLazyQuery();
+  const [stage, setStage] = useState(0);
+  const [trigger, { isSuccess, isFetching }] = userApiSlice.endpoints.getUserProfile.useLazyQuery();
 
   useEffect(() => {
     if (accessToken) {
       trigger();
     } else {
-      setIsLoading(false);
+      setStage(2);
     }
   }, []);
 
   useEffect(() => {
-    if (isError) {
-      setIsLoading(false);
+    if (isFetching && stage === 0) {
+      setStage(1);
+    } else if (!isFetching && stage === 1) {
+      setStage(2);
+      if (isSuccess && accessToken) {
+        dispatch(setAccessToken(accessToken));
+      }
     }
-  }, [isError]);
+  }, [isFetching, isSuccess]);
 
-  useEffect(() => {
-    if (isLoading && isSuccess && accessToken) {
-      setIsLoading(false);
-      dispatch(setAccessToken(accessToken));
-    }
-  }, [isSuccess]);
-
-  if (isLoading) {
+  if (stage !== 2) {
     return (
       <div className='flex h-full items-center justify-center'>
         <Spinner size='xl' />
