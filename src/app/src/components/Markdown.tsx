@@ -35,11 +35,11 @@ const previewProps = {
   rehypeRewrite,
 };
 
-export function MarkdownEditor() {
+export function MarkdownEditor({ height, width }: { height: string; width: string }) {
   return (
     <_MarkdownEditor
-      height='500px'
-      width='900px'
+      height={height}
+      width={width}
       visible={true}
       enableScroll={true}
       previewProps={previewProps}

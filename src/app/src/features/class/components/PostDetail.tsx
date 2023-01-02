@@ -1,10 +1,12 @@
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
-import { Spinner } from '@chakra-ui/react';
+import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { MacScrollbar } from 'mac-scrollbar';
 
-import { MarkdownPreview } from '../../../components/Markdown';
+import EditPostModal from './EditPostModal';
 import { useGetPostByIdQuery } from '../../api';
+import { useUserProfile } from '../../../app/hooks';
+import { MarkdownPreview } from '../../../components/Markdown';
 
 function Comment() {
   return (
@@ -56,7 +58,9 @@ function CommentBox() {
 }
 
 export default function PostDetail({ postId }: { postId: string }) {
-  const { data: post, isSuccess } = useGetPostByIdQuery(postId);
+  const userProfile = useUserProfile();
+  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
+  const { data: post, isSuccess } = useGetPostByIdQuery(postId, { skip: !postId });
 
   if (postId === '') {
     return <></>;
@@ -72,6 +76,7 @@ export default function PostDetail({ postId }: { postId: string }) {
 
   return (
     <>
+      {isModalOpen && <EditPostModal isOpen={true} onClose={onModalClose} />}
       <div className='flex flex-col py-4 px-4'>
         <div className='flex items-center justify-between space-x-4 pb-2'>
           <div>
@@ -87,14 +92,17 @@ export default function PostDetail({ postId }: { postId: string }) {
               </div>
             </div>
           </div>
-          <div className='flex space-x-3'>
-            <button
-              type='button'
-              className='inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2'>
-              <PencilIcon className='-ml-1 mr-2 h-5 w-5 text-gray-400' aria-hidden='true' />
-              <span>Edit</span>
-            </button>
-          </div>
+          {post.question.user._id === userProfile._id && (
+            <div className='flex space-x-3'>
+              <button
+                type='button'
+                onClick={onModalOpen}
+                className='inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50'>
+                <PencilIcon className='-ml-1 mr-2 h-5 w-5 text-gray-400' aria-hidden='true' />
+                <span>Edit</span>
+              </button>
+            </div>
+          )}
         </div>
 
         <MarkdownPreview />

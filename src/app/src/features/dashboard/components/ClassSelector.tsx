@@ -25,7 +25,7 @@ export default function ClassSelector({
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const { data: joinedClasses } = useGetJoinedClassesQuery();
   const { data: selectedClass, isSuccess: hasClassData } = useGetClassByIdQuery(selectedClassId, {
-    skip: selectedClassId === '',
+    skip: !selectedClassId,
   });
 
   const handleSelect = (classId: string) => {
