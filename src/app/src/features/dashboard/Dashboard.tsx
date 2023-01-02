@@ -3,7 +3,6 @@ import { Spinner, useDisclosure } from '@chakra-ui/react';
 import {
   AcademicCapIcon,
   ArrowLeftOnRectangleIcon,
-  BellIcon,
   CogIcon,
   PlusIcon,
   InboxStackIcon,
@@ -11,6 +10,7 @@ import {
 import { MacScrollbar } from 'mac-scrollbar';
 
 import ClassSelector from './components/ClassSelector';
+import NotificationsDropdown from './components/NotificationsDropdown';
 
 import { useGetJoinedClassesQuery, useGetUserProfileQuery } from '../api';
 import { signOut } from '../auth/authSlice';
@@ -83,7 +83,7 @@ export default function Dashboard() {
               </div>
               <MacScrollbar className='flex flex-1 flex-col py-4'>
                 <nav className='flex-1' aria-label='Sidebar'>
-                  <NavigationLink name='Notifications' to='#' icon={BellIcon} classNames='mb-10' />
+                  <NotificationsDropdown />
                   <ClassSelector
                     isClassModalOpen={isClassModalOpen}
                     onClassModalOpen={onClassModalOpen}

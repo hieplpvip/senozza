@@ -67,10 +67,10 @@ export default function PostList({
                     <div className='min-w-0 flex-1'>
                       <button className='block focus:outline-none' onClick={() => setPostId(post._id)}>
                         <span className='absolute inset-0' aria-hidden='true' />
-                        <p className='truncate text-sm font-medium text-gray-900'>
-                          {post.question.user.firstName} {post.question.user.lastName}
+                        <p className='truncate text-left text-sm font-medium text-gray-900'>{post.question.content}</p>
+                        <p className='truncate text-left text-sm text-gray-500'>
+                          by {post.question.user.firstName} {post.question.user.lastName}
                         </p>
-                        <p className='truncate text-sm text-gray-500'>{post.question.content}</p>
                       </button>
                     </div>
                     <time

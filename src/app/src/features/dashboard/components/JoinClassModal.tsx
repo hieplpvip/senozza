@@ -28,26 +28,24 @@ export default function JoinClassModal({ isOpen, onClose }: { isOpen: boolean; o
   };
 
   return (
-    <>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Join Class</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Invite Code</FormLabel>
-              <Input type='text' placeholder='e.g. 7xrM2l78SD' value={code} onChange={(e) => setCode(e.target.value)} />
-            </FormControl>
-          </ModalBody>
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Join Class</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          <FormControl>
+            <FormLabel>Invite Code</FormLabel>
+            <Input type='text' placeholder='e.g. 7xrM2l78SD' value={code} onChange={(e) => setCode(e.target.value)} />
+          </FormControl>
+        </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme='indigo' onClick={onSubmit}>
-              Join
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </>
+        <ModalFooter>
+          <Button colorScheme='indigo' onClick={onSubmit}>
+            Join
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
