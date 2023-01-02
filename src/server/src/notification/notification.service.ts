@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 import { NotificationCreateDto, NotificationDto } from './dto';
 import { Notification } from 'src/schemas';
 import { buildMapper } from 'dto-mapper';
+import { NotificationGateway } from './notification.gateway';
 
 @Injectable()
 export class NotificationService {
@@ -13,6 +14,7 @@ export class NotificationService {
     @InjectModel(Notification.name)
     private readonly notificationModel: Model<NotificationDocument>,
     private readonly userService: UserService,
+    private readonly notificationGateway: NotificationGateway,
   ) {}
 
   async notificationsMapper(
@@ -23,13 +25,15 @@ export class NotificationService {
   }
 
   //** CREATE */
-  async create(
-    notificationCreateDto: NotificationCreateDto,
-  ): Promise<Notification> {
+  async create(notificationCreateDto: NotificationCreateDto) {
     const createdNotification = new this.notificationModel(
       notificationCreateDto,
     );
-    return createdNotification.save();
+    await createdNotification.save();
+
+    this.notificationGateway.sendNotification(
+      notificationCreateDto.class.toString(),
+    );
   }
 
   //** READ */

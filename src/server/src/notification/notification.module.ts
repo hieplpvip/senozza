@@ -12,6 +12,7 @@ import {
 } from 'src/schemas';
 import { UserService } from 'src/user/user.service';
 import { NotificationController } from './notification.controller';
+import { NotificationGateway } from './notification.gateway';
 import { NotificationService } from './notification.service';
 
 @Module({
@@ -23,8 +24,8 @@ import { NotificationService } from './notification.service';
       { name: Post.name, schema: PostSchema },
     ]),
   ],
-  providers: [NotificationService, UserService],
+  providers: [NotificationService, UserService, NotificationGateway],
   controllers: [NotificationController],
-  exports: [NotificationService],
+  exports: [NotificationService, NotificationGateway],
 })
 export class NotificationModule {}

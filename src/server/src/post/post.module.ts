@@ -16,6 +16,7 @@ import { CommentService } from './comment/comment.service';
 import { PostController } from './post.controller';
 import { NotificationService } from 'src/notification/notification.service';
 import { UserService } from 'src/user/user.service';
+import { NotificationGateway } from 'src/notification/notification.gateway';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserService } from 'src/user/user.service';
     ClassService,
     CommentService,
     NotificationService,
+    NotificationGateway,
     UserService,
   ],
   exports: [PostService],
