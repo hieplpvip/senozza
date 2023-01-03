@@ -1,7 +1,12 @@
 import _fetch from 'node-fetch';
 
+const API_BASE_URL = 'http://localhost:3001';
+
+const PASSWORD = '98JN2CZs22kp';
+
 const STUDENTS = [
   {
+    code: 'student1',
     email: 'student1@gmail.com',
     firstName: 'Khoa',
     lastName: 'Nguyen',
@@ -9,6 +14,7 @@ const STUDENTS = [
     role: 'student',
   },
   {
+    code: 'student2',
     email: 'student2@gmail.com',
     firstName: 'Long',
     lastName: 'Nguyen',
@@ -16,6 +22,7 @@ const STUDENTS = [
     role: 'student',
   },
   {
+    code: 'student3',
     email: 'student3@gmail.com',
     firstName: 'Duy',
     lastName: 'Phan',
@@ -23,6 +30,7 @@ const STUDENTS = [
     role: 'student',
   },
   {
+    code: 'student4',
     email: 'student4@gmail.com',
     firstName: 'Huan',
     lastName: 'Le',
@@ -31,10 +39,10 @@ const STUDENTS = [
   },
 ];
 
-const TEACHERS = [
+const INSTRUCTORS = [
   {
+    code: 'prof1',
     email: 'prof1@gmail.com',
-    password: 'demo',
     firstName: 'Hiep',
     lastName: 'Le',
     birth: '2002-01-01',
@@ -48,32 +56,42 @@ const CLASSES = [
     courseName: 'Software Engineering',
     year: 2023,
     semester: 1,
+    instructor: 'prof1',
+    students: ['student1', 'student2', 'student3', 'student4'],
   },
+  {
+    courseCode: 'CS311',
+    courseName: 'Computational Structures',
+    year: 2023,
+    semester: 1,
+    instructor: 'prof1',
+    students: ['student1', 'student2', 'student4'],
+  },
+
   {
     courseCode: 'CS418',
     courseName: 'Natural Language Processing',
     year: 2023,
     semester: 1,
-  },
-  {
-    courseCode: 'MTH346',
-    courseName: 'Number Theory',
-    year: 2023,
-    semester: 1,
+    instructor: 'prof1',
+    students: ['student3', 'student4'],
   },
   {
     courseCode: 'CS420',
     courseName: 'Artificial Intelligence',
     year: 2023,
     semester: 1,
+    instructor: 'prof1',
+    students: ['student1', 'student2'],
   },
-];
-
-const JOIN = [
-  [0, 1, 2],
-  [0, 2],
-  [0, 2, 3],
-  [0, 1, 2, 3],
+  {
+    courseCode: 'MTH346',
+    courseName: 'Number Theory',
+    year: 2023,
+    semester: 1,
+    instructor: 'prof1',
+    students: ['student1', 'student2', 'student3'],
+  },
 ];
 
 const POSTS = [
@@ -102,7 +120,7 @@ const POSTS = [
     },
   },
   {
-    title: 'Ask for problem 1',
+    title: 'Ask for problem 4',
     category: 'Homework 2',
     question: {
       createdDate: '2022-12-25T16:45:17.000Z',
@@ -110,8 +128,6 @@ const POSTS = [
     },
   },
 ];
-
-const API_BASE_URL = 'http://localhost:3001';
 
 async function fetch({
   path,
@@ -158,7 +174,7 @@ async function login(user: SignInArg) {
   const response = await fetch({
     path: '/auth/login',
     method: 'POST',
-    body: { ...user, password: 'demo' },
+    body: { ...user, password: PASSWORD },
   });
 
   return response;
@@ -178,7 +194,7 @@ async function signUp(user: SignUpArg) {
     method: 'POST',
     body: {
       ...user,
-      password: 'demo',
+      password: PASSWORD,
       imgUrl: `https://avatars.dicebear.com/api/bottts/${simpleHash(
         user.email,
       )}.svg?size=128`,
@@ -247,21 +263,44 @@ async function createPost(
 }
 
 async function main() {
-  await Promise.all(TEACHERS.map((user) => signUp(user)));
+  // Create users
+  await Promise.all(INSTRUCTORS.map((user) => signUp(user)));
   await Promise.all(STUDENTS.map((user) => signUp(user)));
 
-  const { accessToken } = await login(TEACHERS[0]);
+  // Convert to dict for easy access
+  const instructors = {};
+  for (const instructor of INSTRUCTORS) {
+    instructors[instructor.code] = {
+      ...instructors,
+      accessToken: (await login(instructor)).accessToken,
+    };
+  }
 
-  const classes = await Promise.all(
-    CLASSES.map((classDto) => createClass(accessToken, classDto)),
-  );
+  const students = {};
+  for (const student of STUDENTS) {
+    students[student.code] = {
+      ...student,
+      accessToken: (await login(student)).accessToken,
+    };
+  }
 
-  for (let i = 0; i < classes.length; i++) {
-    const { _id } = classes[i];
-    const emails = JOIN[i].map((index) => STUDENTS[index].email);
-    await joinClass(accessToken, _id, emails);
+  // Create classes
+  const classes = {};
+  for (const _class of CLASSES) {
+    const accessToken = instructors[_class.instructor].accessToken;
+    const data = await createClass(accessToken, _class);
+    await joinClass(
+      accessToken,
+      data._id,
+      _class.students.map((code) => students[code].email),
+    );
+    classes[data.courseCode] = data;
 
-    await Promise.all(POSTS.map((post) => createPost(accessToken, _id, post)));
+    await Promise.all(
+      POSTS.map((post) =>
+        createPost(students[_class.students[0]].accessToken, data._id, post),
+      ),
+    );
   }
 }
 
