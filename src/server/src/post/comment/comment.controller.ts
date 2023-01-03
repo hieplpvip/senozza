@@ -44,7 +44,7 @@ export class CommentController {
   /** READ */
   @Get('all')
   @UseGuards(JwtAuthGuard)
-  @ApiQuery({ name: 'sortBy', description: '"createdDate" or "upvote"' })
+  @ApiQuery({ name: 'sortBy', description: '"createdDate" or "vote"' })
   @ApiOkResponse({ type: CommentDto, isArray: true })
   async listAll(
     @ExtractedUser() userDto: UserDto,

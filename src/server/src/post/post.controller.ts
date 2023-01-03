@@ -60,7 +60,7 @@ export class PostController {
       to: [],
       class: postCreateDto.classId,
     });
-    await this.notificationService.create(notification);
+    await this.notificationService.create(notification, classId, 'new post');
 
     return await this.postService.postMapper(post);
   }

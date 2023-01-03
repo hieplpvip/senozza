@@ -33,8 +33,8 @@ export class ClassService {
     return this.classModel.findById(id).exec();
   }
 
-  async findIdByCode(code: string): Promise<Class> {
-    return this.classModel.findOne({ inviteCode: code }, '_id').exec();
+  async findByCode(code: string): Promise<Class> {
+    return this.classModel.findOne({ inviteCode: code }).exec();
   }
 
   async listStudent(id: Types.ObjectId): Promise<any> {

@@ -25,15 +25,17 @@ export class NotificationService {
   }
 
   //** CREATE */
-  async create(notificationCreateDto: NotificationCreateDto) {
+  async create(
+    notificationCreateDto: NotificationCreateDto,
+    classId: string,
+    message: string,
+  ) {
     const createdNotification = new this.notificationModel(
       notificationCreateDto,
     );
     await createdNotification.save();
 
-    this.notificationGateway.sendNotification(
-      notificationCreateDto.class.toString(),
-    );
+    this.notificationGateway.sendNotification(classId, message);
   }
 
   //** READ */

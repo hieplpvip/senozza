@@ -10,9 +10,7 @@ export class NotificationGateway {
   @WebSocketServer()
   server: Server;
 
-  async sendNotification(classId: string) {
-    this.server
-      .to(classId)
-      .emit('notification', { message: 'New notification' });
+  async sendNotification(classId: string, message: string) {
+    this.server.to(classId).emit('notification', { message });
   }
 }
