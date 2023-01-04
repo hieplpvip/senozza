@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Button,
   FormControl,
@@ -6,7 +7,6 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
   ModalCloseButton,
   Input,
@@ -15,6 +15,8 @@ import {
 import { MarkdownEditor } from '../../../components/Markdown';
 
 export default function EditPostModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [markdown, setMarkdown] = useState('Enter some *markdown* here!');
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size='6xl'>
       <ModalOverlay />
@@ -26,17 +28,16 @@ export default function EditPostModal({ isOpen, onClose }: { isOpen: boolean; on
             <FormLabel>Title</FormLabel>
             <Input type='text' placeholder='e.g. CS300' />
           </FormControl>
-          <FormControl>
+          <FormControl className='mb-4'>
             <FormLabel>Content</FormLabel>
-            <MarkdownEditor height='40vh' width='50vw' />
+            <MarkdownEditor height='40vh' width='50vw' value={markdown} setValue={setMarkdown} />
+          </FormControl>
+          <FormControl className='flex justify-end'>
+            <Button colorScheme='indigo' onClick={onClose}>
+              Create
+            </Button>
           </FormControl>
         </ModalBody>
-
-        <ModalFooter>
-          <Button colorScheme='indigo' onClick={onClose}>
-            Create
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );

@@ -11,7 +11,6 @@ interface CreatePostArg {
   body: {
     title: string;
     category: string;
-    classId: object;
     question: {
       createdDate: string;
       content: string;
@@ -37,6 +36,7 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         method: 'GET',
         params: { classId },
       }),
+      providesTags: [{ type: 'Post', id: 'LIST' }],
     }),
 
     getPostsByCategory: builder.query<PostDto[], GetPostsByCategoryArg>({
@@ -45,6 +45,7 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         method: 'GET',
         params,
       }),
+      providesTags: [{ type: 'Post', id: 'LIST' }],
     }),
 
     getPostById: builder.query<PostDto, string>({
@@ -61,8 +62,9 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         url: '/post/create',
         method: 'POST',
         params: { classId },
-        body,
+        body: { ...body, classId },
       }),
+      invalidatesTags: [{ type: 'Post', id: 'LIST' }],
     }),
 
     editPost: builder.mutation<void, EditPostArg>({
@@ -72,6 +74,10 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         params: { postId },
         body,
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Post', id: 'LIST' },
+        { type: 'Post', id: arg.postId },
+      ],
     }),
 
     deletePost: builder.mutation<void, string>({
@@ -80,6 +86,10 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         method: 'DELETE',
         params: { postId },
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Post', id: 'LIST' },
+        { type: 'Post', id: arg },
+      ],
     }),
 
     pinPost: builder.mutation<void, string>({
@@ -89,6 +99,10 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         params: { postId },
         body: { pin: true },
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Post', id: 'LIST' },
+        { type: 'Post', id: arg },
+      ],
     }),
 
     unpinPost: builder.mutation<void, string>({
@@ -98,6 +112,10 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
         params: { postId },
         body: { pin: false },
       }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Post', id: 'LIST' },
+        { type: 'Post', id: arg },
+      ],
     }),
   }),
 });

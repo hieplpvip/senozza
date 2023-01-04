@@ -35,7 +35,17 @@ const previewProps = {
   rehypeRewrite,
 };
 
-export function MarkdownEditor({ height, width }: { height: string; width: string }) {
+export function MarkdownEditor({
+  height,
+  width,
+  value,
+  setValue,
+}: {
+  height: string;
+  width: string;
+  value: string;
+  setValue: (value: string) => void;
+}) {
   return (
     <_MarkdownEditor
       height={height}
@@ -43,7 +53,8 @@ export function MarkdownEditor({ height, width }: { height: string; width: strin
       visible={true}
       enableScroll={true}
       previewProps={previewProps}
-      value={source}
+      value={value}
+      onChange={setValue}
     />
   );
 }
