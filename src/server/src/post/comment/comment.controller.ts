@@ -55,6 +55,8 @@ export class CommentController {
       new Types.ObjectId(postId),
       sortedField,
     );
+
+    if (coll.length === 0) return [];
     const { answers } = coll[0];
     return await this.commentService.commentsMapper(answers);
   }
@@ -104,6 +106,8 @@ export class CommentController {
       new Types.ObjectId(postId),
       new Types.ObjectId(commentId),
     );
+
+    if (coll.length === 0) return [];
     const { answers } = coll[0];
     console.log(answers);
     return this.commentService.commentsMapper(answers);
