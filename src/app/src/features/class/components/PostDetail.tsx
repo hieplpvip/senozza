@@ -4,55 +4,67 @@ import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { MacScrollbar } from 'mac-scrollbar';
 
 import EditPostModal from './EditPostModal';
-import { useGetPostByIdQuery } from '../../api';
+import { useGetAllCommentsByPostQuery, useGetPostByIdQuery } from '../../api';
 import { useUserProfile } from '../../../app/hooks';
 import { MarkdownPreview } from '../../../components/Markdown';
+import { CommentDto } from '../../../interface';
 
-function Comment() {
+function Comment({ comment }: { comment: CommentDto }) {
   return (
     <div className='mx-auto mt-3 w-full flex-col border-b-2 border-r-2 border-gray-200 bg-white p-4 sm:rounded-lg sm:shadow-sm'>
       <div className='flex flex-row'>
         <div className='flex flex-col justify-center'>
           <button>
             <ChevronDoubleUpIcon className='h-5 w-5 text-gray-500' aria-hidden='true' />
-            <span className='text-gray-500'>0</span>
+            <span className='text-gray-500'>{comment.upvote}</span>
           </button>
         </div>
         <div className='flex-col'>
           <div className='flex flex-1 items-center font-bold leading-tight'>
-            <img
-              className='mx-2 h-9 w-9 rounded-full border-2 border-gray-300'
-              src='https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&faces=1&faceindex=1&facepad=2.5&w=500&h=500&q=80'
-            />
-            Anonymous
-            <span className='ml-1 text-xs font-normal text-gray-500'>answered this question 3 days ago</span>
+            <img className='mx-2 h-9 w-9 rounded-full border-2 border-gray-300' src={comment.user.imgUrl} />
+            {comment.user.firstName} {comment.user.lastName}
+            <span className='ml-1 text-xs font-normal text-gray-500'>answered 3 days ago</span>
           </div>
-          <div className='flex-1 px-2 text-sm font-medium leading-loose text-gray-600'>Very cool!</div>
+          <div className='flex-1 px-2 text-sm font-medium leading-loose text-gray-600'>{comment.content}</div>
         </div>
       </div>
     </div>
   );
 }
 
-function CommentBox() {
+function CommentBox({ postId }: { postId: string }) {
+  const { data, isSuccess } = useGetAllCommentsByPostQuery({ postId, sortBy: 'createdDate' });
+
   return (
     <div className='flex h-full w-full flex-col bg-white'>
       <div className='mx-3 flex items-center border-b border-gray-200'>
         <nav className='-mb-px flex flex-1 space-x-6 xl:space-x-8' aria-label='Tabs'>
           <span className='whitespace-nowrap border-b-2 border-indigo-500 py-4 px-1 text-sm font-medium text-indigo-600'>
-            Comments
+            Answers
           </span>
         </nav>
+        <button
+          type='button'
+          className='inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700'>
+          Answer this question
+        </button>
       </div>
 
-      <MacScrollbar as='section' className='min-h-0 flex-1'>
-        <div className='container mx-auto px-0 sm:px-5'>
-          <Comment />
-          <Comment />
-          <Comment />
-          <Comment />
+      {!isSuccess && (
+        <div className='flex h-full items-center justify-center'>
+          <Spinner size='lg' />
         </div>
-      </MacScrollbar>
+      )}
+
+      {isSuccess && (
+        <MacScrollbar as='section' className='min-h-0 flex-1'>
+          <div className='container mx-auto px-0 sm:px-5'>
+            {data.map((comment) => (
+              <Comment key={comment._id} comment={comment} />
+            ))}
+          </div>
+        </MacScrollbar>
+      )}
     </div>
   );
 }
@@ -83,7 +95,7 @@ export default function PostDetail({ postId }: { postId: string }) {
             <div className='flex flex-1 items-center font-bold leading-tight'>
               <img className='mr-2 h-7 w-7 rounded-full border-2 border-gray-300' src={post.question.user.imgUrl} />
               {post.question.user.firstName} {post.question.user.lastName}
-              <span className='ml-1 text-xs font-normal text-gray-500'>asked a question 3 days ago</span>
+              <span className='ml-1 text-xs font-normal text-gray-500'>asked 3 days ago</span>
             </div>
             <div className='flex flex-row'>
               <h1 className='text-2xl font-bold text-gray-900'>{post.title}</h1>
@@ -108,7 +120,7 @@ export default function PostDetail({ postId }: { postId: string }) {
         <MarkdownPreview />
       </div>
       <div>
-        <CommentBox />
+        <CommentBox postId={postId} />
       </div>
     </>
   );
