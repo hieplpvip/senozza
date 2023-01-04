@@ -160,12 +160,12 @@ function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?:
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const {
     data: members,
+    isFetching,
     isSuccess,
-    isLoading,
   } = useGetStudentsInClassQuery(selectedClassId, { skip: !selectedClassId });
   const isInstructor = useIsInstructor();
 
-  if (isLoading || !isSuccess) {
+  if (isFetching || !isSuccess) {
     return (
       <div className='flex h-full items-center justify-center'>
         <Spinner size='xl' />
@@ -292,13 +292,13 @@ function Invite({ show }: { show?: boolean }) {
 export default function ClassSettings({ show }: { show?: boolean }) {
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const [panel, setPanel] = useState('details');
-  const { data, isLoading, isSuccess } = useGetClassByIdQuery(selectedClassId, { skip: !selectedClassId });
+  const { data, isFetching, isSuccess } = useGetClassByIdQuery(selectedClassId, { skip: !selectedClassId });
 
   if (!selectedClassId) {
     return <Navigate to='/dashboard' replace />;
   }
 
-  if (isLoading || !isSuccess) {
+  if (isFetching || !isSuccess) {
     return (
       <div className='flex h-full items-center justify-center'>
         <Spinner size='xl' />

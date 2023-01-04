@@ -55,10 +55,10 @@ export default function Dashboard() {
   const dispatch = useAppDispatch();
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const { data: joinedClasses } = useGetJoinedClassesQuery();
-  const { data: userProfile, isLoading, isSuccess } = useGetUserProfileQuery();
+  const { data: userProfile, isFetching, isSuccess } = useGetUserProfileQuery();
   const { isOpen: isClassModalOpen, onOpen: onClassModalOpen, onClose: onClassModalClose } = useDisclosure();
 
-  if (isLoading || !isSuccess) {
+  if (isFetching || !isSuccess) {
     return (
       <div className='flex h-full items-center justify-center'>
         <Spinner size='xl' />
