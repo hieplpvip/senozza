@@ -3,6 +3,7 @@ import { ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { MacScrollbar } from 'mac-scrollbar';
 
+import CreateCommentModal from './CreateCommentModal';
 import EditPostModal from './EditPostModal';
 import { useGetAllCommentsByPostQuery, useGetPostByIdQuery } from '../../api';
 import { useUserProfile } from '../../../app/hooks';
@@ -34,6 +35,7 @@ function Comment({ comment }: { comment: CommentDto }) {
 
 function CommentBox({ postId }: { postId: string }) {
   const { data, isSuccess } = useGetAllCommentsByPostQuery({ postId, sortBy: 'createdDate' });
+  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
 
   return (
     <div className='flex h-full w-full flex-col bg-white'>
@@ -45,6 +47,7 @@ function CommentBox({ postId }: { postId: string }) {
         </nav>
         <button
           type='button'
+          onClick={onModalOpen}
           className='inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700'>
           Answer this question
         </button>
@@ -65,6 +68,8 @@ function CommentBox({ postId }: { postId: string }) {
           </div>
         </MacScrollbar>
       )}
+
+      {isModalOpen && <CreateCommentModal isOpen={true} onClose={onModalClose} />}
     </div>
   );
 }
