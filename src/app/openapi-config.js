@@ -17,6 +17,9 @@ const config = {
     './generated_apis/post.ts': {
       filterEndpoints: [/^post/],
     },
+    './generated_apis/notification.ts': {
+      filterEndpoints: [/^notification/],
+    },
     './generated_apis/auth.ts': {
       filterEndpoints: [/^auth/],
     },
