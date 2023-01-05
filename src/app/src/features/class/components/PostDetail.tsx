@@ -69,7 +69,7 @@ function CommentBox({ postId }: { postId: string }) {
         </MacScrollbar>
       )}
 
-      {isModalOpen && <CreateCommentModal isOpen={true} onClose={onModalClose} />}
+      {isModalOpen && <CreateCommentModal isOpen={true} onClose={onModalClose} postId={postId} />}
     </div>
   );
 }

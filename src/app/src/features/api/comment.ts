@@ -41,6 +41,7 @@ export const commentApiSlice = baseApiSlice.injectEndpoints({
         method: 'GET',
         params,
       }),
+      providesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
     }),
 
     commentOnPost: builder.mutation<void, CommentOnPostArg>({
@@ -50,6 +51,7 @@ export const commentApiSlice = baseApiSlice.injectEndpoints({
         params: { postId },
         body,
       }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
     }),
 
     editComment: builder.mutation<void, EditCommentArg>({
@@ -59,6 +61,7 @@ export const commentApiSlice = baseApiSlice.injectEndpoints({
         params: { postId, commentId },
         body,
       }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
     }),
 
     deleteComment: builder.mutation<void, DeleteCommentArg>({
@@ -67,6 +70,7 @@ export const commentApiSlice = baseApiSlice.injectEndpoints({
         method: 'DELETE',
         params,
       }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
     }),
 
     voteComment: builder.mutation<void, VoteCommentArg>({
@@ -75,6 +79,7 @@ export const commentApiSlice = baseApiSlice.injectEndpoints({
         method: 'PATCH',
         params,
       }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
     }),
   }),
 });
