@@ -129,6 +129,25 @@ const POSTS = [
   },
 ];
 
+const ANSWERS = [
+  {
+    createdDate: '2022-12-24T17:00:00.000Z',
+    content: 'This is 1st answer',
+  },
+  {
+    createdDate: '2022-12-24T17:10:00.000Z',
+    content: 'This is 2nd answer',
+  },
+  {
+    createdDate: '2022-12-24T17:20:00.000Z',
+    content: 'This is 3rd answer',
+  },
+  {
+    createdDate: '2022-12-24T17:30:00.000Z',
+    content: 'This is 4th answer',
+  },
+];
+
 async function fetch({
   path,
   method,
@@ -262,6 +281,26 @@ async function createPost(
   return response;
 }
 
+interface CreateAnswerArg {
+  createdDate: string;
+  content: string;
+}
+
+async function createAnswer(
+  accessToken: string,
+  postId: string,
+  body: CreateAnswerArg,
+) {
+  const response = await fetch({
+    path: `/post/comment/answer?postId=${postId}`,
+    method: 'POST',
+    body,
+    accessToken,
+  });
+
+  return response;
+}
+
 async function main() {
   // Create users
   await Promise.all(INSTRUCTORS.map((user) => signUp(user)));
@@ -297,9 +336,23 @@ async function main() {
     classes[data.courseCode] = data;
 
     await Promise.all(
-      POSTS.map((post) =>
-        createPost(students[_class.students[0]].accessToken, data._id, post),
-      ),
+      POSTS.map(async (post) => {
+        const _post = await createPost(
+          students[_class.students[0]].accessToken,
+          data._id,
+          post,
+        );
+        await Promise.all(
+          ANSWERS.map((answer) =>
+            createAnswer(
+              students[_class.students[0]].accessToken,
+              _post._id,
+              answer,
+            ),
+          ),
+        );
+        return _post;
+      }),
     );
   }
 }
