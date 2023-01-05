@@ -3,7 +3,7 @@ import { CommentDto } from '../../interface';
 
 interface GetAllCommentsByPostArg {
   postId: string;
-  sortBy: 'createdDate' | 'upvote';
+  sortBy: 'createdDate' | 'vote';
 }
 
 interface CommentOnPostArg {

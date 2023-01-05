@@ -5,6 +5,6 @@ export type CommentDto = {
   user: UserDto;
   createdDate: string;
   content: string;
-  upvote: number;
+  vote: number;
   bestAnswer: boolean;
 };

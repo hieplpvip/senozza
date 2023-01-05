@@ -17,7 +17,7 @@ function Comment({ comment }: { comment: CommentDto }) {
         <div className='flex flex-col justify-center'>
           <button>
             <ChevronDoubleUpIcon className='h-5 w-5 text-gray-500' aria-hidden='true' />
-            <span className='text-gray-500'>{comment.upvote}</span>
+            <span className='text-gray-500'>{comment.vote}</span>
           </button>
         </div>
         <div className='flex-col'>
