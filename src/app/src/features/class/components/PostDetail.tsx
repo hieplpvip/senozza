@@ -93,9 +93,17 @@ export default function PostDetail({ postId }: { postId: string }) {
 
   return (
     <>
-      {isModalOpen && <EditPostModal isOpen={true} onClose={onModalClose} />}
+      {isModalOpen && (
+        <EditPostModal
+          isOpen={true}
+          onClose={onModalClose}
+          postId={postId}
+          title={post.title}
+          content={post.question.content}
+        />
+      )}
       <div className='flex flex-col py-4 px-4'>
-        <div className='flex items-center justify-between space-x-4 pb-2'>
+        <div className='mb-4 flex items-center justify-between space-x-4 pb-2 '>
           <div>
             <div className='flex flex-1 items-center font-bold leading-tight'>
               <img className='mr-2 h-7 w-7 rounded-full border-2 border-gray-300' src={post.question.user.imgUrl} />
@@ -104,9 +112,9 @@ export default function PostDetail({ postId }: { postId: string }) {
             </div>
             <div className='flex flex-row'>
               <h1 className='text-2xl font-bold text-gray-900'>{post.title}</h1>
-              <div className='ml-2 flex flex-col justify-center'>
+              {/* <div className='ml-2 flex flex-col justify-center'>
                 <span className='text-sm text-gray-500'>#1111</span>
-              </div>
+              </div> */}
             </div>
           </div>
           {post.question.user._id === userProfile._id && (
@@ -122,7 +130,7 @@ export default function PostDetail({ postId }: { postId: string }) {
           )}
         </div>
 
-        <MarkdownPreview />
+        <MarkdownPreview source={post.question.content} />
       </div>
       <div>
         <CommentBox postId={postId} />

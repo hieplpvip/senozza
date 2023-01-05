@@ -40,7 +40,7 @@ export default function CreatePostModal({ isOpen, onClose }: { isOpen: boolean; 
       await createPost({ classId, body }).unwrap();
       onClose();
     } catch (err) {
-      alert('Failed to post');
+      alert('Failed to post question');
     }
   };
 

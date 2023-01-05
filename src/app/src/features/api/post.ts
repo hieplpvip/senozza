@@ -70,7 +70,7 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
     editPost: builder.mutation<void, EditPostArg>({
       query: ({ postId, body }) => ({
         url: '/post/edit',
-        method: 'POST',
+        method: 'PUT',
         params: { postId },
         body,
       }),
@@ -95,7 +95,7 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
     pinPost: builder.mutation<void, string>({
       query: (postId) => ({
         url: '/post/edit',
-        method: 'POST',
+        method: 'PUT',
         params: { postId },
         body: { pin: true },
       }),
@@ -108,7 +108,7 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
     unpinPost: builder.mutation<void, string>({
       query: (postId) => ({
         url: '/post/edit',
-        method: 'POST',
+        method: 'PUT',
         params: { postId },
         body: { pin: false },
       }),

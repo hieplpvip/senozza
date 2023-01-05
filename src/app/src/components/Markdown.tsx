@@ -5,17 +5,6 @@ import _MarkdownEditor from '@uiw/react-markdown-editor';
 
 import 'katex/dist/katex.min.css';
 
-const source = `
-# Test
-
-Lift($L$) can be determined by Lift Coefficient ($C_L$) like the following
-equation.
-
-$$
-L = \\frac{1}{2} \\rho v^2 S C_L
-$$
-`;
-
 const rehypeRewrite: RehypeRewriteOptions['rewrite'] = (node, _index, parent) => {
   // Disable header links
   if (
@@ -59,6 +48,6 @@ export function MarkdownEditor({
   );
 }
 
-export function MarkdownPreview() {
+export function MarkdownPreview({ source }: { source: string }) {
   return <_MarkdownEditor.Markdown {...previewProps} source={source} />;
 }
