@@ -43,7 +43,10 @@ export class CommentService {
       {
         $addFields: {
           'answers.vote': {
-            $subtract: ['$answers.upvote', '$answers.downvote'],
+            $subtract: [
+              { $size: '$answers.upvote' },
+              { $size: '$answers.downvote' },
+            ],
           },
         },
       },
@@ -72,7 +75,10 @@ export class CommentService {
       {
         $addFields: {
           'answers.vote': {
-            $subtract: ['$answers.upvote', '$answers.downvote'],
+            $subtract: [
+              { $size: '$answers.upvote' },
+              { $size: '$answers.downvote' },
+            ],
           },
         },
       },
