@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Navigate } from 'react-router-dom';
-import { Button, FormControl, FormLabel, Input, Spinner } from '@chakra-ui/react';
+import { Button, FormControl, FormLabel, Input, Spinner, useDisclosure } from '@chakra-ui/react';
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { MacScrollbar } from 'mac-scrollbar';
 
@@ -13,6 +13,7 @@ import {
   useLeaveClassMutation,
 } from '../api';
 import { useAppSelector, useIsInstructor } from '../../app/hooks';
+import AlertModal from '../../components/AlertModal';
 import { capitalize, classNames } from '../../utils';
 
 const panels = [
@@ -53,6 +54,7 @@ function Details({ show }: { show?: boolean }) {
   const [editClass] = useEditClassMutation();
   const [deleteClass] = useDeleteClassMutation();
   const [leaveClass] = useLeaveClassMutation();
+  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const { register, handleSubmit } = useForm<ClassDetailsInput>({
     values: { courseCode: data.courseCode, courseName: data.courseName },
   });
@@ -65,19 +67,15 @@ function Details({ show }: { show?: boolean }) {
     }
   };
 
-  const onDeleteClass = async () => {
+  const onDeleteLeaveClass = async () => {
     try {
-      await deleteClass(data._id).unwrap();
+      if (isInstructor) {
+        await deleteClass(data._id).unwrap();
+      } else {
+        await leaveClass(data._id).unwrap();
+      }
     } catch (err) {
-      alert(`Failed to delete class: ${err}`);
-    }
-  };
-
-  const onLeaveClass = async () => {
-    try {
-      await leaveClass(data._id).unwrap();
-    } catch (err) {
-      alert(`Failed to delete class: ${err}`);
+      alert(`Failed to ${isInstructor ? 'delete' : 'leave'} class: ${err}`);
     }
   };
 
@@ -128,7 +126,7 @@ function Details({ show }: { show?: boolean }) {
             </div>
 
             <div>
-              <Button colorScheme='red' onClick={onDeleteClass}>
+              <Button colorScheme='red' onClick={onModalOpen}>
                 Delete class
               </Button>
             </div>
@@ -145,11 +143,35 @@ function Details({ show }: { show?: boolean }) {
             </div>
 
             <div>
-              <Button colorScheme='red' onClick={onLeaveClass}>
+              <Button colorScheme='red' onClick={onModalOpen}>
                 Leave class
               </Button>
             </div>
           </div>
+        )}
+
+        {isModalOpen && isInstructor && (
+          <AlertModal
+            show={isModalOpen}
+            onClose={onModalClose}
+            onConfirm={onDeleteLeaveClass}
+            title='Delete class'
+            body='Are you sure you want to delete this class? All class data will be permanently removed from our servers. This action cannot be undone.'
+            confirmText='Delete class'
+            cancelText='Cancel'
+          />
+        )}
+
+        {isModalOpen && !isInstructor && (
+          <AlertModal
+            show={isModalOpen}
+            onClose={onModalClose}
+            onConfirm={onDeleteLeaveClass}
+            title='Leave class'
+            body='Are you sure you want to leave this class? After leaving, you will no longer be able to access this class until you are re-invited.'
+            confirmText='Leave class'
+            cancelText='Cancel'
+          />
         )}
       </div>
     </div>
