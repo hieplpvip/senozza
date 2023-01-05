@@ -73,6 +73,7 @@ export class PostService {
   ): Promise<Post> {
     return this.postModel
       .findOneAndUpdate({ _id: postId }, flatten(postUpdateDto))
+      .populate('question.user')
       .exec();
   }
 
