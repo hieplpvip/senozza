@@ -5,11 +5,12 @@ import {
   ChevronDownIcon,
   ChevronDoubleUpIcon,
   EllipsisHorizontalIcon,
-  MapPinIcon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbtack } from '@fortawesome/free-solid-svg-icons';
 import { MacScrollbar } from 'mac-scrollbar';
 import TimeAgo from 'react-timeago';
 
@@ -242,9 +243,9 @@ export default function PostDetail({ postId }: { postId: string }) {
                               active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                               'group flex w-full items-center px-4 py-2 text-sm',
                             )}>
-                            <MapPinIcon
-                              className='mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500'
-                              aria-hidden='true'
+                            <FontAwesomeIcon
+                              icon={faThumbtack}
+                              className='-mb-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500'
                             />
                             Pin to top
                           </button>

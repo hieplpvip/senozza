@@ -1,5 +1,7 @@
 import { Select, Spinner, useDisclosure } from '@chakra-ui/react';
 import { PlusSmallIcon } from '@heroicons/react/24/solid';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbtack } from '@fortawesome/free-solid-svg-icons';
 import { MacScrollbar } from 'mac-scrollbar';
 import TimeAgo from 'react-timeago';
 
@@ -60,9 +62,21 @@ export default function PostList({
                 <li
                   key={post._id}
                   className={classNames(
-                    post._id === selectedPostId ? 'rounded bg-gray-200' : 'bg-white hover:bg-gray-50',
+                    post.pin
+                      ? post._id === selectedPostId
+                        ? 'bg-indigo-200'
+                        : 'bg-indigo-100 hover:bg-indigo-200'
+                      : post._id === selectedPostId
+                      ? 'bg-gray-200'
+                      : 'bg-white hover:bg-gray-50',
                     'relative py-5 px-4',
                   )}>
+                  {post.pin && (
+                    <FontAwesomeIcon
+                      icon={faThumbtack}
+                      className='absolute top-2 left-2 h-4 w-4 text-indigo-400 group-hover:text-indigo-500'
+                    />
+                  )}
                   <div className='flex justify-between space-x-3'>
                     <img className='my-auto h-6 w-6 rounded-full' src={post.question.user.imgUrl} />
                     <div className='min-w-0 flex-1'>
