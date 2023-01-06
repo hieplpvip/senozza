@@ -3,14 +3,13 @@ import { Menu, Transition } from '@headlessui/react';
 import {
   CheckBadgeIcon,
   ChevronDownIcon,
-  ChevronDoubleUpIcon,
   EllipsisHorizontalIcon,
   PencilSquareIcon,
   TrashIcon,
 } from '@heroicons/react/24/solid';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faThumbtack } from '@fortawesome/free-solid-svg-icons';
+import { faChevronUp, faChevronDown, faThumbtack } from '@fortawesome/free-solid-svg-icons';
 import { MacScrollbar } from 'mac-scrollbar';
 import TimeAgo from 'react-timeago';
 
@@ -61,9 +60,12 @@ function CommentBox({ postId }: { postId: string }) {
                   key={comment._id}>
                   <div className='flex flex-row'>
                     <div className='flex flex-col justify-center'>
-                      <button>
-                        <ChevronDoubleUpIcon className='h-5 w-5 text-gray-500' aria-hidden='true' />
-                        <span className='text-gray-500'>{comment.vote}</span>
+                      <button className='-mb-3'>
+                        <FontAwesomeIcon icon={faChevronUp} className='h-5 w-5 text-gray-500' />
+                      </button>
+                      <span className='text-center text-gray-500'>{comment.vote}</span>
+                      <button className='voted -mt-1'>
+                        <FontAwesomeIcon icon={faChevronDown} className='h-5 w-5 text-indigo-500' />
                       </button>
                     </div>
                     <div className='grow flex-col'>

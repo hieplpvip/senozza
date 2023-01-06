@@ -25,3 +25,7 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+.voted {
+  filter: drop-shadow(0 0 4px rgb(67 56 202));
+}
