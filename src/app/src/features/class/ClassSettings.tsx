@@ -275,7 +275,11 @@ function Invite({ show }: { show?: boolean }) {
                 </div>
               </div>
               <div className='ml-4 flex-1'>
-                <button className='group flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900'>
+                <button
+                  className='group flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900'
+                  onClick={() => {
+                    navigator.clipboard.writeText(`https://senozza.com/join-class/${data.inviteCode}`);
+                  }}>
                   <LinkIcon className='mr-1 h-5 w-5 text-indigo-500 group-hover:text-indigo-900' aria-hidden='true' />
                   <span>Copy link</span>
                 </button>
@@ -298,7 +302,11 @@ function Invite({ show }: { show?: boolean }) {
                 <div className='text-sm font-medium text-gray-900'>{data.inviteCode}</div>
               </div>
               <div className='ml-4 flex-1'>
-                <button className='group flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900'>
+                <button
+                  className='group flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900'
+                  onClick={() => {
+                    navigator.clipboard.writeText(data.inviteCode);
+                  }}>
                   <LinkIcon className='mr-1 h-5 w-5 text-indigo-500 group-hover:text-indigo-900' aria-hidden='true' />
                   <span>Copy code</span>
                 </button>
