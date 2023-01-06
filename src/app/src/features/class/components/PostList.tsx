@@ -1,6 +1,7 @@
 import { Select, Spinner, useDisclosure } from '@chakra-ui/react';
 import { PlusSmallIcon } from '@heroicons/react/24/solid';
 import { MacScrollbar } from 'mac-scrollbar';
+import TimeAgo from 'react-timeago';
 
 import CreatePostModal from './CreatePostModal';
 import { useGetAllPostsQuery } from '../../api';
@@ -73,11 +74,10 @@ export default function PostList({
                         </p>
                       </button>
                     </div>
-                    <time
-                      dateTime={post.question.createdDate}
-                      className='flex-shrink-0 whitespace-nowrap text-sm text-gray-500'>
-                      aaaaaaaaaaa
-                    </time>
+                    <TimeAgo
+                      date={new Date(post.question.createdDate)}
+                      className='flex-shrink-0 whitespace-nowrap text-sm text-gray-500'
+                    />
                   </div>
                   <div className='mt-1'>
                     <p className='line-clamp-2 text-sm text-gray-600'>{post.question.content}</p>

@@ -2,6 +2,7 @@ import { PencilIcon } from '@heroicons/react/24/solid';
 import { ChevronDoubleUpIcon } from '@heroicons/react/24/solid';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { MacScrollbar } from 'mac-scrollbar';
+import TimeAgo from 'react-timeago';
 
 import CreateCommentModal from './CreateCommentModal';
 import EditPostModal from './EditPostModal';
@@ -24,7 +25,9 @@ function Comment({ comment }: { comment: CommentDto }) {
           <div className='flex flex-1 items-center font-bold leading-tight'>
             <img className='mx-2 h-9 w-9 rounded-full border-2 border-gray-300' src={comment.user.imgUrl} />
             {comment.user.firstName} {comment.user.lastName}
-            <span className='ml-1 text-xs font-normal text-gray-500'>answered 3 days ago</span>
+            <span className='ml-1 font-normal text-gray-500'>
+              answered <TimeAgo date={new Date(comment.createdDate)} />
+            </span>
           </div>
           <div className='flex-1 px-2 text-sm font-medium leading-loose text-gray-600'>{comment.content}</div>
         </div>
@@ -108,7 +111,9 @@ export default function PostDetail({ postId }: { postId: string }) {
             <div className='flex flex-1 items-center font-bold leading-tight'>
               <img className='mr-2 h-7 w-7 rounded-full border-2 border-gray-300' src={post.question.user.imgUrl} />
               {post.question.user.firstName} {post.question.user.lastName}
-              <span className='ml-1 text-xs font-normal text-gray-500'>asked 3 days ago</span>
+              <span className='ml-1 font-normal text-gray-500'>
+                asked <TimeAgo date={new Date(post.question.createdDate)} />
+              </span>
             </div>
             <div className='flex flex-row'>
               <h1 className='text-2xl font-bold text-gray-900'>{post.title}</h1>
