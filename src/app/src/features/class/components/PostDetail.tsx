@@ -15,8 +15,14 @@ import TimeAgo from 'react-timeago';
 
 import CreateCommentModal from './CreateCommentModal';
 import EditPostModal from './EditPostModal';
-import { useGetAllCommentsByPostQuery, useGetPostByIdQuery, usePinPostMutation } from '../../api';
+import {
+  useDeletePostMutation,
+  useGetAllCommentsByPostQuery,
+  useGetPostByIdQuery,
+  usePinPostMutation,
+} from '../../api';
 import { useUserProfile, useIsInstructor } from '../../../app/hooks';
+import AlertModal from '../../../components/AlertModal';
 import { MarkdownPreview } from '../../../components/Markdown';
 import { classNames } from '../../../utils';
 
@@ -175,15 +181,21 @@ function CommentBox({ postId }: { postId: string }) {
 export default function PostDetail({ postId }: { postId: string }) {
   const userProfile = useUserProfile();
   const isInstructor = useIsInstructor();
-  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
-  const { data: post, isSuccess } = useGetPostByIdQuery(postId, { skip: !postId });
+  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
+  const { data: post, isError, isFetching, isSuccess } = useGetPostByIdQuery(postId, { skip: !postId });
   const [pinPost] = usePinPostMutation();
+  const [deletePost] = useDeletePostMutation();
 
   if (postId === '') {
     return <></>;
   }
 
-  if (!isSuccess) {
+  if (isError) {
+    return <></>;
+  }
+
+  if (isFetching || !isSuccess) {
     return (
       <div className='row-span-2 flex h-full items-center justify-center'>
         <Spinner size='xl' />
@@ -201,15 +213,35 @@ export default function PostDetail({ postId }: { postId: string }) {
     }
   };
 
+  const onDeletePost = async () => {
+    try {
+      await deletePost(post._id).unwrap();
+      onDeleteModalClose();
+    } catch (err) {
+      alert(`Failed to delete post: ${err}`);
+    }
+  };
+
   return (
     <>
-      {isModalOpen && (
+      {isEditModalOpen && (
         <EditPostModal
           isOpen={true}
-          onClose={onModalClose}
+          onClose={onEditModalClose}
           postId={postId}
           title={post.title}
           content={post.question.content}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <AlertModal
+          show={isDeleteModalOpen}
+          onClose={onDeleteModalClose}
+          onConfirm={onDeletePost}
+          title='Delete post'
+          body='Are you sure you want to delete this post? This action cannot be undone.'
+          confirmText='Delete post'
+          cancelText='Cancel'
         />
       )}
       <div className='flex flex-col py-4 px-4'>
@@ -269,7 +301,7 @@ export default function PostDetail({ postId }: { postId: string }) {
                     <Menu.Item>
                       {({ active }) => (
                         <button
-                          onClick={onModalOpen}
+                          onClick={onEditModalOpen}
                           className={classNames(
                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                             'group flex w-full items-center px-4 py-2 text-sm',
@@ -285,6 +317,7 @@ export default function PostDetail({ postId }: { postId: string }) {
                     <Menu.Item>
                       {({ active }) => (
                         <button
+                          onClick={onDeleteModalOpen}
                           className={classNames(
                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                             'group flex w-full items-center px-4 py-2 text-sm',
