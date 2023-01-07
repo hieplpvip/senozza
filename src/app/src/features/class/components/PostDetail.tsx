@@ -15,7 +15,7 @@ import TimeAgo from 'react-timeago';
 
 import CreateCommentModal from './CreateCommentModal';
 import EditPostModal from './EditPostModal';
-import { useGetAllCommentsByPostQuery, useGetPostByIdQuery } from '../../api';
+import { useGetAllCommentsByPostQuery, useGetPostByIdQuery, usePinPostMutation } from '../../api';
 import { useUserProfile, useIsInstructor } from '../../../app/hooks';
 import { MarkdownPreview } from '../../../components/Markdown';
 import { classNames } from '../../../utils';
@@ -177,6 +177,7 @@ export default function PostDetail({ postId }: { postId: string }) {
   const isInstructor = useIsInstructor();
   const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
   const { data: post, isSuccess } = useGetPostByIdQuery(postId, { skip: !postId });
+  const [pinPost] = usePinPostMutation();
 
   if (postId === '') {
     return <></>;
@@ -191,6 +192,14 @@ export default function PostDetail({ postId }: { postId: string }) {
   }
 
   const isAuthor = post.question.user._id === userProfile._id;
+
+  const handlePin = async () => {
+    try {
+      await pinPost({ postId: post._id, pin: !post.pin }).unwrap();
+    } catch (err) {
+      alert(`Failed to ${post.pin ? 'unpin' : 'pin'} post: ${err}`);
+    }
+  };
 
   return (
     <>
@@ -241,6 +250,7 @@ export default function PostDetail({ postId }: { postId: string }) {
                       <Menu.Item>
                         {({ active }) => (
                           <button
+                            onClick={handlePin}
                             className={classNames(
                               active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                               'group flex w-full items-center px-4 py-2 text-sm',
@@ -249,7 +259,7 @@ export default function PostDetail({ postId }: { postId: string }) {
                               icon={faThumbtack}
                               className='-mb-1 mr-3 h-5 w-5 text-gray-400 group-hover:text-gray-500'
                             />
-                            Pin to top
+                            {post.pin ? 'Unpin' : 'Pin to top'}
                           </button>
                         )}
                       </Menu.Item>

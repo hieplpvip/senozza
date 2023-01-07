@@ -28,6 +28,11 @@ interface EditPostArg {
   };
 }
 
+interface PinPostArg {
+  postId: string;
+  pin: boolean;
+}
+
 export const postApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllPosts: builder.query<PostDto[], string>({
@@ -92,29 +97,16 @@ export const postApiSlice = baseApiSlice.injectEndpoints({
       ],
     }),
 
-    pinPost: builder.mutation<void, string>({
-      query: (postId) => ({
+    pinPost: builder.mutation<void, PinPostArg>({
+      query: ({ postId, pin }) => ({
         url: '/post/edit',
         method: 'PUT',
         params: { postId },
-        body: { pin: true },
+        body: { pin },
       }),
       invalidatesTags: (_result, _error, arg) => [
         { type: 'Post', id: 'LIST' },
-        { type: 'Post', id: arg },
-      ],
-    }),
-
-    unpinPost: builder.mutation<void, string>({
-      query: (postId) => ({
-        url: '/post/edit',
-        method: 'PUT',
-        params: { postId },
-        body: { pin: false },
-      }),
-      invalidatesTags: (_result, _error, arg) => [
-        { type: 'Post', id: 'LIST' },
-        { type: 'Post', id: arg },
+        { type: 'Post', id: arg.postId },
       ],
     }),
   }),
@@ -128,5 +120,4 @@ export const {
   useEditPostMutation,
   useDeletePostMutation,
   usePinPostMutation,
-  useUnpinPostMutation,
 } = postApiSlice;
