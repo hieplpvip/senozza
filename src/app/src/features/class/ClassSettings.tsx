@@ -5,6 +5,7 @@ import { Button, FormControl, FormLabel, Input, Spinner, useDisclosure } from '@
 import { InformationCircleIcon, LinkIcon, UserGroupIcon, UserPlusIcon } from '@heroicons/react/24/outline';
 import { MacScrollbar } from 'mac-scrollbar';
 
+import { resetClassState } from './classSlide';
 import {
   useDeleteClassMutation,
   useEditClassMutation,
@@ -12,7 +13,7 @@ import {
   useGetStudentsInClassQuery,
   useLeaveClassMutation,
 } from '../api';
-import { useAppSelector, useIsInstructor } from '../../app/hooks';
+import { useAppDispatch, useAppSelector, useIsInstructor } from '../../app/hooks';
 import AlertModal from '../../components/AlertModal';
 import { capitalize, classNames } from '../../utils';
 
@@ -50,6 +51,7 @@ function Details({ show }: { show?: boolean }) {
   }
 
   const data = useClassData();
+  const dispatch = useAppDispatch();
   const isInstructor = useIsInstructor();
   const [editClass] = useEditClassMutation();
   const [deleteClass] = useDeleteClassMutation();
@@ -74,6 +76,8 @@ function Details({ show }: { show?: boolean }) {
       } else {
         await leaveClass(data._id).unwrap();
       }
+      onModalClose();
+      dispatch(resetClassState());
     } catch (err) {
       alert(`Failed to ${isInstructor ? 'delete' : 'leave'} class: ${err}`);
     }
