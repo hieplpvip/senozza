@@ -1,3 +1,4 @@
+import { useForm } from 'react-hook-form';
 import {
   Button,
   FormControl,
@@ -13,11 +14,32 @@ import {
   Select,
 } from '@chakra-ui/react';
 
-const YEARS = ['2019', '2020', '2021', '2022', '2023', '2024'];
+import { useCreateClassMutation } from '../../api';
+
+interface CreateClassFormInput {
+  courseCode: string;
+  courseName: string;
+  year: number;
+  semester: string;
+}
+
+const YEARS = [2019, 2020, 2021, 2022, 2023, 2024];
 
 export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const { register, handleSubmit } = useForm<CreateClassFormInput>();
+  const [createClass] = useCreateClassMutation();
+
+  const onSubmit = async (data: CreateClassFormInput) => {
+    try {
+      await createClass(data).unwrap();
+      onClose();
+    } catch (err) {
+      alert(`Failed to create class: ${err}`);
+    }
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleSubmit(onSubmit)}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create Class</ModalHeader>
@@ -25,25 +47,29 @@ export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean;
         <ModalBody>
           <FormControl className='mb-3'>
             <FormLabel>Class code</FormLabel>
-            <Input type='text' placeholder='e.g. CS300' />
+            <Input type='text' placeholder='e.g. CS300' required {...register('courseCode')} />
           </FormControl>
           <FormControl className='mb-3'>
             <FormLabel>Class name</FormLabel>
-            <Input type='text' placeholder='e.g. Elements of Software Engineering' />
+            <Input
+              type='text'
+              placeholder='e.g. Elements of Software Engineering'
+              required
+              {...register('courseName')}
+            />
           </FormControl>
           <FormControl className='mb-3'>
             <FormLabel>Semester</FormLabel>
-            <Select>
+            <Select defaultValue='spring' {...register('semester')}>
               <option value='spring'>Spring</option>
               <option value='summer'>Summer</option>
-              <option value='fall' selected>
-                Fall
-              </option>
+              <option value='fall'>Fall</option>
+              <option value='winter'>Winter</option>
             </Select>
           </FormControl>
           <FormControl>
             <FormLabel>Year</FormLabel>
-            <Select>
+            <Select defaultValue={2023} {...register('year')}>
               {YEARS.map((year) => (
                 <option key={year} value={year}>
                   {year}
@@ -54,7 +80,7 @@ export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean;
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme='indigo' onClick={onClose}>
+          <Button colorScheme='indigo' type='submit'>
             Create
           </Button>
         </ModalFooter>

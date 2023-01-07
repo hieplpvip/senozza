@@ -84,7 +84,9 @@ function Details({ show }: { show?: boolean }) {
       <h1 className='text-blue-gray-900 text-2xl font-medium'>
         {data.courseCode}: {data.courseName}
       </h1>
-      <p className='text-m font-medium text-gray-500'>Fall 2022</p>
+      <p className='text-m font-medium text-gray-500'>
+        {data.semester} {data.year}
+      </p>
 
       <div className='divide-y-blue-gray-200 mt-6 space-y-8 divide-y'>
         <form className='grid grid-cols-6 gap-y-4 gap-x-6' onSubmit={handleSubmit(onSubmit)}>

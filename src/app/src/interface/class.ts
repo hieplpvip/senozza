@@ -3,7 +3,7 @@ export type ClassDto = {
   courseCode: string;
   courseName: string;
   year: number;
-  semester: number;
+  semester: string;
   categories: string[];
   archived: boolean;
   inviteCode: string;

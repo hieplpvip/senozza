@@ -5,8 +5,7 @@ interface CreateClassArg {
   courseCode: string;
   courseName: string;
   year: number;
-  semester: number;
-  categories: string[];
+  semester: string;
 }
 
 interface EditClassArg {
