@@ -21,6 +21,7 @@ import {
   useGetAllCommentsByPostQuery,
   useGetPostByIdQuery,
   usePinPostMutation,
+  useDeleteCommentMutation,
 } from '../../api';
 import { useUserProfile, useIsInstructor } from '../../../app/hooks';
 import AlertModal from '../../../components/AlertModal';
@@ -36,6 +37,16 @@ function CommentBox({ postId }: { postId: string }) {
   const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
+  const [deleteComment] = useDeleteCommentMutation();
+
+  const onDeleteComment = async () => {
+    try {
+      await deleteComment({ postId, commentId: targetId }).unwrap();
+      onDeleteModalClose();
+    } catch (err) {
+      alert(`Failed to delete comment: ${err}`);
+    }
+  };
 
   return (
     <div className='flex h-full w-full flex-col bg-white'>
@@ -189,6 +200,17 @@ function CommentBox({ postId }: { postId: string }) {
                 postId={postId}
                 commentId={targetId}
                 content={data.find((c) => c._id === targetId)!.content}
+              />
+            )}
+            {isDeleteModalOpen && (
+              <AlertModal
+                show={isDeleteModalOpen}
+                onClose={onDeleteModalClose}
+                onConfirm={onDeleteComment}
+                title='Delete comment'
+                body='Are you sure you want to delete this comment? This action cannot be undone.'
+                confirmText='Delete comment'
+                cancelText='Cancel'
               />
             )}
           </div>
