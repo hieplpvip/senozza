@@ -1,4 +1,4 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import {
   CheckBadgeIcon,
@@ -14,6 +14,7 @@ import { MacScrollbar } from 'mac-scrollbar';
 import TimeAgo from 'react-timeago';
 
 import CreateCommentModal from './CreateCommentModal';
+import EditCommentModal from './EditCommentModal';
 import EditPostModal from './EditPostModal';
 import {
   useDeletePostMutation,
@@ -30,7 +31,11 @@ function CommentBox({ postId }: { postId: string }) {
   const userProfile = useUserProfile();
   const isInstructor = useIsInstructor();
   const { data, isSuccess } = useGetAllCommentsByPostQuery({ postId, sortBy: 'createdDate' });
-  const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure();
+
+  const [targetId, setTargetId] = useState('');
+  const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
+  const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
+  const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
 
   return (
     <div className='flex h-full w-full flex-col bg-white'>
@@ -42,7 +47,7 @@ function CommentBox({ postId }: { postId: string }) {
         </nav>
         <button
           type='button'
-          onClick={onModalOpen}
+          onClick={onCreateModalOpen}
           className='inline-flex items-center rounded-lg border border-transparent bg-indigo-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-indigo-700'>
           Answer this question
         </button>
@@ -108,7 +113,6 @@ function CommentBox({ postId }: { postId: string }) {
                                     <Menu.Item>
                                       {({ active }) => (
                                         <button
-                                          onClick={onModalOpen}
                                           className={classNames(
                                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                             'group flex w-full items-center px-4 py-2 text-sm',
@@ -126,7 +130,10 @@ function CommentBox({ postId }: { postId: string }) {
                                     <Menu.Item>
                                       {({ active }) => (
                                         <button
-                                          onClick={onModalOpen}
+                                          onClick={() => {
+                                            setTargetId(comment._id);
+                                            onEditModalOpen();
+                                          }}
                                           className={classNames(
                                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                             'group flex w-full items-center px-4 py-2 text-sm',
@@ -143,6 +150,10 @@ function CommentBox({ postId }: { postId: string }) {
                                   <Menu.Item>
                                     {({ active }) => (
                                       <button
+                                        onClick={() => {
+                                          setTargetId(comment._id);
+                                          onDeleteModalOpen();
+                                        }}
                                         className={classNames(
                                           active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                           'group flex w-full items-center px-4 py-2 text-sm',
@@ -169,11 +180,20 @@ function CommentBox({ postId }: { postId: string }) {
                 </div>
               );
             })}
+
+            {isCreateModalOpen && <CreateCommentModal isOpen={true} onClose={onCreateModalClose} postId={postId} />}
+            {isEditModalOpen && (
+              <EditCommentModal
+                isOpen={true}
+                onClose={onEditModalClose}
+                postId={postId}
+                commentId={targetId}
+                content={data.find((c) => c._id === targetId)!.content}
+              />
+            )}
           </div>
         </MacScrollbar>
       )}
-
-      {isModalOpen && <CreateCommentModal isOpen={true} onClose={onModalClose} postId={postId} />}
     </div>
   );
 }
