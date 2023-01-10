@@ -15,7 +15,7 @@ export class Class {
   year: number;
 
   @Prop()
-  semester: number;
+  semester: string;
 
   @Prop({ type: [{ type: String }] })
   categories: string[];

@@ -30,44 +30,14 @@ export class CommentService {
   }
 
   /** READ */
-  async listAll(
+  async find(
     postId: Types.ObjectId,
+    commentId,
     sortedField: string,
   ): Promise<Record<string, any>> {
     const sort = {};
     sort[`answers.${sortedField}`] = -1;
 
-    return this.postModel.aggregate([
-      { $match: { _id: postId } },
-      { $unwind: { path: '$answers' } },
-      {
-        $addFields: {
-          'answers.vote': {
-            $subtract: [
-              { $size: '$answers.upvote' },
-              { $size: '$answers.downvote' },
-            ],
-          },
-        },
-      },
-      { $sort: sort },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'answers.user',
-          foreignField: '_id',
-          as: 'answers.user',
-        },
-      },
-      { $unwind: { path: '$answers.user' } },
-      { $group: { _id: '_id', answers: { $push: '$answers' } } },
-    ]);
-  }
-
-  async find(
-    postId: Types.ObjectId,
-    commentId: Types.ObjectId,
-  ): Promise<Record<string, any>> {
     return this.postModel.aggregate([
       { $match: { _id: postId } },
       { $unwind: { path: '$answers' } },
@@ -82,6 +52,7 @@ export class CommentService {
           },
         },
       },
+      { $sort: { 'answers.bestAnswer': -1, ...sort } },
       {
         $lookup: {
           from: 'users',
@@ -120,6 +91,20 @@ export class CommentService {
       {
         $push: { 'answers.$.downvote': userId },
         $pull: { 'answers.$.upvote': userId },
+      },
+    );
+  }
+
+  async markAnswer(postId: Types.ObjectId, commentId: Types.ObjectId) {
+    await this.postModel.updateOne(
+      { _id: postId, 'answers.bestAnswer': true },
+      { $set: { 'answers.$.bestAnswer': false } },
+    );
+
+    await this.postModel.updateOne(
+      { _id: postId, 'answers._id': commentId },
+      {
+        $set: { 'answers.$.bestAnswer': true },
       },
     );
   }

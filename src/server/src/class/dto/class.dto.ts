@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsArray,
-  IsBoolean,
-  IsInt,
-  IsString,
-  IsUUID,
-  Length,
-} from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsString, Length } from 'class-validator';
 import { dto, include, mapTo, transform } from 'dto-mapper';
 import { Types } from 'mongoose';
 
@@ -18,7 +11,6 @@ export class ClassDto {
     fromDto: (_id) => new Types.ObjectId(_id),
   })
   @ApiProperty({ example: '63a56430c4811d03571c88f1' })
-  @IsUUID()
   _id: string;
 
   @include()
@@ -37,9 +29,9 @@ export class ClassDto {
   year: number;
 
   @include()
-  @ApiProperty({ example: 2 })
-  @IsInt()
-  semester: number;
+  @ApiProperty({ example: 'Fall' })
+  @IsString()
+  semester: string;
 
   @include()
   @ApiProperty({ type: String, isArray: true })

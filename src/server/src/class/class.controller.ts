@@ -1,15 +1,17 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
+  NotAcceptableException,
   NotFoundException,
   Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
@@ -42,6 +44,10 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Body() classCreateDto: ClassCreateDto,
   ): Promise<ClassDto> {
+    const foundClass = await this.classService.findByCourse(classCreateDto);
+    if (foundClass)
+      throw new ConflictException({ message: 'Class already exists' });
+
     classCreateDto.archived = false;
     classCreateDto.inviteCode = this.classService.generateCode();
     while (
@@ -72,6 +78,9 @@ export class ClassController {
       new Types.ObjectId(classId),
     );
 
+    if (!foundClass)
+      throw new NotFoundException({ message: 'Class not found' });
+
     return this.classService.classMapper(foundClass);
   }
 
@@ -82,10 +91,17 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Query('classId') classId: string,
   ): Promise<UserDto[]> {
+    if (
+      this.userService.findInClass(
+        new Types.ObjectId(userDto._id),
+        new Types.ObjectId(classId),
+      )
+    )
+      throw new NotAcceptableException({ message: 'Not in class' });
+
     const { members } = await this.classService.listStudent(
       new Types.ObjectId(classId),
     );
-
     return await this.userService.usersMapper(members);
   }
 
@@ -103,6 +119,9 @@ export class ClassController {
       classUpdateDto,
     );
 
+    if (!foundClass)
+      throw new NotFoundException({ message: 'Class not found' });
+
     return this.classService.classMapper(foundClass);
   }
 
@@ -116,13 +135,15 @@ export class ClassController {
     const users = await this.userService.findIdsByEmails(userEmails);
     const userIds = users.map((user) => user._id);
     const classId = new Types.ObjectId(id);
+    const _class = await this.classService.find(classId);
+    if (!_class) throw new NotFoundException('Class not found');
 
     await Promise.all([
       this.classService.addMembers(classId, userIds),
       this.userService.joinClassMany(userIds, classId),
     ]);
 
-    const { courseCode, courseName } = await this.classService.find(classId);
+    const { courseCode, courseName } = _class;
     const notification = new NotificationCreateDto({
       message: `You have been invited to class ${courseCode}-${courseName}`,
       createdAt: new Date().toISOString(),

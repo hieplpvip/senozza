@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 import { dto, include, nested, transform } from 'dto-mapper';
 import { Types } from 'mongoose';
 import { CommentDto } from '../comment/dto';
@@ -12,7 +12,6 @@ export class PostDto {
     fromDto: (_id) => new Types.ObjectId(_id),
   })
   @ApiProperty({ example: '63a6d616c3a7a193da3da5fd' })
-  @IsUUID()
   _id: string;
 
   @include()
@@ -41,6 +40,5 @@ export class PostDto {
     fromDto: (_id) => new Types.ObjectId(_id),
   })
   @ApiProperty({ example: '63a6d616c3a7a193da3da5fd' })
-  @IsUUID()
   classId;
 }

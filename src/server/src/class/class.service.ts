@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { buildMapper } from 'dto-mapper';
 import { Model, Types } from 'mongoose';
@@ -31,6 +31,18 @@ export class ClassService {
   // Find
   async find(id: Types.ObjectId): Promise<Class> {
     return this.classModel.findById(id).exec();
+  }
+
+  async findByCourse({
+    courseCode,
+    year,
+    semester,
+  }: {
+    courseCode: string;
+    year: number;
+    semester: string;
+  }): Promise<Class> {
+    return this.classModel.findOne({ courseCode, year, semester }).exec();
   }
 
   async findByCode(code: string): Promise<Class> {

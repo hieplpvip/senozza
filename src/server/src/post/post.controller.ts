@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Post,
   Put,
   Query,
@@ -71,6 +72,7 @@ export class PostController {
   @ApiOkResponse({ type: PostDto })
   async get(@Query('postId') postId: string): Promise<PostDto> {
     const post = await this.postService.getOne(new Types.ObjectId(postId));
+    if (!post) throw new NotFoundException({ message: 'Post not found' });
 
     return await this.postService.postMapper(post);
   }
@@ -112,6 +114,8 @@ export class PostController {
       new Types.ObjectId(postId),
       postUpdateDto,
     );
+    if (!post) throw new NotFoundException({ message: 'Post not found' });
+
     return this.postService.postMapper(post);
   }
 

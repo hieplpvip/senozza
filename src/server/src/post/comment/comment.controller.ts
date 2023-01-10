@@ -17,6 +17,9 @@ import { ExtractedUser } from 'src/common/decorator/user.decorator';
 import { UserDto } from 'src/user/dto';
 import { CommentCreateDto, CommentDto, CommentUpdateDto } from './dto';
 import { CommentService } from './comment.service';
+import { CommentSortBy, UserRole } from 'src/common/enum';
+import { Roles } from 'src/common/decorator/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller()
 @ApiTags('post')
@@ -44,15 +47,16 @@ export class CommentController {
   /** READ */
   @Get('all')
   @UseGuards(JwtAuthGuard)
-  @ApiQuery({ name: 'sortBy', description: '"createdDate" or "vote"' })
+  @ApiQuery({ name: 'sortBy', enum: CommentSortBy })
   @ApiOkResponse({ type: CommentDto, isArray: true })
   async listAll(
     @ExtractedUser() userDto: UserDto,
     @Query('postId') postId: string,
-    @Query('sortBy') sortedField: string,
+    @Query('sortBy') sortedField: CommentSortBy,
   ): Promise<CommentDto[]> {
-    const coll = await this.commentService.listAll(
+    const coll = await this.commentService.find(
       new Types.ObjectId(postId),
+      { $exists: true },
       sortedField,
     );
 
@@ -87,6 +91,21 @@ export class CommentController {
     return { message: 'Vote successfully' };
   }
 
+  @Patch('markAnswer')
+  @Roles(UserRole.INSTRUCTOR)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  async markAnswer(
+    @Query('postId') postId: string,
+    @Query('commentId') commentId: string,
+  ) {
+    await this.commentService.markAnswer(
+      new Types.ObjectId(postId),
+      new Types.ObjectId(commentId),
+    );
+
+    return { message: 'Mark answer successfully' };
+  }
+
   @Put('edit')
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: CommentUpdateDto })
@@ -105,6 +124,7 @@ export class CommentController {
     const coll = await this.commentService.find(
       new Types.ObjectId(postId),
       new Types.ObjectId(commentId),
+      CommentSortBy.CREATED_DATE,
     );
 
     if (coll.length === 0) return [];
