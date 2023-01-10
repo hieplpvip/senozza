@@ -7,4 +7,6 @@ export type CommentDto = {
   content: string;
   vote: number;
   bestAnswer: boolean;
+  upvote: boolean;
+  downvote: boolean;
 };

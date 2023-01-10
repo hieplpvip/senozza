@@ -15,7 +15,12 @@ import TimeAgo from 'react-timeago';
 
 import CreateCommentModal from './CreateCommentModal';
 import EditCommentModal from './EditCommentModal';
-import { useGetAllCommentsByPostQuery, useDeleteCommentMutation, useMarkCorrectCommentMutation } from '../../api';
+import {
+  useGetAllCommentsByPostQuery,
+  useDeleteCommentMutation,
+  useMarkCorrectCommentMutation,
+  useVoteCommentMutation,
+} from '../../api';
 import { useUserProfile, useIsInstructor } from '../../../app/hooks';
 import AlertModal from '../../../components/AlertModal';
 import ConfirmModal from '../../../components/ConfirmModal';
@@ -33,6 +38,7 @@ export default function CommentBox({ postId }: { postId: string }) {
   const { isOpen: isMarkModalOpen, onOpen: onMarkModalOpen, onClose: onMarkModalClose } = useDisclosure();
   const [deleteComment] = useDeleteCommentMutation();
   const [markCorrect] = useMarkCorrectCommentMutation();
+  const [voteComment] = useVoteCommentMutation();
 
   const onDeleteComment = async () => {
     try {
@@ -49,6 +55,22 @@ export default function CommentBox({ postId }: { postId: string }) {
       onMarkModalClose();
     } catch (err) {
       alert(`Failed to delete comment: ${err}`);
+    }
+  };
+
+  const onUpvoteComment = async () => {
+    try {
+      await voteComment({ postId, commentId: targetId, upvote: +1 }).unwrap();
+    } catch (err) {
+      alert(`Failed to vote comment: ${err}`);
+    }
+  };
+
+  const onDownvoteComment = async () => {
+    try {
+      await voteComment({ postId, commentId: targetId, upvote: -1 }).unwrap();
+    } catch (err) {
+      alert(`Failed to vote comment: ${err}`);
     }
   };
 
@@ -95,12 +117,28 @@ export default function CommentBox({ postId }: { postId: string }) {
                   )}
                   <div className='flex flex-row'>
                     <div className='flex flex-col justify-center'>
-                      <button className='-mb-3'>
-                        <FontAwesomeIcon icon={faChevronUp} className='h-5 w-5 text-gray-500' />
+                      <button
+                        className={'-mb-3' + (comment.upvote ? ' voted' : '')}
+                        onClick={() => {
+                          setTargetId(comment._id);
+                          onUpvoteComment();
+                        }}>
+                        <FontAwesomeIcon
+                          icon={faChevronUp}
+                          className={'h-5 w-5' + (comment.upvote ? ' text-indigo-500' : 'text-gray-500')}
+                        />{' '}
                       </button>
                       <span className='text-center text-gray-500'>{comment.vote}</span>
-                      <button className='voted -mt-1'>
-                        <FontAwesomeIcon icon={faChevronDown} className='h-5 w-5 text-indigo-500' />
+                      <button
+                        className={'-mt-1' + (comment.downvote ? ' voted' : '')}
+                        onClick={() => {
+                          setTargetId(comment._id);
+                          onDownvoteComment();
+                        }}>
+                        <FontAwesomeIcon
+                          icon={faChevronDown}
+                          className={'h-5 w-5' + (comment.downvote ? ' text-indigo-500' : 'text-gray-500')}
+                        />
                       </button>
                     </div>
                     <div className='grow flex-col'>
