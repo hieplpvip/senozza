@@ -39,51 +39,52 @@ export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean;
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleSubmit(onSubmit)}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create Class</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl className='mb-3'>
-            <FormLabel>Class code</FormLabel>
-            <Input type='text' placeholder='e.g. CS300' required {...register('courseCode')} />
-          </FormControl>
-          <FormControl className='mb-3'>
-            <FormLabel>Class name</FormLabel>
-            <Input
-              type='text'
-              placeholder='e.g. Elements of Software Engineering'
-              required
-              {...register('courseName')}
-            />
-          </FormControl>
-          <FormControl className='mb-3'>
-            <FormLabel>Semester</FormLabel>
-            <Select defaultValue='spring' {...register('semester')}>
-              <option value='spring'>Spring</option>
-              <option value='summer'>Summer</option>
-              <option value='fall'>Fall</option>
-              <option value='winter'>Winter</option>
-            </Select>
-          </FormControl>
-          <FormControl>
-            <FormLabel>Year</FormLabel>
-            <Select defaultValue={2023} {...register('year')}>
-              {YEARS.map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <FormControl className='mb-3'>
+              <FormLabel>Class code</FormLabel>
+              <Input type='text' placeholder='e.g. CS300' required {...register('courseCode')} />
+            </FormControl>
+            <FormControl className='mb-3'>
+              <FormLabel>Class name</FormLabel>
+              <Input
+                type='text'
+                placeholder='e.g. Elements of Software Engineering'
+                required
+                {...register('courseName')}
+              />
+            </FormControl>
+            <FormControl className='mb-3'>
+              <FormLabel>Semester</FormLabel>
+              <Select defaultValue='spring' {...register('semester')}>
+                <option value='spring'>Spring</option>
+                <option value='summer'>Summer</option>
+                <option value='fall'>Fall</option>
+                <option value='winter'>Winter</option>
+              </Select>
+            </FormControl>
+            <FormControl className='mb-4'>
+              <FormLabel>Year</FormLabel>
+              <Select defaultValue={2023} {...register('year')}>
+                {YEARS.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl className='flex justify-end'>
+              <Button colorScheme='indigo' type='submit'>
+                Create
+              </Button>
+            </FormControl>
+          </form>
         </ModalBody>
-
-        <ModalFooter>
-          <Button colorScheme='indigo' type='submit'>
-            Create
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );
