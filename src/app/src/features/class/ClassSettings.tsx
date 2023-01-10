@@ -12,6 +12,7 @@ import {
   useGetClassByIdQuery,
   useGetStudentsInClassQuery,
   useLeaveClassMutation,
+  useRemoveStudentFromClassMutation,
 } from '../api';
 import { useAppDispatch, useAppSelector, useIsInstructor } from '../../app/hooks';
 import AlertModal from '../../components/AlertModal';
@@ -185,13 +186,16 @@ function Details({ show }: { show?: boolean }) {
 }
 
 function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?: boolean }) {
+  const isInstructor = useIsInstructor();
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const {
     data: members,
     isFetching,
     isSuccess,
   } = useGetStudentsInClassQuery(selectedClassId, { skip: !selectedClassId });
-  const isInstructor = useIsInstructor();
+  const [targetId, setTargetId] = useState('');
+  const { isOpen: isRemoveModalOpen, onOpen: onRemoveModalOpen, onClose: onRemoveModalClose } = useDisclosure();
+  const [removeStudent] = useRemoveStudentFromClassMutation();
 
   if (isFetching || !isSuccess) {
     return (
@@ -201,63 +205,90 @@ function Members({ setPanel, show }: { setPanel: (panel: string) => void; show?:
     );
   }
 
+  const onRemoveStudent = async () => {
+    try {
+      await removeStudent({ classId: selectedClassId, userId: targetId }).unwrap();
+      onRemoveModalClose();
+    } catch (err) {
+      alert(`Failed to remove student: ${err}`);
+    }
+  };
+
   return (
-    <div className={'flex h-full w-full flex-col p-4' + (!show ? ' hidden' : '')}>
-      <div className='flex items-center'>
-        <h1 className='text-blue-gray-900 flex-auto text-2xl font-medium'>Members ({members.length})</h1>
-        <Button colorScheme='indigo' onClick={() => setPanel('invite')}>
-          Add student
-        </Button>
-      </div>
-      <MacScrollbar className='mt-8 rounded-lg align-middle shadow ring-1 ring-black ring-opacity-5'>
-        <table className='min-w-full divide-y divide-gray-300'>
-          <thead className='sticky top-0 bg-gray-50'>
-            <tr>
-              <th scope='col' className='py-3.5 pr-3 pl-6 text-left text-sm font-semibold text-gray-900'>
-                Name
-              </th>
-              <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
-                Joined
-              </th>
-              <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
-                Role
-              </th>
-              <th scope='col' className='px-3 py-3.5 text-sm font-semibold text-gray-900'>
-                <span className='sr-only'>Remove</span>
-              </th>
-            </tr>
-          </thead>
-          <tbody className='divide-y divide-gray-200 bg-white'>
-            {members.map((member) => (
-              <tr key={member._id}>
-                <td className='whitespace-nowrap py-4 pr-3 pl-6 text-sm'>
-                  <div className='flex items-center'>
-                    <div className='h-10 w-10 flex-shrink-0'>
-                      <img className='h-10 w-10 rounded-full' src={member.imgUrl} />
-                    </div>
-                    <div className='ml-4'>
-                      <div className='font-medium text-gray-900'>
-                        {member.firstName} {member.lastName}
-                      </div>
-                      <div className='text-gray-500'>{member.email}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>7 months ago</td>
-                <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>{capitalize(member.role)}</td>
-                <td className='whitespace-nowrap py-4 pl-3 pr-6 text-right text-sm font-medium'>
-                  {isInstructor && member.role !== 'instructor' && (
-                    <a href='#' className='text-indigo-600 hover:text-indigo-900'>
-                      Remove
-                    </a>
-                  )}
-                </td>
+    <>
+      {isRemoveModalOpen && (
+        <AlertModal
+          show={isRemoveModalOpen}
+          onClose={onRemoveModalClose}
+          onConfirm={onRemoveStudent}
+          title='Remove student'
+          body='Are you sure you want to remove this student? You will have to re-invite them if you change your mind later.'
+          confirmText='Remove student'
+          cancelText='Cancel'
+        />
+      )}
+      <div className={'flex h-full w-full flex-col p-4' + (!show ? ' hidden' : '')}>
+        <div className='flex items-center'>
+          <h1 className='text-blue-gray-900 flex-auto text-2xl font-medium'>Members ({members.length})</h1>
+          <Button colorScheme='indigo' onClick={() => setPanel('invite')}>
+            Add student
+          </Button>
+        </div>
+        <MacScrollbar className='mt-8 rounded-lg align-middle shadow ring-1 ring-black ring-opacity-5'>
+          <table className='min-w-full divide-y divide-gray-300'>
+            <thead className='sticky top-0 bg-gray-50'>
+              <tr>
+                <th scope='col' className='py-3.5 pr-3 pl-6 text-left text-sm font-semibold text-gray-900'>
+                  Name
+                </th>
+                <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
+                  Joined
+                </th>
+                <th scope='col' className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'>
+                  Role
+                </th>
+                <th scope='col' className='px-3 py-3.5 text-sm font-semibold text-gray-900'>
+                  <span className='sr-only'>Remove</span>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </MacScrollbar>
-    </div>
+            </thead>
+            <tbody className='divide-y divide-gray-200 bg-white'>
+              {members.map((member) => (
+                <tr key={member._id}>
+                  <td className='whitespace-nowrap py-4 pr-3 pl-6 text-sm'>
+                    <div className='flex items-center'>
+                      <div className='h-10 w-10 flex-shrink-0'>
+                        <img className='h-10 w-10 rounded-full' src={member.imgUrl} />
+                      </div>
+                      <div className='ml-4'>
+                        <div className='font-medium text-gray-900'>
+                          {member.firstName} {member.lastName}
+                        </div>
+                        <div className='text-gray-500'>{member.email}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>7 months ago</td>
+                  <td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>{capitalize(member.role)}</td>
+                  <td className='whitespace-nowrap py-4 pl-3 pr-6 text-right text-sm font-medium'>
+                    {isInstructor && member.role !== 'instructor' && (
+                      <button
+                        className='text-indigo-600 hover:text-indigo-900'
+                        onClick={() => {
+                          setTargetId(member._id);
+                          onRemoveModalOpen();
+                        }}>
+                        Remove
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </MacScrollbar>
+      </div>
+    </>
   );
 }
 

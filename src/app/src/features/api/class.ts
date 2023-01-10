@@ -25,6 +25,11 @@ interface InviteToClassByEmailsArg {
   emails: string[];
 }
 
+interface RemoveStudentFromClassArg {
+  classId: string;
+  userId: string;
+}
+
 export const classApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getJoinedClasses: builder.query<ClassDto[], void>({
@@ -50,6 +55,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         method: 'GET',
         params: { classId },
       }),
+      providesTags: (_result, _error, arg) => [{ type: 'Class', id: arg }],
     }),
 
     createClass: builder.mutation<ClassDto, CreateClassArg>({
@@ -116,6 +122,18 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
         { type: 'Class', id: arg },
       ],
     }),
+
+    removeStudentFromClass: builder.mutation<void, RemoveStudentFromClassArg>({
+      query: (params) => ({
+        url: '/class/kick',
+        method: 'PUT',
+        params,
+      }),
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'Class', id: 'LIST' },
+        { type: 'Class', id: arg.classId },
+      ],
+    }),
   }),
 });
 
@@ -129,4 +147,5 @@ export const {
   useInviteToClassByEmailsMutation,
   useJoinClassByCodeMutation,
   useLeaveClassMutation,
+  useRemoveStudentFromClassMutation,
 } = classApiSlice;
