@@ -33,6 +33,11 @@ interface VoteCommentArg {
   upvote: number;
 }
 
+interface MarkCorrectCommentArg {
+  postId: string;
+  commentId: string;
+}
+
 export const commentApiSlice = baseApiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getAllCommentsByPost: builder.query<CommentDto[], GetAllCommentsByPostArg>({
@@ -81,6 +86,15 @@ export const commentApiSlice = baseApiSlice.injectEndpoints({
       }),
       invalidatesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
     }),
+
+    markCorrectComment: builder.mutation<void, MarkCorrectCommentArg>({
+      query: (params) => ({
+        url: '/post/comment/markAnswer',
+        method: 'PATCH',
+        params,
+      }),
+      invalidatesTags: (_result, _error, arg) => [{ type: 'Comment', id: arg.postId }],
+    }),
   }),
 });
 
@@ -90,4 +104,5 @@ export const {
   useEditCommentMutation,
   useDeleteCommentMutation,
   useVoteCommentMutation,
+  useMarkCorrectCommentMutation,
 } = commentApiSlice;

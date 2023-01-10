@@ -1,6 +1,12 @@
 import { Fragment, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { CheckBadgeIcon, EllipsisHorizontalIcon, PencilSquareIcon, TrashIcon } from '@heroicons/react/24/solid';
+import {
+  CheckBadgeIcon,
+  CheckIcon,
+  EllipsisHorizontalIcon,
+  PencilSquareIcon,
+  TrashIcon,
+} from '@heroicons/react/24/solid';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
@@ -9,9 +15,10 @@ import TimeAgo from 'react-timeago';
 
 import CreateCommentModal from './CreateCommentModal';
 import EditCommentModal from './EditCommentModal';
-import { useGetAllCommentsByPostQuery, useDeleteCommentMutation } from '../../api';
+import { useGetAllCommentsByPostQuery, useDeleteCommentMutation, useMarkCorrectCommentMutation } from '../../api';
 import { useUserProfile, useIsInstructor } from '../../../app/hooks';
 import AlertModal from '../../../components/AlertModal';
+import ConfirmModal from '../../../components/ConfirmModal';
 import { classNames } from '../../../utils';
 
 export default function CommentBox({ postId }: { postId: string }) {
@@ -23,12 +30,23 @@ export default function CommentBox({ postId }: { postId: string }) {
   const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
   const { isOpen: isEditModalOpen, onOpen: onEditModalOpen, onClose: onEditModalClose } = useDisclosure();
   const { isOpen: isDeleteModalOpen, onOpen: onDeleteModalOpen, onClose: onDeleteModalClose } = useDisclosure();
+  const { isOpen: isMarkModalOpen, onOpen: onMarkModalOpen, onClose: onMarkModalClose } = useDisclosure();
   const [deleteComment] = useDeleteCommentMutation();
+  const [markCorrect] = useMarkCorrectCommentMutation();
 
   const onDeleteComment = async () => {
     try {
       await deleteComment({ postId, commentId: targetId }).unwrap();
       onDeleteModalClose();
+    } catch (err) {
+      alert(`Failed to delete comment: ${err}`);
+    }
+  };
+
+  const onMarkCorrect = async () => {
+    try {
+      await markCorrect({ postId, commentId: targetId }).unwrap();
+      onMarkModalClose();
     } catch (err) {
       alert(`Failed to delete comment: ${err}`);
     }
@@ -64,8 +82,17 @@ export default function CommentBox({ postId }: { postId: string }) {
 
               return (
                 <div
-                  className='mx-auto mt-3 w-full flex-col border-b-2 border-r-2 border-gray-200 bg-white p-4 sm:rounded-lg sm:shadow-sm'
+                  className={classNames(
+                    comment.bestAnswer ? 'bg-green-100' : 'bg-white',
+                    'mx-auto mt-3 w-full flex-col border-b-2 border-r-2 border-gray-200 p-4 sm:rounded-lg sm:shadow-sm',
+                  )}
                   key={comment._id}>
+                  {comment.bestAnswer && (
+                    <div className='flex'>
+                      <CheckIcon className='h-5 w-5 text-green-500' />
+                      <span className='text-sm italic'>Marked as correct answer by instructor</span>
+                    </div>
+                  )}
                   <div className='flex flex-row'>
                     <div className='flex flex-col justify-center'>
                       <button className='-mb-3'>
@@ -92,7 +119,7 @@ export default function CommentBox({ postId }: { postId: string }) {
                         </div>
                         {(isInstructor || isAuthor) && (
                           <Menu as='div' className='relative inline-block text-left'>
-                            <Menu.Button className='inline-flex w-full justify-center bg-white p-1 text-sm font-medium text-gray-700'>
+                            <Menu.Button className='inline-flex w-full justify-center p-1 text-sm font-medium text-gray-700'>
                               <EllipsisHorizontalIcon className='h-5 w-5' aria-hidden='true' />
                             </Menu.Button>
 
@@ -110,6 +137,10 @@ export default function CommentBox({ postId }: { postId: string }) {
                                     <Menu.Item>
                                       {({ active }) => (
                                         <button
+                                          onClick={() => {
+                                            setTargetId(comment._id);
+                                            onMarkModalOpen();
+                                          }}
                                           className={classNames(
                                             active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
                                             'group flex w-full items-center px-4 py-2 text-sm',
@@ -193,9 +224,20 @@ export default function CommentBox({ postId }: { postId: string }) {
                 show={isDeleteModalOpen}
                 onClose={onDeleteModalClose}
                 onConfirm={onDeleteComment}
-                title='Delete comment'
-                body='Are you sure you want to delete this comment? This action cannot be undone.'
-                confirmText='Delete comment'
+                title='Delete answer'
+                body='Are you sure you want to delete this answer? This action cannot be undone.'
+                confirmText='Delete answer'
+                cancelText='Cancel'
+              />
+            )}
+            {isMarkModalOpen && (
+              <ConfirmModal
+                show={isMarkModalOpen}
+                onClose={onMarkModalClose}
+                onConfirm={onMarkCorrect}
+                title='Mark as correct'
+                body='Are you sure you want to mark this answer as correct this answer?'
+                confirmText='Mark'
                 cancelText='Cancel'
               />
             )}
