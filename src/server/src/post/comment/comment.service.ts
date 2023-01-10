@@ -33,6 +33,7 @@ export class CommentService {
   async find(
     postId: Types.ObjectId,
     commentId,
+    userId: Types.ObjectId,
     sortedField: string,
   ): Promise<Record<string, any>> {
     const sort = {};
@@ -50,6 +51,8 @@ export class CommentService {
               { $size: '$answers.downvote' },
             ],
           },
+          'answers.upvote': { $in: [userId, '$answers.upvote'] },
+          'answers.downvote': { $in: [userId, '$answers.downvote'] },
         },
       },
       { $sort: { 'answers.bestAnswer': -1, ...sort } },

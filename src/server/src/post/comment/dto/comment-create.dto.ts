@@ -9,6 +9,8 @@ export class CommentCreateDto extends OmitType(CommentDto, [
   'vote',
   'user',
   '_id',
+  'upvote',
+  'downvote',
 ] as const) {
   user: Types.ObjectId;
 }

@@ -44,5 +44,15 @@ export class CommentDto {
   @include()
   @ApiProperty()
   @IsBoolean()
+  upvote: boolean;
+
+  @include()
+  @ApiProperty()
+  @IsBoolean()
+  downvote: boolean;
+
+  @include()
+  @ApiProperty()
+  @IsBoolean()
   bestAnswer: boolean;
 }

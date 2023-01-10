@@ -57,6 +57,7 @@ export class CommentController {
     const coll = await this.commentService.find(
       new Types.ObjectId(postId),
       { $exists: true },
+      new Types.ObjectId(userDto._id),
       sortedField,
     );
 
@@ -124,6 +125,7 @@ export class CommentController {
     const coll = await this.commentService.find(
       new Types.ObjectId(postId),
       new Types.ObjectId(commentId),
+      new Types.ObjectId(userDto._id),
       CommentSortBy.CREATED_DATE,
     );
 
