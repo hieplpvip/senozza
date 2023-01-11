@@ -74,12 +74,20 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Query('classId') classId: string,
   ): Promise<ClassDto> {
+    const joined = await this.userService.findJoinedClass(
+      new Types.ObjectId(userDto._id),
+      new Types.ObjectId(classId),
+    );
+    if (!joined) {
+      throw new NotAcceptableException({ message: 'Class not found' });
+    }
+
     const foundClass = await this.classService.find(
       new Types.ObjectId(classId),
     );
-
-    if (!foundClass)
+    if (!foundClass) {
       throw new NotFoundException({ message: 'Class not found' });
+    }
 
     return this.classService.classMapper(foundClass);
   }

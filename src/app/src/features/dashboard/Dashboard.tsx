@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { Spinner, useDisclosure } from '@chakra-ui/react';
 import {
@@ -12,10 +13,11 @@ import { MacScrollbar } from 'mac-scrollbar';
 import ClassSelector from './components/ClassSelector';
 import NotificationsDropdown from './components/NotificationsDropdown';
 
-import { useGetJoinedClassesQuery, useGetUserProfileQuery } from '../api';
+import { useGetClassByIdQuery, useGetJoinedClassesQuery, useGetUserProfileQuery } from '../api';
 import { signOut } from '../auth/authSlice';
 import ClassFeed from '../class/ClassFeed';
 import ClassSettings from '../class/ClassSettings';
+import { setSelectedClassId } from '../class/classSlide';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { classNames } from '../../utils';
 
@@ -55,8 +57,15 @@ export default function Dashboard() {
   const dispatch = useAppDispatch();
   const selectedClassId = useAppSelector((state) => state.class.selectedClassId);
   const { data: joinedClasses } = useGetJoinedClassesQuery();
+  const { isError: isSelectedClassError } = useGetClassByIdQuery(selectedClassId, { skip: !selectedClassId });
   const { data: userProfile, isFetching, isSuccess } = useGetUserProfileQuery();
   const { isOpen: isClassModalOpen, onOpen: onClassModalOpen, onClose: onClassModalClose } = useDisclosure();
+
+  useEffect(() => {
+    if (selectedClassId && isSelectedClassError) {
+      dispatch(setSelectedClassId(''));
+    }
+  }, [isSelectedClassError]);
 
   if (isFetching || !isSuccess) {
     return (
