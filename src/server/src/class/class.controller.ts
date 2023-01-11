@@ -91,13 +91,11 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Query('classId') classId: string,
   ): Promise<UserDto[]> {
-    if (
-      this.userService.findInClass(
-        new Types.ObjectId(userDto._id),
-        new Types.ObjectId(classId),
-      )
-    )
-      throw new NotAcceptableException({ message: 'Not in class' });
+    const joined = await this.userService.findInClass(
+      new Types.ObjectId(userDto._id),
+      new Types.ObjectId(classId),
+    );
+    if (!joined) throw new NotAcceptableException({ message: 'Not in class' });
 
     const { members } = await this.classService.listStudent(
       new Types.ObjectId(classId),
@@ -159,6 +157,12 @@ export class ClassController {
   async join(@ExtractedUser() userDto: UserDto, @Query('code') code: string) {
     const foundClass = await this.classService.findByCode(code);
     if (!foundClass) throw new NotFoundException('Class not found');
+    const joined = await this.userService.findInClass(
+      new Types.ObjectId(userDto._id),
+      new Types.ObjectId(foundClass._id),
+    );
+    if (joined)
+      throw new NotAcceptableException({ message: 'Already in class' });
 
     const userIds = [new Types.ObjectId(userDto._id)];
     await Promise.all([
