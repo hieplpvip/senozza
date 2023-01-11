@@ -79,7 +79,7 @@ export class CommentService {
       { _id: postId, 'answers._id': commentId },
       {
         $pull: { 'answers.$.downvote': userId },
-        $push: { 'answers.$.upvote': userId },
+        $addToSet: { 'answers.$.upvote': userId },
       },
     );
   }
@@ -92,7 +92,7 @@ export class CommentService {
     await this.postModel.updateOne(
       { _id: postId, 'answers._id': commentId },
       {
-        $push: { 'answers.$.downvote': userId },
+        $addToSet: { 'answers.$.downvote': userId },
         $pull: { 'answers.$.upvote': userId },
       },
     );
