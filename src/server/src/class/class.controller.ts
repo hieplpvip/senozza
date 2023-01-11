@@ -182,7 +182,7 @@ export class ClassController {
       'invited',
     );
 
-    return { message: 'Joined' };
+    return await this.classService.classMapper(foundClass);
   }
 
   @Put('leave')
