@@ -102,7 +102,7 @@ export const classApiSlice = baseApiSlice.injectEndpoints({
       invalidatesTags: (_result, _error, arg) => [{ type: 'Class', id: arg.classId }],
     }),
 
-    joinClassByCode: builder.mutation<void, string>({
+    joinClassByCode: builder.mutation<ClassDto, string>({
       query: (code) => ({
         url: '/class/join',
         method: 'PUT',

@@ -14,6 +14,8 @@ import {
 } from '@chakra-ui/react';
 
 import { useCreateClassMutation } from '../../api';
+import { useAppDispatch } from '../../../app/hooks';
+import { setSelectedClassId } from '../../class/classSlide';
 
 interface CreateClassFormInput {
   courseCode: string;
@@ -25,12 +27,14 @@ interface CreateClassFormInput {
 const YEARS = [2019, 2020, 2021, 2022, 2023, 2024];
 
 export default function CreateClassModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const dispatch = useAppDispatch();
   const { register, handleSubmit } = useForm<CreateClassFormInput>();
   const [createClass] = useCreateClassMutation();
 
   const onSubmit = async (data: CreateClassFormInput) => {
     try {
-      await createClass(data).unwrap();
+      const resp = await createClass(data).unwrap();
+      dispatch(setSelectedClassId(resp._id));
       onClose();
     } catch (err) {
       alert(`Failed to create class: ${err}`);
