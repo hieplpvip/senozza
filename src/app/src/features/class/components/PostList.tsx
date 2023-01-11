@@ -33,10 +33,8 @@ export default function PostList({
             </div>
           </div>
           <div className='flex items-center bg-white px-2 pb-2'>
-            <Select rounded='3xl'>
-              <option value='all' selected>
-                All categories
-              </option>
+            <Select rounded='3xl' defaultValue='all'>
+              <option value='all'>All categories</option>
             </Select>
             <div>
               <button

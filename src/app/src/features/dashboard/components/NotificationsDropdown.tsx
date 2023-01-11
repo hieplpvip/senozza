@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, RefObject } from 'react';
 import { BellIcon } from '@heroicons/react/24/outline';
 
-function useOnClickOutside(ref: any, handler: any) {
+function useOnClickOutside(ref: RefObject<HTMLDivElement>, handler: (event: MouseEvent | TouchEvent) => void) {
   useEffect(() => {
-    const listener = (event: any) => {
+    const listener = (event: MouseEvent | TouchEvent) => {
       // Do nothing if clicking ref's element or descendent elements
-      if (!ref.current || ref.current.contains(event.target)) {
+      if (!ref.current || ref.current.contains(event.target as Node)) {
         return;
       }
       handler(event);

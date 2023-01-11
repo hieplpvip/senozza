@@ -29,7 +29,7 @@ import { classNames } from '../../../utils';
 export default function CommentBox({ postId }: { postId: string }) {
   const userProfile = useUserProfile();
   const isInstructor = useIsInstructor();
-  const { data, isSuccess } = useGetAllCommentsByPostQuery({ postId, sortBy: 'createdDate' });
+  const { data, isSuccess } = useGetAllCommentsByPostQuery({ postId, sortBy: 'vote' });
 
   const [targetId, setTargetId] = useState('');
   const { isOpen: isCreateModalOpen, onOpen: onCreateModalOpen, onClose: onCreateModalClose } = useDisclosure();
