@@ -58,17 +58,17 @@ export default function CommentBox({ postId }: { postId: string }) {
     }
   };
 
-  const onUpvoteComment = async () => {
+  const onUpvoteComment = async (commentId: string) => {
     try {
-      await voteComment({ postId, commentId: targetId, upvote: +1 }).unwrap();
+      await voteComment({ postId, commentId, upvote: +1 }).unwrap();
     } catch (err) {
       alert(`Failed to vote comment: ${err}`);
     }
   };
 
-  const onDownvoteComment = async () => {
+  const onDownvoteComment = async (commentId: string) => {
     try {
-      await voteComment({ postId, commentId: targetId, upvote: -1 }).unwrap();
+      await voteComment({ postId, commentId, upvote: -1 }).unwrap();
     } catch (err) {
       alert(`Failed to vote comment: ${err}`);
     }
@@ -119,10 +119,7 @@ export default function CommentBox({ postId }: { postId: string }) {
                     <div className='flex flex-col justify-center'>
                       <button
                         className={'-mb-3' + (comment.upvote ? ' voted' : '')}
-                        onClick={() => {
-                          setTargetId(comment._id);
-                          onUpvoteComment();
-                        }}>
+                        onClick={() => onUpvoteComment(comment._id)}>
                         <FontAwesomeIcon
                           icon={faChevronUp}
                           className={'h-5 w-5' + (comment.upvote ? ' text-indigo-500' : 'text-gray-500')}
@@ -131,10 +128,7 @@ export default function CommentBox({ postId }: { postId: string }) {
                       <span className='text-center text-gray-500'>{comment.vote}</span>
                       <button
                         className={'-mt-1' + (comment.downvote ? ' voted' : '')}
-                        onClick={() => {
-                          setTargetId(comment._id);
-                          onDownvoteComment();
-                        }}>
+                        onClick={() => onDownvoteComment(comment._id)}>
                         <FontAwesomeIcon
                           icon={faChevronDown}
                           className={'h-5 w-5' + (comment.downvote ? ' text-indigo-500' : 'text-gray-500')}
