@@ -70,8 +70,12 @@ export class CommentService {
   async upvote(postId: Types.ObjectId, commentId: Types.ObjectId, userId: Types.ObjectId) {
     const post = await this.postModel.findOne({
       _id: postId,
-      'answers._id': commentId,
-      'answers.downvote': userId,
+      answers: {
+        $elemMatch: {
+          _id: commentId,
+          downvote: userId,
+        },
+      },
     });
 
     if (post) {
@@ -94,8 +98,12 @@ export class CommentService {
   async downvote(postId: Types.ObjectId, commentId: Types.ObjectId, userId: Types.ObjectId) {
     const post = await this.postModel.findOne({
       _id: postId,
-      'answers._id': commentId,
-      'answers.upvote': userId,
+      answers: {
+        $elemMatch: {
+          _id: commentId,
+          upvote: userId,
+        },
+      },
     });
 
     if (post) {
