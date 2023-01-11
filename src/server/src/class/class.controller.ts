@@ -91,7 +91,7 @@ export class ClassController {
     @ExtractedUser() userDto: UserDto,
     @Query('classId') classId: string,
   ): Promise<UserDto[]> {
-    const joined = await this.userService.findInClass(
+    const joined = await this.userService.findJoinedClass(
       new Types.ObjectId(userDto._id),
       new Types.ObjectId(classId),
     );
@@ -157,7 +157,7 @@ export class ClassController {
   async join(@ExtractedUser() userDto: UserDto, @Query('code') code: string) {
     const foundClass = await this.classService.findByCode(code);
     if (!foundClass) throw new NotFoundException('Class not found');
-    const joined = await this.userService.findInClass(
+    const joined = await this.userService.findJoinedClass(
       new Types.ObjectId(userDto._id),
       new Types.ObjectId(foundClass._id),
     );
