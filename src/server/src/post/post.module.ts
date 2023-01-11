@@ -1,16 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ClassService } from 'src/class/class.service';
-import {
-  Class,
-  ClassSchema,
-  Notification,
-  NotificationSchema,
-  Post,
-  PostSchema,
-  User,
-  UserSchema,
-} from 'src/schemas';
+import { Class, ClassSchema, Notification, NotificationSchema, Post, PostSchema, User, UserSchema } from 'src/schemas';
 import { PostService } from './post.service';
 import { CommentService } from './comment/comment.service';
 import { PostController } from './post.controller';
@@ -28,14 +19,7 @@ import { NotificationGateway } from 'src/notification/notification.gateway';
     ]),
   ],
   controllers: [PostController],
-  providers: [
-    PostService,
-    ClassService,
-    CommentService,
-    NotificationService,
-    NotificationGateway,
-    UserService,
-  ],
+  providers: [PostService, ClassService, CommentService, NotificationService, NotificationGateway, UserService],
   exports: [PostService],
 })
 export class PostModule {}

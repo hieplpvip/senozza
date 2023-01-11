@@ -40,19 +40,13 @@ export class ClassController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiBody({ type: ClassCreateDto })
   @ApiOkResponse({ type: ClassDto })
-  async create(
-    @ExtractedUser() userDto: UserDto,
-    @Body() classCreateDto: ClassCreateDto,
-  ): Promise<ClassDto> {
+  async create(@ExtractedUser() userDto: UserDto, @Body() classCreateDto: ClassCreateDto): Promise<ClassDto> {
     const foundClass = await this.classService.findByCourse(classCreateDto);
-    if (foundClass)
-      throw new ConflictException({ message: 'Class already exists' });
+    if (foundClass) throw new ConflictException({ message: 'Class already exists' });
 
     classCreateDto.archived = false;
     classCreateDto.inviteCode = this.classService.generateCode();
-    while (
-      (await this.classService.findByCode(classCreateDto.inviteCode)) !== null
-    ) {
+    while ((await this.classService.findByCode(classCreateDto.inviteCode)) !== null) {
       classCreateDto.inviteCode = this.classService.generateCode();
     }
     const createdClass = await this.classService.create(classCreateDto);
@@ -70,21 +64,13 @@ export class ClassController {
   @Get('find')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ClassDto })
-  async find(
-    @ExtractedUser() userDto: UserDto,
-    @Query('classId') classId: string,
-  ): Promise<ClassDto> {
-    const joined = await this.userService.findJoinedClass(
-      new Types.ObjectId(userDto._id),
-      new Types.ObjectId(classId),
-    );
+  async find(@ExtractedUser() userDto: UserDto, @Query('classId') classId: string): Promise<ClassDto> {
+    const joined = await this.userService.findJoinedClass(new Types.ObjectId(userDto._id), new Types.ObjectId(classId));
     if (!joined) {
       throw new NotAcceptableException({ message: 'Class not found' });
     }
 
-    const foundClass = await this.classService.find(
-      new Types.ObjectId(classId),
-    );
+    const foundClass = await this.classService.find(new Types.ObjectId(classId));
     if (!foundClass) {
       throw new NotFoundException({ message: 'Class not found' });
     }
@@ -95,19 +81,11 @@ export class ClassController {
   @Get('listStudent')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: UserDto, isArray: true })
-  async listStudent(
-    @ExtractedUser() userDto: UserDto,
-    @Query('classId') classId: string,
-  ): Promise<UserDto[]> {
-    const joined = await this.userService.findJoinedClass(
-      new Types.ObjectId(userDto._id),
-      new Types.ObjectId(classId),
-    );
+  async listStudent(@ExtractedUser() userDto: UserDto, @Query('classId') classId: string): Promise<UserDto[]> {
+    const joined = await this.userService.findJoinedClass(new Types.ObjectId(userDto._id), new Types.ObjectId(classId));
     if (!joined) throw new NotAcceptableException({ message: 'Not in class' });
 
-    const { members } = await this.classService.listStudent(
-      new Types.ObjectId(classId),
-    );
+    const { members } = await this.classService.listStudent(new Types.ObjectId(classId));
     return await this.userService.usersMapper(members);
   }
 
@@ -116,17 +94,10 @@ export class ClassController {
   @Roles(UserRole.INSTRUCTOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOkResponse({ type: ClassDto })
-  async update(
-    @Query('classId') id: string,
-    @Body() classUpdateDto: ClassUpdateDto,
-  ): Promise<ClassUpdateDto> {
-    const foundClass = await this.classService.update(
-      new Types.ObjectId(id),
-      classUpdateDto,
-    );
+  async update(@Query('classId') id: string, @Body() classUpdateDto: ClassUpdateDto): Promise<ClassUpdateDto> {
+    const foundClass = await this.classService.update(new Types.ObjectId(id), classUpdateDto);
 
-    if (!foundClass)
-      throw new NotFoundException({ message: 'Class not found' });
+    if (!foundClass) throw new NotFoundException({ message: 'Class not found' });
 
     return this.classService.classMapper(foundClass);
   }
@@ -134,10 +105,7 @@ export class ClassController {
   @Put('invite')
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: [String], isArray: true })
-  async invite(
-    @Query('classId') id: string,
-    @Body('emails') userEmails: string[],
-  ) {
+  async invite(@Query('classId') id: string, @Body('emails') userEmails: string[]) {
     const users = await this.userService.findIdsByEmails(userEmails);
     const userIds = users.map((user) => user._id);
     const classId = new Types.ObjectId(id);
@@ -169,8 +137,7 @@ export class ClassController {
       new Types.ObjectId(userDto._id),
       new Types.ObjectId(foundClass._id),
     );
-    if (joined)
-      throw new NotAcceptableException({ message: 'Already in class' });
+    if (joined) throw new NotAcceptableException({ message: 'Already in class' });
 
     const userIds = [new Types.ObjectId(userDto._id)];
     await Promise.all([
@@ -184,27 +151,17 @@ export class ClassController {
       createdAt: new Date().toISOString(),
       to: userIds,
     });
-    await this.notificationService.create(
-      notification,
-      foundClass._id.toString(),
-      'invited',
-    );
+    await this.notificationService.create(notification, foundClass._id.toString(), 'invited');
 
     return await this.classService.classMapper(foundClass);
   }
 
   @Put('leave')
   @UseGuards(JwtAuthGuard)
-  async leave(
-    @ExtractedUser() userDto: UserDto,
-    @Query('classId') _id: string,
-  ) {
+  async leave(@ExtractedUser() userDto: UserDto, @Query('classId') _id: string) {
     const userId = new Types.ObjectId(userDto._id);
     const classId = new Types.ObjectId(_id);
-    await Promise.all([
-      this.userService.leaveClass(userId, classId),
-      this.classService.leave(classId, userId),
-    ]);
+    await Promise.all([this.userService.leaveClass(userId, classId), this.classService.leave(classId, userId)]);
 
     return { message: 'Left' };
   }
@@ -215,10 +172,7 @@ export class ClassController {
   async kick(@Query('classId') _id: string, @Query('userId') userId: string) {
     const classId = new Types.ObjectId(_id);
     const user = new Types.ObjectId(userId);
-    await Promise.all([
-      this.userService.leaveClass(user, classId),
-      this.classService.leave(classId, user),
-    ]);
+    await Promise.all([this.userService.leaveClass(user, classId), this.classService.leave(classId, user)]);
 
     return { message: 'Kicked' };
   }
@@ -228,9 +182,7 @@ export class ClassController {
   @Roles(UserRole.INSTRUCTOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async delete(@Query('classId') classId: string) {
-    const { members } = await this.classService.find(
-      new Types.ObjectId(classId),
-    );
+    const { members } = await this.classService.find(new Types.ObjectId(classId));
     await Promise.all([
       this.classService.delete(new Types.ObjectId(classId)),
       this.userService.leaveClassMany(members, new Types.ObjectId(classId)),

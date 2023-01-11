@@ -4,9 +4,7 @@ import { dto } from 'dto-mapper';
 import { ClassDto } from './class.dto';
 
 @dto()
-export class ClassUpdateDto extends PartialType(
-  OmitType(ClassDto, ['_id', 'inviteCode', 'memberCount'] as const),
-) {
+export class ClassUpdateDto extends PartialType(OmitType(ClassDto, ['_id', 'inviteCode', 'memberCount'] as const)) {
   @IsString()
   @Length(6)
   @IsOptional()

@@ -42,10 +42,7 @@ export class UserService {
     return this.userModel.find().exec();
   }
 
-  async findJoinedClass(
-    _id: Types.ObjectId,
-    classId: Types.ObjectId,
-  ): Promise<User> {
+  async findJoinedClass(_id: Types.ObjectId, classId: Types.ObjectId): Promise<User> {
     return this.userModel.findOne({ _id, classes: classId }).exec();
   }
 
@@ -65,23 +62,15 @@ export class UserService {
 
   // Update
   async update(email: string, userUpdateDto: UserUpdateDto): Promise<User> {
-    return this.userModel
-      .findOneAndUpdate({ email }, userUpdateDto, { new: true })
-      .exec();
+    return this.userModel.findOneAndUpdate({ email }, userUpdateDto, { new: true }).exec();
   }
 
   async joinClass(email: string, classId: Types.ObjectId) {
-    await this.userModel.updateOne(
-      { email },
-      { $addToSet: { classes: classId } },
-    );
+    await this.userModel.updateOne({ email }, { $addToSet: { classes: classId } });
   }
 
   async joinClassMany(ids: string[], classId: Types.ObjectId) {
-    await this.userModel.updateMany(
-      { _id: { $in: ids } },
-      { $addToSet: { classes: classId } },
-    );
+    await this.userModel.updateMany({ _id: { $in: ids } }, { $addToSet: { classes: classId } });
   }
 
   // Delete
@@ -90,10 +79,7 @@ export class UserService {
   }
 
   async leaveClassMany(_ids: Types.ObjectId[], classId: Types.ObjectId) {
-    await this.userModel.updateMany(
-      { _id: { $in: _ids } },
-      { $pull: { classes: classId } },
-    );
+    await this.userModel.updateMany({ _id: { $in: _ids } }, { $pull: { classes: classId } });
   }
 
   async delete(id: Types.ObjectId) {

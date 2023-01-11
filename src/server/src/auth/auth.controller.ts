@@ -24,10 +24,7 @@ export class AuthController {
       },
     },
   })
-  async login(
-    @Body() userLoginDto: UserLoginDto,
-    @Res() res: Response,
-  ): Promise<unknown> {
+  async login(@Body() userLoginDto: UserLoginDto, @Res() res: Response): Promise<unknown> {
     const user = await this.authService.validateUser(userLoginDto);
 
     const accessToken = await this.authService.generateAccessToken(user.email);
@@ -51,10 +48,7 @@ export class AuthController {
       },
     },
   })
-  async register(
-    @Body() userRegisterDto: UserRegisterDto,
-    @Res() res: Response,
-  ): Promise<unknown> {
+  async register(@Body() userRegisterDto: UserRegisterDto, @Res() res: Response): Promise<unknown> {
     const user = await this.authService.registerUser(userRegisterDto);
 
     const accessToken = await this.authService.generateAccessToken(user.email);

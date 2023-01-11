@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, ParseIntPipe, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -36,10 +25,7 @@ export class CommentController {
     @Body() postCreatedDto: CommentCreateDto,
   ) {
     postCreatedDto.user = new Types.ObjectId(userDto._id);
-    await this.commentService.answer(
-      new Types.ObjectId(postId),
-      postCreatedDto,
-    );
+    await this.commentService.answer(new Types.ObjectId(postId), postCreatedDto);
 
     return { message: 'Answer successfully' };
   }
@@ -95,14 +81,8 @@ export class CommentController {
   @Patch('markAnswer')
   @Roles(UserRole.INSTRUCTOR)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async markAnswer(
-    @Query('postId') postId: string,
-    @Query('commentId') commentId: string,
-  ) {
-    await this.commentService.markAnswer(
-      new Types.ObjectId(postId),
-      new Types.ObjectId(commentId),
-    );
+  async markAnswer(@Query('postId') postId: string, @Query('commentId') commentId: string) {
+    await this.commentService.markAnswer(new Types.ObjectId(postId), new Types.ObjectId(commentId));
 
     return { message: 'Mark answer successfully' };
   }
@@ -116,11 +96,7 @@ export class CommentController {
     @Query('commentId') commentId: string,
     @Body() postUpdateDto: CommentUpdateDto,
   ): Promise<CommentDto[]> {
-    await this.commentService.edit(
-      new Types.ObjectId(postId),
-      new Types.ObjectId(commentId),
-      postUpdateDto,
-    );
+    await this.commentService.edit(new Types.ObjectId(postId), new Types.ObjectId(commentId), postUpdateDto);
 
     const coll = await this.commentService.find(
       new Types.ObjectId(postId),
@@ -138,14 +114,8 @@ export class CommentController {
   /** DELETE */
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
-  async delete(
-    @Query('postId') postId: string,
-    @Query('commentId') commentId: string,
-  ) {
-    await this.commentService.delete(
-      new Types.ObjectId(postId),
-      new Types.ObjectId(commentId),
-    );
+  async delete(@Query('postId') postId: string, @Query('commentId') commentId: string) {
+    await this.commentService.delete(new Types.ObjectId(postId), new Types.ObjectId(commentId));
 
     return { mesage: 'Delete successfully' };
   }

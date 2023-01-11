@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  NotFoundException,
-  Post,
-  Put,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -48,13 +38,8 @@ export class PostController {
     this.classService.addPost(postCreateDto.classId, post._id);
 
     // add notification
-    const postType =
-      postCreateDto.category == 'announcement'
-        ? 'an announcement'
-        : 'a question';
-    const { courseCode, courseName } = await this.classService.find(
-      postCreateDto.classId,
-    );
+    const postType = postCreateDto.category == 'announcement' ? 'an announcement' : 'a question';
+    const { courseCode, courseName } = await this.classService.find(postCreateDto.classId);
     const notification = new NotificationCreateDto({
       message: `${userDto.firstName} ${userDto.lastName} has posted ${postType} in ${courseCode}-${courseName}`,
       createdAt: new Date().toISOString(),
@@ -89,14 +74,8 @@ export class PostController {
   @Get('filter')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: PostDto, isArray: true })
-  async listFilter(
-    @Query('classId') classId: string,
-    @Query('category') category: string,
-  ): Promise<PostDto[]> {
-    const posts = await this.postService.filterCategory(
-      new Types.ObjectId(classId),
-      category,
-    );
+  async listFilter(@Query('classId') classId: string, @Query('category') category: string): Promise<PostDto[]> {
+    const posts = await this.postService.filterCategory(new Types.ObjectId(classId), category);
 
     return await this.postService.postsMapper(posts);
   }
@@ -110,10 +89,7 @@ export class PostController {
     @Query('postId') postId: string,
     @Body() postUpdateDto: PostUpdateDto,
   ): Promise<PostDto> {
-    const post = await this.postService.edit(
-      new Types.ObjectId(postId),
-      postUpdateDto,
-    );
+    const post = await this.postService.edit(new Types.ObjectId(postId), postUpdateDto);
     if (!post) throw new NotFoundException({ message: 'Post not found' });
 
     return this.postService.postMapper(post);
@@ -123,16 +99,10 @@ export class PostController {
   @Delete('delete')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: Boolean })
-  async delete(
-    @Query('classId') classId: string,
-    @Query('postId') postId: string,
-  ): Promise<boolean> {
+  async delete(@Query('classId') classId: string, @Query('postId') postId: string): Promise<boolean> {
     await Promise.all([
       this.postService.delete(new Types.ObjectId(postId)),
-      this.classService.removePost(
-        new Types.ObjectId(classId),
-        new Types.ObjectId(postId),
-      ),
+      this.classService.removePost(new Types.ObjectId(classId), new Types.ObjectId(postId)),
     ]);
 
     return true;

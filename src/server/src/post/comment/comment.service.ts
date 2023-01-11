@@ -46,10 +46,7 @@ export class CommentService {
       {
         $addFields: {
           'answers.vote': {
-            $subtract: [
-              { $size: '$answers.upvote' },
-              { $size: '$answers.downvote' },
-            ],
+            $subtract: [{ $size: '$answers.upvote' }, { $size: '$answers.downvote' }],
           },
           'answers.upvote': { $in: [userId, '$answers.upvote'] },
           'answers.downvote': { $in: [userId, '$answers.downvote'] },
@@ -70,11 +67,7 @@ export class CommentService {
   }
 
   /** UPDATE */
-  async upvote(
-    postId: Types.ObjectId,
-    commentId: Types.ObjectId,
-    userId: Types.ObjectId,
-  ) {
+  async upvote(postId: Types.ObjectId, commentId: Types.ObjectId, userId: Types.ObjectId) {
     const post = await this.postModel.findOne({
       _id: postId,
       'answers._id': commentId,
@@ -98,11 +91,7 @@ export class CommentService {
     }
   }
 
-  async downvote(
-    postId: Types.ObjectId,
-    commentId: Types.ObjectId,
-    userId: Types.ObjectId,
-  ) {
+  async downvote(postId: Types.ObjectId, commentId: Types.ObjectId, userId: Types.ObjectId) {
     const post = await this.postModel.findOne({
       _id: postId,
       'answers._id': commentId,
@@ -146,10 +135,7 @@ export class CommentService {
       set['answers.$.' + field] = postUpdateDto[field];
     }
 
-    await this.postModel.updateOne(
-      { _id: postId, 'answers._id': commentId },
-      { $set: set },
-    );
+    await this.postModel.updateOne({ _id: postId, 'answers._id': commentId }, { $set: set });
   }
 
   /** DELETE */

@@ -64,34 +64,20 @@ export class ClassService {
   }
 
   async addMembers(id: Types.ObjectId, userIds: Types.ObjectId[]) {
-    await this.classModel.updateOne(
-      { _id: id },
-      { $addToSet: { members: { $each: userIds } } },
-    );
+    await this.classModel.updateOne({ _id: id }, { $addToSet: { members: { $each: userIds } } });
   }
 
-  async update(
-    id: Types.ObjectId,
-    classUpdateDto: ClassUpdateDto,
-  ): Promise<Class> {
-    return this.classModel
-      .findByIdAndUpdate(id, classUpdateDto, { new: true })
-      .exec();
+  async update(id: Types.ObjectId, classUpdateDto: ClassUpdateDto): Promise<Class> {
+    return this.classModel.findByIdAndUpdate(id, classUpdateDto, { new: true }).exec();
   }
 
   // Delete
   async leave(id: Types.ObjectId, memberId: Types.ObjectId) {
-    await this.classModel.updateOne(
-      { _id: id },
-      { $pull: { members: memberId } },
-    );
+    await this.classModel.updateOne({ _id: id }, { $pull: { members: memberId } });
   }
 
   async leaveMany(ids: Types.ObjectId[], memberId: Types.ObjectId) {
-    await this.classModel.updateMany(
-      { _id: { $in: ids } },
-      { $pull: { members: memberId } },
-    );
+    await this.classModel.updateMany({ _id: { $in: ids } }, { $pull: { members: memberId } });
   }
 
   async removePost(id: Types.ObjectId, postId: Types.ObjectId) {

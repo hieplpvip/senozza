@@ -13,10 +13,7 @@ import { UserService } from './user.service';
 @Controller()
 @ApiTags('user')
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly classService: ClassService,
-  ) {}
+  constructor(private readonly userService: UserService, private readonly classService: ClassService) {}
 
   /** CREATE */
 
@@ -43,14 +40,8 @@ export class UserController {
   @UseGuards(JwtAuthGuard)
   @ApiBody({ type: UserUpdateDto })
   @ApiOkResponse({ type: UserDto })
-  async update(
-    @ExtractedUser() userDto: UserDto,
-    @Body() userUpdateDto: UserUpdateDto,
-  ): Promise<UserDto> {
-    const updatedUser = await this.userService.update(
-      userDto.email,
-      userUpdateDto,
-    );
+  async update(@ExtractedUser() userDto: UserDto, @Body() userUpdateDto: UserUpdateDto): Promise<UserDto> {
+    const updatedUser = await this.userService.update(userDto.email, userUpdateDto);
 
     return this.userService.userMapper(updatedUser);
   }

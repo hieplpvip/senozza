@@ -17,22 +17,14 @@ export class NotificationService {
     private readonly notificationGateway: NotificationGateway,
   ) {}
 
-  async notificationsMapper(
-    notifications: Notification[],
-  ): Promise<NotificationDto[]> {
+  async notificationsMapper(notifications: Notification[]): Promise<NotificationDto[]> {
     const mapper = buildMapper(NotificationDto);
     return notifications.map((notification) => mapper.serialize(notification));
   }
 
   //** CREATE */
-  async create(
-    notificationCreateDto: NotificationCreateDto,
-    classId: string,
-    message: string,
-  ) {
-    const createdNotification = new this.notificationModel(
-      notificationCreateDto,
-    );
+  async create(notificationCreateDto: NotificationCreateDto, classId: string, message: string) {
+    const createdNotification = new this.notificationModel(notificationCreateDto);
     await createdNotification.save();
 
     this.notificationGateway.sendNotification(classId, message);
@@ -61,10 +53,7 @@ export class NotificationService {
 
   //** UPDATE */
   async read(notificationId: Types.ObjectId, userId: Types.ObjectId) {
-    await this.notificationModel.updateOne(
-      { _id: notificationId },
-      { $addToSet: { readBy: userId } },
-    );
+    await this.notificationModel.updateOne({ _id: notificationId }, { $addToSet: { readBy: userId } });
   }
 
   async readAll(userId: Types.ObjectId) {

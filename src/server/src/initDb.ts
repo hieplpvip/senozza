@@ -214,9 +214,7 @@ async function signUp(user: SignUpArg) {
     body: {
       ...user,
       password: PASSWORD,
-      imgUrl: `https://avatars.dicebear.com/api/bottts/${simpleHash(
-        user.email,
-      )}.svg?size=128`,
+      imgUrl: `https://avatars.dicebear.com/api/bottts/${simpleHash(user.email)}.svg?size=128`,
     },
   });
 
@@ -241,11 +239,7 @@ async function createClass(accessToken: string, body: CreateClassArg) {
   return response;
 }
 
-async function joinClass(
-  accessToken: string,
-  classId: string,
-  emails: string[],
-) {
+async function joinClass(accessToken: string, classId: string, emails: string[]) {
   const response = await fetch({
     path: `/class/invite?classId=${classId}`,
     method: 'PUT',
@@ -266,11 +260,7 @@ interface CreatePostArg {
   };
 }
 
-async function createPost(
-  accessToken: string,
-  classId: string,
-  body: CreatePostArg,
-) {
+async function createPost(accessToken: string, classId: string, body: CreatePostArg) {
   const response = await fetch({
     path: `/post/create?classId=${classId}`,
     method: 'POST',
@@ -286,11 +276,7 @@ interface CreateAnswerArg {
   content: string;
 }
 
-async function createAnswer(
-  accessToken: string,
-  postId: string,
-  body: CreateAnswerArg,
-) {
+async function createAnswer(accessToken: string, postId: string, body: CreateAnswerArg) {
   const response = await fetch({
     path: `/post/comment/answer?postId=${postId}`,
     method: 'POST',
@@ -337,19 +323,9 @@ async function main() {
 
     await Promise.all(
       POSTS.map(async (post) => {
-        const _post = await createPost(
-          students[_class.students[0]].accessToken,
-          data._id,
-          post,
-        );
+        const _post = await createPost(students[_class.students[0]].accessToken, data._id, post);
         await Promise.all(
-          ANSWERS.map((answer) =>
-            createAnswer(
-              students[_class.students[0]].accessToken,
-              _post._id,
-              answer,
-            ),
-          ),
+          ANSWERS.map((answer) => createAnswer(students[_class.students[0]].accessToken, _post._id, answer)),
         );
         return _post;
       }),

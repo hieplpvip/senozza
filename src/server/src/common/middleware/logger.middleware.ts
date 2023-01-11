@@ -5,11 +5,7 @@ import { Response } from 'express';
 export class LoggerMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
 
-  async use(
-    req: Record<string, any>,
-    res: Response,
-    next: () => void,
-  ): Promise<any> {
+  async use(req: Record<string, any>, res: Response, next: () => void): Promise<any> {
     const { ip, method, originalUrl } = req;
     const userAgent = req.get('user-agent') || '';
 
@@ -17,9 +13,7 @@ export class LoggerMiddleware implements NestMiddleware {
       const { statusCode } = res;
       const contentLength = res.get('content-length') || '';
 
-      this.logger.log(
-        `${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip}`,
-      );
+      this.logger.log(`${method} ${originalUrl} ${statusCode} ${contentLength} - ${userAgent} ${ip}`);
     });
 
     return next();

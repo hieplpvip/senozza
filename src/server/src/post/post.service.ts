@@ -48,33 +48,16 @@ export class PostService {
   }
 
   async listAll(classId: Types.ObjectId): Promise<Post[]> {
-    return this.postModel
-      .find({ classId })
-      .sort('-pin -question.createdDate')
-      .populate('question.user')
-      .exec();
+    return this.postModel.find({ classId }).sort('-pin -question.createdDate').populate('question.user').exec();
   }
 
-  async filterCategory(
-    classId: Types.ObjectId,
-    category: string,
-  ): Promise<Post[]> {
-    return this.postModel
-      .find({ classId, category })
-      .sort('-question.createdDate')
-      .populate('question.user')
-      .exec();
+  async filterCategory(classId: Types.ObjectId, category: string): Promise<Post[]> {
+    return this.postModel.find({ classId, category }).sort('-question.createdDate').populate('question.user').exec();
   }
 
   /** UPDATE */
-  async edit(
-    postId: Types.ObjectId,
-    postUpdateDto: PostUpdateDto,
-  ): Promise<Post> {
-    return this.postModel
-      .findOneAndUpdate({ _id: postId }, flatten(postUpdateDto))
-      .populate('question.user')
-      .exec();
+  async edit(postId: Types.ObjectId, postUpdateDto: PostUpdateDto): Promise<Post> {
+    return this.postModel.findOneAndUpdate({ _id: postId }, flatten(postUpdateDto)).populate('question.user').exec();
   }
 
   /** DELETE */

@@ -19,9 +19,7 @@ export class NotificationController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: NotificationDto, isArray: true })
   async listAll(@ExtractedUser() userDto: UserDto): Promise<NotificationDto[]> {
-    const notifications = await this.notificationService.listAll(
-      new Types.ObjectId(userDto._id),
-    );
+    const notifications = await this.notificationService.listAll(new Types.ObjectId(userDto._id));
 
     return await this.notificationService.notificationsMapper(notifications);
   }
@@ -29,14 +27,8 @@ export class NotificationController {
   //** UPDATE */
   @Put('read')
   @UseGuards(JwtAuthGuard)
-  async read(
-    @ExtractedUser() userDto: UserDto,
-    @Query('notificationId') notificationId: string,
-  ): Promise<void> {
-    await this.notificationService.read(
-      new Types.ObjectId(notificationId),
-      new Types.ObjectId(userDto._id),
-    );
+  async read(@ExtractedUser() userDto: UserDto, @Query('notificationId') notificationId: string): Promise<void> {
+    await this.notificationService.read(new Types.ObjectId(notificationId), new Types.ObjectId(userDto._id));
   }
 
   @Put('readAll')

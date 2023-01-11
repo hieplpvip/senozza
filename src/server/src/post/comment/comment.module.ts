@@ -1,13 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import {
-  Class,
-  ClassSchema,
-  Post,
-  PostSchema,
-  User,
-  UserSchema,
-} from 'src/schemas';
+import { Class, ClassSchema, Post, PostSchema, User, UserSchema } from 'src/schemas';
 import { CommentController } from './comment.controller';
 import { CommentService } from './comment.service';
 

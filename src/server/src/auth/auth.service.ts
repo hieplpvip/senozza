@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotAcceptableException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/schemas';
 import { UserLoginDto, UserRegisterDto } from 'src/user/dto';
@@ -11,10 +7,7 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private jwtService: JwtService,
-    private readonly userService: UserService,
-  ) {}
+  constructor(private jwtService: JwtService, private readonly userService: UserService) {}
 
   async generateAccessToken(email: string): Promise<string> {
     return this.jwtService.sign({

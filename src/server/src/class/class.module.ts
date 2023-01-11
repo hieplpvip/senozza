@@ -3,16 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { NotificationGateway } from 'src/notification/notification.gateway';
 import { NotificationService } from 'src/notification/notification.service';
 import { PostService } from 'src/post/post.service';
-import {
-  Class,
-  ClassSchema,
-  Notification,
-  NotificationSchema,
-  Post,
-  PostSchema,
-  User,
-  UserSchema,
-} from 'src/schemas';
+import { Class, ClassSchema, Notification, NotificationSchema, Post, PostSchema, User, UserSchema } from 'src/schemas';
 import { UserService } from 'src/user/user.service';
 import { ClassController } from './class.controller';
 import { ClassService } from './class.service';
@@ -27,13 +18,7 @@ import { ClassService } from './class.service';
     ]),
   ],
   controllers: [ClassController],
-  providers: [
-    ClassService,
-    UserService,
-    PostService,
-    NotificationService,
-    NotificationGateway,
-  ],
+  providers: [ClassService, UserService, PostService, NotificationService, NotificationGateway],
   exports: [ClassService],
 })
 export class ClassModule {}
