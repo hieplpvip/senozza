@@ -75,13 +75,27 @@ export class CommentService {
     commentId: Types.ObjectId,
     userId: Types.ObjectId,
   ) {
-    await this.postModel.updateOne(
-      { _id: postId, 'answers._id': commentId },
-      {
-        $pull: { 'answers.$.downvote': userId },
-        $addToSet: { 'answers.$.upvote': userId },
-      },
-    );
+    const post = await this.postModel.findOne({
+      _id: postId,
+      'answers._id': commentId,
+      'answers.downvote': userId,
+    });
+
+    if (post) {
+      await this.postModel.updateOne(
+        { _id: postId, 'answers._id': commentId },
+        {
+          $pull: { 'answers.$.downvote': userId },
+        },
+      );
+    } else {
+      await this.postModel.updateOne(
+        { _id: postId, 'answers._id': commentId },
+        {
+          $addToSet: { 'answers.$.upvote': userId },
+        },
+      );
+    }
   }
 
   async downvote(
@@ -89,13 +103,27 @@ export class CommentService {
     commentId: Types.ObjectId,
     userId: Types.ObjectId,
   ) {
-    await this.postModel.updateOne(
-      { _id: postId, 'answers._id': commentId },
-      {
-        $addToSet: { 'answers.$.downvote': userId },
-        $pull: { 'answers.$.upvote': userId },
-      },
-    );
+    const post = await this.postModel.findOne({
+      _id: postId,
+      'answers._id': commentId,
+      'answers.upvote': userId,
+    });
+
+    if (post) {
+      await this.postModel.updateOne(
+        { _id: postId, 'answers._id': commentId },
+        {
+          $pull: { 'answers.$.upvote': userId },
+        },
+      );
+    } else {
+      await this.postModel.updateOne(
+        { _id: postId, 'answers._id': commentId },
+        {
+          $addToSet: { 'answers.$.downvote': userId },
+        },
+      );
+    }
   }
 
   async markAnswer(postId: Types.ObjectId, commentId: Types.ObjectId) {
