@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/senozza/static/css/main.28c5a2b1.css",
-    "main.js": "/senozza/static/js/main.c572a42d.js",
+    "main.js": "/senozza/static/js/main.df524a4f.js",
     "static/js/3419.68d6bd33.chunk.js": "/senozza/static/js/3419.68d6bd33.chunk.js",
     "static/js/2801.c5a90198.chunk.js": "/senozza/static/js/2801.c5a90198.chunk.js",
     "static/js/3577.e6659e53.chunk.js": "/senozza/static/js/3577.e6659e53.chunk.js",
@@ -171,7 +171,7 @@
     "static/media/KaTeX_Size3-Regular.woff2": "/senozza/static/media/KaTeX_Size3-Regular.e1951519f6f0596f7356.woff2",
     "index.html": "/senozza/index.html",
     "main.28c5a2b1.css.map": "/senozza/static/css/main.28c5a2b1.css.map",
-    "main.c572a42d.js.map": "/senozza/static/js/main.c572a42d.js.map",
+    "main.df524a4f.js.map": "/senozza/static/js/main.df524a4f.js.map",
     "3419.68d6bd33.chunk.js.map": "/senozza/static/js/3419.68d6bd33.chunk.js.map",
     "2801.c5a90198.chunk.js.map": "/senozza/static/js/2801.c5a90198.chunk.js.map",
     "3577.e6659e53.chunk.js.map": "/senozza/static/js/3577.e6659e53.chunk.js.map",
@@ -282,6 +282,6 @@
   },
   "entrypoints": [
     "static/css/main.28c5a2b1.css",
-    "static/js/main.c572a42d.js"
+    "static/js/main.df524a4f.js"
   ]
 }
